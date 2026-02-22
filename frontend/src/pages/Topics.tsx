@@ -10,10 +10,18 @@ const Topics = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!subjectId) {
+      setError("Subject not found");
+      setLoading(false);
+      return;
+    }
     api
       .get(`/topics/${subjectId}`)
       .then((res) => setTopics(res.data))
-      .catch(() => setError("Failed to load topics"))
+      .catch((err) => {
+        console.error("Failed to load topics:", err);
+        setError("Failed to load topics")
+      })
       .finally(() => setLoading(false));
   }, [subjectId]);
 

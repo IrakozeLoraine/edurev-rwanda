@@ -55,14 +55,18 @@ PORT=5000
 JWT_SECRET=your_jwt_secret_key_here
 ```
 
-3. Install backend dependencies and start the server
+3. Create a `.env` file in the frontend directory with the following variable:
+```VITE_API_URL=http://localhost:5000
+```
+
+4. Install backend dependencies and start the server
 ```bash
 cd backend
 npm install
 npm run dev
 ```
 
-4. In a new terminal, install frontend dependencies and start the development server
+5. In a new terminal, install frontend dependencies and start the development server
 ```bash
 cd frontend
 npm install

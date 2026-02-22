@@ -12,7 +12,10 @@ const Subjects = () => {
     api
       .get("/subjects")
       .then((res) => setSubjects(res.data))
-      .catch(() => setError("Failed to load subjects"))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load subjects.")
+      })
       .finally(() => setLoading(false));
   }, []);
 
