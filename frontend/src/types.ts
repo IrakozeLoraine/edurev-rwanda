@@ -7,7 +7,7 @@ export interface Subject {
 export interface Topic {
   _id: string;
   title: string;
-  notes: string;
-  references: string[];
+  notes?: string;
+  references?: string[];
   subject: Subject;
 }
