@@ -4,22 +4,18 @@
 
 ## African Context
 
-[Explain what problem this solves and why it matters in an African context]
-
 Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. This leads to inefficient study habits and lower exam performance, which in turn affects future educational and career opportunities. By providing a smart revision companion, we aim to empower students with the tools they need to succeed academically and contribute to Rwanda's development.
 
 ## Team Members
 
-- Loraine Mukezwa Irakoze - [Role] - l.irakoze2@alustudent.com
-- Ninette Irisa Agatesi - [Role] - [Student ID]
-- John Kwizera - [Role] - j.kwizera@alustudent.com
-- Nicole Ange Umukundwa - [Role] - [Student ID]
+- Loraine Mukezwa Irakoze - Team Lead - l.irakoze2@alustudent.com
+- Ninette Irisa Agatesi - Backend Developer - n.agatesi@alustudent.com
+- John Kwizera - DevOps Engineer - j.kwizera@alustudent.com
+- Nicole Ange Umukundwa - Frontend Developer - n.mukundwa@alustudent.com
 
 ## Project Overview
 
-[2-3 paragraph description of what this application does]
-
-EduRev Rwanda is a web application designed to help Rwandan secondary students efficiently revise for their national exams. The platform offers randomized practice questions based on the REB curriculum, allowing students to test their knowledge and identify areas for improvement. Additionally, EduRev offers forums where students can discuss topics, share resources, and support each other in their revision journey. EduRev aims to create a collaborative learning environment that fosters academic success and builds a strong community of learners.
+EduRev Rwanda is a web application designed to help Rwandan secondary students efficiently revise for their national exams. The platform offers randomized practice questions based on the REB (Rwanda Education Board) curriculum, allowing students to test their knowledge and identify areas for improvement. Additionally, EduRev offers forums where students can discuss topics, share resources, and support each other in their revision journey. EduRev aims to create a collaborative learning environment that fosters academic success and builds a strong community of learners.
 
 ### Target Users
 
@@ -48,28 +44,120 @@ Rwandan O-Level and A-Level secondary students preparing for national exams.
 
 1. Clone the repository
 ```bash
-   git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
-   cd edurev-rwanda
+git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
+cd edurev-rwanda
 ```
 
-2. [Step-by-step setup instructions]
+2. Create a `.env` file in the backend directory with the following variables:
+```
+MONGO_URI=mongodb://localhost:27017/edurev-rwanda
+PORT=5000
+JWT_SECRET=your_jwt_secret_key_here
+```
 
-3. Run the application
+3. Install backend dependencies and start the server
 ```bash
-   [command to run]
+cd backend
+npm install
+npm run dev
 ```
+
+4. In a new terminal, install frontend dependencies and start the development server
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The application will be available at `http://localhost:5173` (Vite default port) with the backend running on `http://localhost:5000`.
 
 ### Usage
 
-[How to use the application - include examples if applicable]
+1. **Open the application** in your browser at `http://localhost:5173`
+
+2. **Create an account** - Sign up with your email and password
+
+3. **Select a subject** - Choose from available O-Level or A-Level subjects (Mathematics, English, Biology, etc.)
+
+4. **Browse topics** - View all topics within your selected subject
+
+5. **Practice questions** - Take randomized multiple-choice quizzes for any topic:
+   - Answer all questions
+   - Submit to see your score
+   - Review correct answers and explanations
+
+6. **Access notes** - View concise study notes and references for each topic
+
+7. **Join the forum** - Participate in discussions, ask questions, and help fellow students
+
+### API Endpoints
+
+#### Authentication
+- `POST /auth/register` - Register a new user
+- `POST /auth/login` - Login and receive JWT token
+
+#### Subjects & Topics
+- `GET /subjects` - List all subjects
+- `GET /subjects/:id/topics` - Get topics for a subject
+
+#### Questions
+- `GET /topics/:id/questions` - Get questions for a topic
+
+#### Forum (Coming Soon)
+- `GET /forum` - List forum threads
+- `POST /forum` - Create a new thread
 
 ## Project Structure
-[Show your directory structure]
+
+```
+edurev-rwanda/
+├── backend/                    # Node.js/Express server
+│   ├── config/
+│   │   └── db.js             # MongoDB connection setup
+│   ├── middleware/
+│   │   └── authMiddleware.js  # JWT authentication middleware
+│   ├── models/                # Mongoose schemas
+│   │   ├── Forum.js
+│   │   ├── Question.js
+│   │   ├── Subject.js
+│   │   ├── Topic.js
+│   │   └── User.js
+│   ├── routes/                # Express route handlers
+│   │   ├── authRoutes.js
+│   │   ├── subjectRoutes.js
+│   │   └── topicRoutes.js
+│   ├── server.js              # Express app entry point
+│   └── package.json
+│
+├── frontend/                   # React + TypeScript application
+│   ├── src/
+│   │   ├── components/        # Reusable React components
+│   │   ├── pages/             # Page components
+│   │   ├── store/             # Redux store configuration
+│   │   │   ├── reducers/      # Redux reducers
+│   │   │   └── store.ts
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── axios.ts           # Axios API client configuration
+│   │   ├── types.ts           # TypeScript type definitions
+│   │   └── index.css
+│   ├── vite.config.ts         # Vite configuration
+│   ├── tsconfig.json          # TypeScript configuration
+│   ├── index.html
+│   └── package.json
+│
+├── README.md
+└── LICENSE
+```
 
 ## Links
 
 - [Project Board](https://github.com/users/IrakozeLoraine/projects/1)
-- [Documentation](if applicable)
+- [GitHub Repository](https://github.com/IrakozeLoraine/edurev-rwanda)
+
+## Contributing
+
+To contribute submit pull requests or open issues for bugs and feature requests.
 
 ## License
 
