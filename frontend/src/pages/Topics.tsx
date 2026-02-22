@@ -6,6 +6,7 @@ import type { Topic } from "../types";
 const Topics = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [subjectName, setSubjectName] = useState("Subject");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -15,12 +16,24 @@ const Topics = () => {
       setLoading(false);
       return;
     }
+
+    api.get(`/subjects/${subjectId}`)
+      .then((res) => {
+        if (res.data?.name) setSubjectName(res.data.name);
+      })
+      .catch(() => {});
+
     api
       .get(`/topics/${subjectId}`)
-      .then((res) => setTopics(res.data))
+      .then((res) => {
+        setTopics(res.data);
+        if (res.data.length > 0 && res.data[0].subject?.name) {
+          setSubjectName(res.data[0].subject.name);
+        }
+      })
       .catch((err) => {
         console.error("Failed to load topics:", err);
-        setError("Failed to load topics")
+        setError("Failed to load topics");
       })
       .finally(() => setLoading(false));
   }, [subjectId]);
@@ -43,8 +56,6 @@ const Topics = () => {
         </div>
       </div>
     );
-
-  const subjectName = topics.length > 0 ? topics[0].subject.name : "Subject";
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
