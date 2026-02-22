@@ -117,7 +117,7 @@ const Topics = () => {
                     {topic.title}
                   </h2>
                   {topic.notes && (
-                    <p className="text-sm text-mongo-muted mt-1.5 leading-relaxed">
+                    <p className="text-sm text-mongo-muted mt-1.5 leading-relaxed line-clamp-2">
                       {topic.notes}
                     </p>
                   )}
