@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const subjectSchema = new mongoose.Schema({
   name: String,
-  level: String // O-Level or A-Level
+  level: String, enum: ["O-level", "A-level"],
 });
 
 module.exports = mongoose.model("Subject", subjectSchema);
