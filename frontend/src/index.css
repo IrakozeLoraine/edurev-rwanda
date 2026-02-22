@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+@theme {
+  --color-mongo-green: #00A94F;
+  --color-mongo-green-light: #E3FCF2;
+  --color-mongo-heading: #1A1A2E;
+  --color-mongo-text: #3D4F58;
+  --color-mongo-muted: #5A6B73;
+  --color-mongo-card: #FFFFFF;
+  --color-mongo-border: #D4DAD8;
+  --color-mongo-bg: #F1F5F4;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-mongo-bg);
+    color: var(--color-mongo-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
