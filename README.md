@@ -55,14 +55,19 @@ PORT=5000
 JWT_SECRET=your_jwt_secret_key_here
 ```
 
-3. Install backend dependencies and start the server
+3. Create a `.env` file in the frontend directory with the following variable:
+```
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+4. Install backend dependencies and start the server
 ```bash
 cd backend
 npm install
 npm run dev
 ```
 
-4. In a new terminal, install frontend dependencies and start the development server
+5. In a new terminal, install frontend dependencies and start the development server
 ```bash
 cd frontend
 npm install
@@ -93,19 +98,20 @@ The application will be available at `http://localhost:5173` (Vite default port)
 ### API Endpoints
 
 #### Authentication
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login and receive JWT token
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login and receive JWT token
 
 #### Subjects & Topics
-- `GET /subjects` - List all subjects
-- `GET /subjects/:id/topics` - Get topics for a subject
+- `GET /api/subjects` - List all subjects
+- `GET /api/subjects/:id` - Get a single subject
+- `GET /api/topics/:subjectId` - Get topics for a subject
 
-#### Questions
-- `GET /topics/:id/questions` - Get questions for a topic
+#### Questions (Coming Soon)
+- `GET /api/topics/:id/questions` - Get questions for a topic
 
 #### Forum (Coming Soon)
-- `GET /forum` - List forum threads
-- `POST /forum` - Create a new thread
+- `GET /api/forum` - List forum threads
+- `POST /api/forum` - Create a new thread
 
 ## Project Structure
 
