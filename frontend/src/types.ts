@@ -7,6 +7,10 @@ export interface Subject {
 export interface Topic {
   _id: string;
   title: string;
+  chapter: number;
+  chapterTitle?: string;
+  order: number;
+  difficulty: "beginner" | "intermediate" | "advanced";
   notes?: string;
   references?: string[];
   subject: Subject;

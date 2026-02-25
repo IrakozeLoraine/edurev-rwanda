@@ -1,7 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../axios";
 import type { Topic } from "../types";
+
+type SortMode = "chapter" | "difficulty" | "title";
+type GroupMode = "chapter" | "difficulty" | "none";
+
+const DIFFICULTY_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
+  beginner: { label: "Beginner", color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200", dot: "bg-emerald-600" },
+  intermediate: { label: "Intermediate", color: "text-amber-700", bg: "bg-amber-50 border-amber-200", dot: "bg-amber-600" },
+  advanced: { label: "Advanced", color: "text-red-700", bg: "bg-red-50 border-red-200", dot: "bg-red-600" },
+};
 
 const Topics = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -9,6 +18,8 @@ const Topics = () => {
   const [subjectName, setSubjectName] = useState("Subject");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sortMode, setSortMode] = useState<SortMode>("chapter");
+  const [groupMode, setGroupMode] = useState<GroupMode>("chapter");
 
   useEffect(() => {
     if (!subjectId) {
@@ -24,7 +35,7 @@ const Topics = () => {
       .catch(() => {});
 
     api
-      .get(`/topics/${subjectId}`)
+      .get(`/topics/${subjectId}`, { params: { sortBy: sortMode } })
       .then((res) => {
         setTopics(res.data);
         if (res.data.length > 0 && res.data[0].subject?.name) {
@@ -36,7 +47,49 @@ const Topics = () => {
         setError("Failed to load topics");
       })
       .finally(() => setLoading(false));
-  }, [subjectId]);
+  }, [subjectId, sortMode]);
+
+  // Group topics based on the selected grouping mode
+  const groupedTopics = useMemo(() => {
+    if (groupMode === "none") {
+      return [{ key: "all", label: "", topics }];
+    }
+
+    const groups = new Map<string, { label: string; topics: Topic[] }>();
+
+    for (const topic of topics) {
+      let key: string;
+      let label: string;
+
+      if (groupMode === "chapter") {
+        key = `ch-${topic.chapter}`;
+        label = topic.chapterTitle
+          ? `Chapter ${topic.chapter}: ${topic.chapterTitle}`
+          : `Chapter ${topic.chapter}`;
+      } else {
+        key = topic.difficulty;
+        label = DIFFICULTY_CONFIG[topic.difficulty]?.label ?? topic.difficulty;
+      }
+
+      if (!groups.has(key)) {
+        groups.set(key, { label, topics: [] });
+      }
+      groups.get(key)!.topics.push(topic);
+    }
+
+    return Array.from(groups.entries()).map(([key, val]) => ({
+      key,
+      label: val.label,
+      topics: val.topics,
+    }));
+  }, [topics, groupMode]);
+
+  // Count topics per difficulty for the stats bar
+  const difficultyCounts = useMemo(() => {
+    const counts: Record<string, number> = { beginner: 0, intermediate: 0, advanced: 0 };
+    for (const t of topics) counts[t.difficulty] = (counts[t.difficulty] || 0) + 1;
+    return counts;
+  }, [topics]);
 
   if (loading)
     return (
@@ -84,13 +137,55 @@ const Topics = () => {
       </div>
 
       {/* Stats Bar */}
-      <div className="flex items-center gap-6 mb-6 pb-6 border-b border-mongo-border">
+      <div className="flex flex-wrap items-center gap-6 mb-6 pb-6 border-b border-mongo-border">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-mongo-green rounded-full" />
           <span className="text-sm text-mongo-muted">
             <span className="text-mongo-heading font-medium">{topics.length}</span>{" "}
             {topics.length === 1 ? "topic" : "topics"} available
           </span>
+        </div>
+        {(["beginner", "intermediate", "advanced"] as const).map((d) => {
+          const cfg = DIFFICULTY_CONFIG[d];
+          return (
+            <div key={d} className="flex items-center gap-1.5">
+              <span className={`inline-block w-2 h-2 rounded-full ${cfg.dot}`} />
+              <span className="text-sm text-mongo-muted">
+                <span className="text-mongo-heading font-medium">{difficultyCounts[d] || 0}</span>{" "}
+                {cfg.label.toLowerCase()}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Sort & Group Controls */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <label htmlFor="group-select" className="text-sm text-mongo-muted font-medium">Group by:</label>
+          <select
+            id="group-select"
+            value={groupMode}
+            onChange={(e) => setGroupMode(e.target.value as GroupMode)}
+            className="text-sm bg-mongo-card border border-mongo-border rounded-lg px-3 py-1.5 text-mongo-heading focus:outline-none focus:ring-2 focus:ring-mongo-green/40"
+          >
+            <option value="chapter">Chapter</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="sort-select" className="text-sm text-mongo-muted font-medium">Sort by:</label>
+          <select
+            id="sort-select"
+            value={sortMode}
+            onChange={(e) => setSortMode(e.target.value as SortMode)}
+            className="text-sm bg-mongo-card border border-mongo-border rounded-lg px-3 py-1.5 text-mongo-heading focus:outline-none focus:ring-2 focus:ring-mongo-green/40"
+          >
+            <option value="chapter">Chapter order</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="title">Title (A-Z)</option>
+          </select>
         </div>
       </div>
 
@@ -100,30 +195,74 @@ const Topics = () => {
           <p className="text-mongo-muted text-sm">No topics found for this subject.</p>
         </div>
       ) : (
-        <div className="grid gap-3">
-          {topics.map((topic, index) => (
-            <div
-              key={topic._id}
-              className="group bg-mongo-card border border-mongo-border rounded-xl p-5 hover:border-mongo-green/50 hover:shadow-md transition-all duration-200"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-mongo-green-light rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-mongo-green text-xs font-bold">
-                    {String(index + 1).padStart(2, "0")}
+        <div className="space-y-8">
+          {groupedTopics.map((group) => (
+            <section key={group.key}>
+              {group.label && (
+                <div className="flex items-center gap-3 mb-3">
+                  {groupMode === "chapter" && (
+                    <div className="w-7 h-7 bg-mongo-green-light rounded-md flex items-center justify-center shrink-0">
+                      <span className="text-mongo-green text-xs font-bold">
+                        {group.key.replace("ch-", "")}
+                      </span>
+                    </div>
+                  )}
+                  {groupMode === "difficulty" && (
+                    <span
+                      className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                        DIFFICULTY_CONFIG[group.key]?.dot ?? "bg-gray-400"
+                      }`}
+                    />
+                  )}
+                  <h2 className="text-base font-semibold text-mongo-heading">
+                    {group.label}
+                  </h2>
+                  <span className="text-xs text-mongo-muted">
+                    ({group.topics.length} {group.topics.length === 1 ? "topic" : "topics"})
                   </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-base font-semibold text-mongo-heading group-hover:text-mongo-green transition-colors">
-                    {topic.title}
-                  </h2>
-                  {topic.notes && (
-                    <p className="text-sm text-mongo-muted mt-1.5 leading-relaxed line-clamp-2">
-                      {topic.notes}
-                    </p>
-                  )}
-                </div>
+              )}
+
+              <div className="grid gap-3">
+                {group.topics.map((topic, index) => {
+                  const diffCfg = DIFFICULTY_CONFIG[topic.difficulty];
+                  return (
+                    <div
+                      key={topic._id}
+                      className="group bg-mongo-card border border-mongo-border rounded-xl p-5 hover:border-mongo-green/50 hover:shadow-md transition-all duration-200"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-8 h-8 bg-mongo-green-light rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-mongo-green text-xs font-bold">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-base font-semibold text-mongo-heading group-hover:text-mongo-green transition-colors">
+                              {topic.title}
+                            </h3>
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${diffCfg.bg} ${diffCfg.color}`}
+                            >
+                              {diffCfg.label}
+                            </span>
+                          </div>
+                          {topic.notes && (
+                            <p className="text-sm text-mongo-muted mt-1.5 leading-relaxed line-clamp-2">
+                              {topic.notes}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-3 mt-2 text-xs text-mongo-muted">
+                            <span>Chapter {topic.chapter}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            </section>
           ))}
         </div>
       )}
