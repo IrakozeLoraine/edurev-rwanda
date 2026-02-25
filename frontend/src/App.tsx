@@ -1,10 +1,35 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import Subjects from './pages/Subjects';
 import Topics from './pages/Topics';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
+import ProtectedRoute from './components/ProtectedRoute';
+import { logout } from './store/actions/authActions';
+import type { RootState, AppDispatch } from './store/store';
 
 const App = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, token } = useSelector((state: RootState) => state.auth);
   const isHome = location.pathname === '/';
+  const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup';
+
+  const handleSignOut = () => {
+    dispatch(logout() as never);
+    navigate('/signin');
+  };
+
+  // Hide the main layout chrome on auth pages
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-mongo-bg text-mongo-text">
@@ -34,9 +59,46 @@ const App = () => {
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="w-8 h-8 bg-mongo-green-light rounded-full flex items-center justify-center">
-              <span className="text-mongo-green text-xs font-bold">RW</span>
-            </div>
+            {token && user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-mongo-green-light rounded-full flex items-center justify-center">
+                    <span className="text-mongo-green text-xs font-bold">
+                      {user.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2)}
+                    </span>
+                  </div>
+                  <span className="text-sm text-mongo-heading font-medium hidden sm:inline">
+                    {user.name}
+                  </span>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-mongo-muted hover:text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -44,8 +106,22 @@ const App = () => {
       {/* Main Content */}
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<Subjects />} />
-          <Route path="/subjects/:subjectId/topics" element={<Topics />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Subjects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subjects/:subjectId/topics"
+            element={
+              <ProtectedRoute>
+                <Topics />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="*"
             element={
