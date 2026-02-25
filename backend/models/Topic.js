@@ -12,6 +12,7 @@ const topicSchema = new mongoose.Schema({
     default: "beginner",
   },
   notes: String,
+  summary: [String],
   references: [String]
 });
 

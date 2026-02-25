@@ -20,6 +20,16 @@ const Topics = () => {
   const [error, setError] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("chapter");
   const [groupMode, setGroupMode] = useState<GroupMode>("chapter");
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
+
+  const toggleTopic = (id: string) => {
+    setExpandedTopics((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!subjectId) {
@@ -226,12 +236,18 @@ const Topics = () => {
               <div className="grid gap-3">
                 {group.topics.map((topic, index) => {
                   const diffCfg = DIFFICULTY_CONFIG[topic.difficulty];
+                  const isExpanded = expandedTopics.has(topic._id);
                   return (
                     <div
                       key={topic._id}
-                      className="group bg-mongo-card border border-mongo-border rounded-xl p-5 hover:border-mongo-green/50 hover:shadow-md transition-all duration-200"
+                      className="bg-mongo-card border border-mongo-border rounded-xl overflow-hidden hover:border-mongo-green/50 hover:shadow-md transition-all duration-200"
                     >
-                      <div className="flex items-start gap-4">
+                      {/* Clickable header */}
+                      <button
+                        type="button"
+                        onClick={() => toggleTopic(topic._id)}
+                        className="w-full text-left p-5 flex items-start gap-4 group cursor-pointer"
+                      >
                         <div className="w-8 h-8 bg-mongo-green-light rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                           <span className="text-mongo-green text-xs font-bold">
                             {String(index + 1).padStart(2, "0")}
@@ -255,9 +271,45 @@ const Topics = () => {
                           )}
                           <div className="flex items-center gap-3 mt-2 text-xs text-mongo-muted">
                             <span>Chapter {topic.chapter}</span>
+                            {topic.summary && topic.summary.length > 0 && (
+                              <span className="flex items-center gap-1 text-mongo-green">
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                {topic.summary.length} key points
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </div>
+                        <svg
+                          className={`w-5 h-5 text-mongo-muted shrink-0 mt-1 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Expandable summary panel */}
+                      {isExpanded && topic.summary && topic.summary.length > 0 && (
+                        <div className="px-5 pb-5 pt-0">
+                          <div className="ml-12 border-t border-mongo-border pt-4">
+                            <h4 className="text-xs font-semibold text-mongo-green uppercase tracking-wider mb-3">
+                              Key Revision Points
+                            </h4>
+                            <ul className="space-y-2">
+                              {topic.summary.map((point, i) => (
+                                <li key={i} className="flex items-start gap-2.5 text-sm text-mongo-text leading-relaxed">
+                                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mongo-green shrink-0" />
+                                  {point}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

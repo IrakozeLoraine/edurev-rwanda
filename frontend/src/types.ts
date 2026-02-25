@@ -12,6 +12,7 @@ export interface Topic {
   order: number;
   difficulty: "beginner" | "intermediate" | "advanced";
   notes?: string;
+  summary?: string[];
   references?: string[];
   subject: Subject;
 }
