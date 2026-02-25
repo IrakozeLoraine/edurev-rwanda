@@ -1,6 +1,7 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Subjects from './pages/Subjects';
 import Topics from './pages/Topics';
+import TopicDetail from './pages/TopicDetail';
 
 const App = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Subjects />} />
           <Route path="/subjects/:subjectId/topics" element={<Topics />} />
+          <Route path="/topics/:topicId" element={<TopicDetail />} />
           <Route
             path="*"
             element={

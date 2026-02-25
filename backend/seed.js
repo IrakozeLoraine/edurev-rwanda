@@ -12,500 +12,532 @@ const subjects = [
   { name: "English", level: "O-Level" },
   { name: "Chemistry", level: "O-Level" },
   { name: "Geography", level: "O-Level" },
+  { name: "Mathematics (Advanced)", level: "A-Level" },
+  { name: "Physics (Advanced)", level: "A-Level" },
+  { name: "Biology (Advanced)", level: "A-Level" },
+  { name: "English (Advanced)", level: "A-Level" },
+  { name: "Chemistry (Advanced)", level: "A-Level" },
 ];
 
 const topicsBySubject = {
   "Mathematics": [
     // Chapter 1 – Numbers & Expressions
-    { title: "Number Systems", chapter: 1, chapterTitle: "Numbers & Expressions", order: 1, difficulty: "beginner", notes: "Natural numbers, integers, rational and irrational numbers, and real number properties.", summary: [
-      "Natural numbers (ℕ) start from 1; whole numbers include 0.",
-      "Integers (ℤ) include negative numbers, zero, and positive numbers.",
-      "Rational numbers can be expressed as a fraction p/q where q ≠ 0.",
-      "Irrational numbers (e.g. √2, π) cannot be written as simple fractions.",
-      "Real numbers = rational ∪ irrational; they fill the entire number line."
-    ]},
-    { title: "Algebra", chapter: 1, chapterTitle: "Numbers & Expressions", order: 2, difficulty: "beginner", notes: "Solving linear and quadratic equations, inequalities, and polynomials.", summary: [
-      "A linear equation has the form ax + b = 0 and produces one solution.",
-      "Quadratic equations (ax² + bx + c = 0) are solved using factoring, completing the square, or the quadratic formula.",
-      "The discriminant (b² − 4ac) determines the number of real roots.",
-      "Inequalities use <, >, ≤, ≥ and the solution is a range of values.",
-      "Polynomials can be added, subtracted, multiplied, and factored."
-    ]},
-    { title: "Indices and Logarithms", chapter: 1, chapterTitle: "Numbers & Expressions", order: 3, difficulty: "intermediate", notes: "Laws of indices, logarithmic equations, and change of base.", summary: [
-      "Key index laws: aᵐ × aⁿ = aᵐ⁺ⁿ, aᵐ ÷ aⁿ = aᵐ⁻ⁿ, (aᵐ)ⁿ = aᵐⁿ.",
-      "a⁰ = 1 for any non-zero a; a⁻ⁿ = 1/aⁿ.",
-      "Logarithm is the inverse of exponentiation: if aˣ = b then logₐ(b) = x.",
-      "Log laws: log(ab) = log a + log b; log(a/b) = log a − log b; log(aⁿ) = n·log a.",
-      "Change of base formula: logₐ(b) = log(b) / log(a)."
-    ]},
+    {
+      title: "Number Systems", chapter: 1, chapterTitle: "Numbers & Expressions", order: 1, difficulty: "beginner",
+      notes: "Natural numbers, integers, rational and irrational numbers, and real number properties.",
+      summary: ["Understand the different sets of numbers", "Classify numbers correctly", "Apply properties of real numbers"],
+      content: [
+        {
+          heading: "Sets of Numbers",
+          body: "Numbers are organized into sets based on their properties.\n\n- **Natural numbers (ℕ):** 1, 2, 3, …\n- **Whole numbers:** 0, 1, 2, 3, …\n- **Integers (ℤ):** …, −2, −1, 0, 1, 2, …\n- **Rational numbers (ℚ):** Numbers that can be expressed as a fraction p/q where q ≠ 0\n- **Irrational numbers:** Numbers that cannot be expressed as a simple fraction (e.g., √2, π)\n- **Real numbers (ℝ):** The union of rational and irrational numbers",
+          examples: [
+            { label: "Classifying Numbers", content: "Classify the number −7:\n\n−7 is an **integer** and a **rational number** (since −7 = −7/1). It is NOT a natural number or a whole number." },
+            { label: "Identifying Irrationals", content: "Is √9 irrational?\n\n√9 = 3, which is a rational number. However, √5 ≈ 2.2360679… is irrational because it cannot be expressed as a fraction." }
+          ]
+        },
+        {
+          heading: "Properties of Real Numbers",
+          body: "Real numbers follow several fundamental properties:\n\n| Property | Addition | Multiplication |\n|---|---|---|\n| Commutative | a + b = b + a | a × b = b × a |\n| Associative | (a + b) + c = a + (b + c) | (a × b) × c = a × (b × c) |\n| Identity | a + 0 = a | a × 1 = a |\n| Inverse | a + (−a) = 0 | a × (1/a) = 1, a ≠ 0 |\n| Distributive | a × (b + c) = a × b + a × c | |",
+          examples: [
+            { label: "Distributive Property", content: "Expand 3(x + 4):\n\n3(x + 4) = 3 × x + 3 × 4 = 3x + 12" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "Algebra", chapter: 1, chapterTitle: "Numbers & Expressions", order: 2, difficulty: "beginner",
+      notes: "Solving linear and quadratic equations, inequalities, and polynomials.",
+      summary: ["Solve linear equations in one variable", "Factor and solve quadratic equations", "Work with inequalities and polynomials"],
+      content: [
+        {
+          heading: "Linear Equations",
+          body: "A linear equation is an equation of the first degree, meaning the variable is raised to the power of 1.\n\n**General form:** ax + b = 0\n\n**Steps to solve:**\n1. Simplify both sides of the equation\n2. Collect variable terms on one side\n3. Isolate the variable",
+          examples: [
+            { label: "Solving a Linear Equation", content: "Solve 2x + 5 = 13:\n\n2x + 5 = 13\n2x = 13 − 5\n2x = 8\nx = 4" },
+            { label: "Equation with Variables on Both Sides", content: "Solve 3x − 2 = x + 6:\n\n3x − x = 6 + 2\n2x = 8\nx = 4" }
+          ]
+        },
+        {
+          heading: "Quadratic Equations",
+          body: "A quadratic equation has the general form **ax² + bx + c = 0** where a ≠ 0.\n\n**Methods of solving:**\n- Factoring\n- Completing the square\n- Quadratic formula: x = (−b ± √(b² − 4ac)) / 2a",
+          examples: [
+            { label: "Solving by Factoring", content: "Solve x² − 5x + 6 = 0:\n\nFactor: (x − 2)(x − 3) = 0\n\nSo x = 2 or x = 3" },
+            { label: "Using the Quadratic Formula", content: "Solve 2x² + 3x − 2 = 0:\n\na = 2, b = 3, c = −2\nx = (−3 ± √(9 + 16)) / 4\nx = (−3 ± 5) / 4\n\nx = 1/2 or x = −2" }
+          ]
+        },
+        {
+          heading: "Inequalities",
+          body: "Inequalities are solved similarly to equations, but the inequality sign **reverses** when multiplying or dividing by a negative number.\n\n**Symbols:** < (less than), > (greater than), ≤ (less than or equal), ≥ (greater than or equal)",
+          examples: [
+            { label: "Solving an Inequality", content: "Solve −3x + 6 > 0:\n\n−3x > −6\nx < 2 (sign reverses!)\n\nSolution set: x ∈ (−∞, 2)" }
+          ]
+        }
+      ]
+    },
+    { title: "Indices and Logarithms", chapter: 1, chapterTitle: "Numbers & Expressions", order: 3, difficulty: "intermediate",
+      notes: "Laws of indices, logarithmic equations, and change of base.",
+      summary: ["Apply laws of indices", "Convert between exponential and logarithmic form", "Use change of base formula"],
+      content: [
+        {
+          heading: "Laws of Indices",
+          body: "Indices (or exponents) follow these key rules:\n\n- aᵐ × aⁿ = aᵐ⁺ⁿ\n- aᵐ ÷ aⁿ = aᵐ⁻ⁿ\n- (aᵐ)ⁿ = aᵐⁿ\n- a⁰ = 1 (where a ≠ 0)\n- a⁻ⁿ = 1/aⁿ\n- a^(1/n) = ⁿ√a",
+          examples: [
+            { label: "Simplifying Expressions", content: "Simplify 2³ × 2⁴:\n\n2³ × 2⁴ = 2³⁺⁴ = 2⁷ = 128" }
+          ]
+        },
+        {
+          heading: "Logarithms",
+          body: "A logarithm answers the question: \"To what power must the base be raised to get this number?\"\n\nIf aˣ = b, then log_a(b) = x\n\n**Key properties:**\n- log_a(mn) = log_a(m) + log_a(n)\n- log_a(m/n) = log_a(m) − log_a(n)\n- log_a(mⁿ) = n × log_a(m)\n- Change of base: log_a(b) = log_c(b) / log_c(a)",
+          examples: [
+            { label: "Evaluating Logarithms", content: "Find log₂(32):\n\n2ˣ = 32\n2ˣ = 2⁵\nx = 5\n\nSo log₂(32) = 5" }
+          ]
+        }
+      ]
+    },
     // Chapter 2 – Shapes & Space
-    { title: "Geometry", chapter: 2, chapterTitle: "Shapes & Space", order: 1, difficulty: "intermediate", notes: "Properties of shapes, angles, circles, and coordinate geometry.", summary: [
-      "Angles in a triangle sum to 180°; angles in a quadrilateral sum to 360°.",
-      "Types of triangles: equilateral, isosceles, scalene, right-angled.",
-      "Circle theorems: angle at centre = 2× angle at circumference; angles in the same segment are equal.",
-      "Coordinate geometry: distance = √[(x₂−x₁)² + (y₂−y₁)²]; midpoint = ((x₁+x₂)/2, (y₁+y₂)/2).",
-      "Gradient of a line = (y₂−y₁)/(x₂−x₁); perpendicular gradients multiply to −1."
-    ]},
-    { title: "Trigonometry", chapter: 2, chapterTitle: "Shapes & Space", order: 2, difficulty: "intermediate", notes: "Sine, cosine, tangent ratios, trigonometric identities, and applications.", summary: [
-      "SOH-CAH-TOA: sin = opposite/hypotenuse, cos = adjacent/hypotenuse, tan = opposite/adjacent.",
-      "The sine rule: a/sin A = b/sin B = c/sin C (used for non-right triangles).",
-      "The cosine rule: a² = b² + c² − 2bc·cos A.",
-      "Key identity: sin²θ + cos²θ = 1.",
-      "Trigonometry is used to find unknown sides, angles, heights, and distances."
-    ]},
-    { title: "Vectors", chapter: 2, chapterTitle: "Shapes & Space", order: 3, difficulty: "advanced", notes: "Vector addition, scalar multiplication, dot product, and position vectors.", summary: [
-      "A vector has both magnitude and direction, written as a column vector or using notation like →AB.",
-      "Vector addition: add corresponding components; subtraction reverses the second vector.",
-      "Scalar multiplication scales each component: k(a, b) = (ka, kb).",
-      "The magnitude of vector (a, b) = √(a² + b²).",
-      "Position vector of a point P relative to origin O is →OP."
-    ]},
+    {
+      title: "Geometry", chapter: 2, chapterTitle: "Shapes & Space", order: 1, difficulty: "intermediate",
+      notes: "Properties of shapes, angles, circles, and coordinate geometry.",
+      summary: ["Identify angle relationships", "Calculate areas and perimeters", "Use coordinate geometry formulas"],
+      content: [
+        {
+          heading: "Angle Relationships",
+          body: "When lines intersect, they create specific angle relationships:\n\n- **Complementary angles:** sum to 90°\n- **Supplementary angles:** sum to 180°\n- **Vertically opposite angles:** are equal\n- **Angles on a straight line:** sum to 180°\n- **Angles at a point:** sum to 360°",
+          examples: [
+            { label: "Finding an Angle", content: "Two supplementary angles are in the ratio 2:3. Find them.\n\nLet the angles be 2x and 3x.\n2x + 3x = 180°\n5x = 180°\nx = 36°\n\nThe angles are 72° and 108°." }
+          ]
+        },
+        {
+          heading: "Coordinate Geometry",
+          body: "Key formulas for working with points on the Cartesian plane:\n\n- **Distance:** d = √((x₂−x₁)² + (y₂−y₁)²)\n- **Midpoint:** M = ((x₁+x₂)/2, (y₁+y₂)/2)\n- **Gradient (slope):** m = (y₂−y₁)/(x₂−x₁)\n- **Equation of a line:** y − y₁ = m(x − x₁)",
+          examples: [
+            { label: "Distance Between Points", content: "Find the distance between A(1, 2) and B(4, 6):\n\nd = √((4−1)² + (6−2)²)\nd = √(9 + 16) = √25 = 5 units" }
+          ]
+        }
+      ]
+    },
+    { title: "Trigonometry", chapter: 2, chapterTitle: "Shapes & Space", order: 2, difficulty: "intermediate", notes: "Sine, cosine, tangent ratios, trigonometric identities, and applications.",
+      summary: ["Use SOH-CAH-TOA for right triangles", "Apply trigonometric identities", "Solve real-world problems with trigonometry"],
+      content: [
+        {
+          heading: "Trigonometric Ratios",
+          body: "For a right-angled triangle with angle θ:\n\n- **sin θ** = Opposite / Hypotenuse\n- **cos θ** = Adjacent / Hypotenuse\n- **tan θ** = Opposite / Adjacent\n\nRemember: **SOH-CAH-TOA**",
+          examples: [
+            { label: "Finding a Side", content: "A right triangle has a hypotenuse of 10 cm and an angle of 30°. Find the opposite side.\n\nsin 30° = Opposite / 10\n0.5 = Opposite / 10\nOpposite = 5 cm" }
+          ]
+        }
+      ]
+    },
+    { title: "Vectors", chapter: 2, chapterTitle: "Shapes & Space", order: 3, difficulty: "advanced", notes: "Vector addition, scalar multiplication, dot product, and position vectors." },
     // Chapter 3 – Data & Probability
-    { title: "Statistics", chapter: 3, chapterTitle: "Data & Probability", order: 1, difficulty: "intermediate", notes: "Mean, median, mode, probability, and data representation.", summary: [
-      "Mean = sum of all values ÷ number of values.",
-      "Median = middle value when data is ordered; for even counts, average the two middle values.",
-      "Mode = the most frequently occurring value in a data set.",
-      "Range = highest value − lowest value; it measures spread.",
-      "Data can be displayed using bar charts, histograms, pie charts, and frequency tables."
-    ]},
-    { title: "Probability", chapter: 3, chapterTitle: "Data & Probability", order: 2, difficulty: "advanced", notes: "Conditional probability, independent events, tree diagrams, and combinatorics.", summary: [
-      "Probability of an event = number of favourable outcomes / total outcomes.",
-      "P(A and B) = P(A) × P(B) for independent events.",
-      "P(A or B) = P(A) + P(B) − P(A and B).",
-      "Tree diagrams help visualise sequential events and their probabilities.",
-      "Conditional probability: P(A|B) = P(A and B) / P(B)."
-    ]},
+    { title: "Statistics", chapter: 3, chapterTitle: "Data & Probability", order: 1, difficulty: "intermediate", notes: "Mean, median, mode, probability, and data representation.",
+      summary: ["Calculate measures of central tendency", "Represent data using charts and graphs", "Interpret statistical results"],
+      content: [
+        {
+          heading: "Measures of Central Tendency",
+          body: "Three common ways to summarize a data set:\n\n- **Mean:** The average — sum of all values divided by the number of values\n- **Median:** The middle value when data is arranged in order\n- **Mode:** The value that appears most frequently",
+          examples: [
+            { label: "Calculating Mean, Median, Mode", content: "Data: 3, 5, 5, 7, 9, 11\n\n**Mean** = (3+5+5+7+9+11)/6 = 40/6 ≈ 6.67\n**Median** = (5+7)/2 = 6 (average of the 3rd and 4th values)\n**Mode** = 5 (appears twice)" }
+          ]
+        }
+      ]
+    },
+    { title: "Probability", chapter: 3, chapterTitle: "Data & Probability", order: 2, difficulty: "advanced", notes: "Conditional probability, independent events, tree diagrams, and combinatorics." },
     // Chapter 4 – Advanced Topics
-    { title: "Sequences and Series", chapter: 4, chapterTitle: "Advanced Topics", order: 1, difficulty: "advanced", notes: "Arithmetic and geometric sequences, sum formulas, and convergence.", summary: [
-      "Arithmetic sequence: each term differs by a constant d; nth term = a + (n−1)d.",
-      "Sum of arithmetic series: Sₙ = n/2 × (2a + (n−1)d).",
-      "Geometric sequence: each term is multiplied by a constant ratio r; nth term = arⁿ⁻¹.",
-      "Sum of geometric series: Sₙ = a(1 − rⁿ)/(1 − r) when r ≠ 1.",
-      "An infinite geometric series converges if |r| < 1; sum = a/(1 − r)."
-    ]},
-    { title: "Matrices", chapter: 4, chapterTitle: "Advanced Topics", order: 2, difficulty: "advanced", notes: "Matrix operations, determinants, inverse matrices, and solving systems of equations.", summary: [
-      "A matrix is a rectangular array of numbers arranged in rows and columns.",
-      "Matrices can be added/subtracted if they have the same dimensions.",
-      "Matrix multiplication: number of columns in A must equal rows in B.",
-      "Determinant of a 2×2 matrix [[a,b],[c,d]] = ad − bc.",
-      "The inverse A⁻¹ exists only if det(A) ≠ 0; useful for solving AX = B as X = A⁻¹B."
-    ]},
+    { title: "Sequences and Series", chapter: 4, chapterTitle: "Advanced Topics", order: 1, difficulty: "advanced", notes: "Arithmetic and geometric sequences, sum formulas, and convergence." },
+    { title: "Matrices", chapter: 4, chapterTitle: "Advanced Topics", order: 2, difficulty: "advanced", notes: "Matrix operations, determinants, inverse matrices, and solving systems of equations." },
   ],
   "Physics": [
     // Chapter 1 – Forces & Motion
-    { title: "Measurements and Units", chapter: 1, chapterTitle: "Forces & Motion", order: 1, difficulty: "beginner", notes: "SI units, measuring instruments, significant figures, and unit conversions.", summary: [
-      "The 7 SI base units include metre (m), kilogram (kg), second (s), ampere (A), and kelvin (K).",
-      "Derived units are combinations of base units (e.g. m/s for speed, N for force).",
-      "Common instruments: ruler, vernier caliper, micrometer, stopwatch, balance.",
-      "Significant figures indicate the precision of a measurement.",
-      "Always convert units before substituting into formulas."
-    ]},
-    { title: "Mechanics", chapter: 1, chapterTitle: "Forces & Motion", order: 2, difficulty: "beginner", notes: "Newton's laws of motion, forces, energy, and work.", summary: [
-      "Newton's 1st law: an object stays at rest or in uniform motion unless acted on by a net force.",
-      "Newton's 2nd law: F = ma (force equals mass times acceleration).",
-      "Newton's 3rd law: every action has an equal and opposite reaction.",
-      "Work = force × distance in the direction of force (W = Fd).",
-      "Kinetic energy = ½mv²; gravitational potential energy = mgh."
-    ]},
-    { title: "Momentum and Impulse", chapter: 1, chapterTitle: "Forces & Motion", order: 3, difficulty: "intermediate", notes: "Conservation of momentum, collisions, impulse, and force-time graphs.", summary: [
-      "Momentum = mass × velocity (p = mv); it is a vector quantity.",
-      "Law of conservation of momentum: total momentum before = total momentum after (in a closed system).",
-      "Impulse = force × time = change in momentum (FΔt = Δp).",
-      "Elastic collisions conserve both momentum and kinetic energy; inelastic do not conserve KE.",
-      "The area under a force-time graph equals the impulse."
-    ]},
+    {
+      title: "Measurements and Units", chapter: 1, chapterTitle: "Forces & Motion", order: 1, difficulty: "beginner",
+      notes: "SI units, measuring instruments, significant figures, and unit conversions.",
+      summary: ["Know the 7 SI base units", "Convert between units", "Use measuring instruments correctly"],
+      content: [
+        {
+          heading: "SI Base Units",
+          body: "The International System of Units (SI) defines seven base quantities:\n\n| Quantity | Unit | Symbol |\n|---|---|---|\n| Length | metre | m |\n| Mass | kilogram | kg |\n| Time | second | s |\n| Electric current | ampere | A |\n| Temperature | kelvin | K |\n| Amount of substance | mole | mol |\n| Luminous intensity | candela | cd |",
+          examples: [
+            { label: "Unit Conversion", content: "Convert 2.5 km to metres:\n\n2.5 km × 1000 m/km = 2500 m" }
+          ]
+        },
+        {
+          heading: "Significant Figures",
+          body: "Rules for counting significant figures:\n\n1. All non-zero digits are significant\n2. Zeros between non-zero digits are significant\n3. Leading zeros are NOT significant\n4. Trailing zeros after a decimal point ARE significant",
+          examples: [
+            { label: "Counting Significant Figures", content: "0.00340 has **3** significant figures (3, 4, and the trailing 0).\n\n2050 has **3** significant figures (2, 0 between, and 5)." }
+          ]
+        }
+      ]
+    },
+    {
+      title: "Mechanics", chapter: 1, chapterTitle: "Forces & Motion", order: 2, difficulty: "beginner",
+      notes: "Newton's laws of motion, forces, energy, and work.",
+      summary: ["State and apply Newton's three laws", "Calculate force, work, and energy", "Understand the relationship between force and motion"],
+      content: [
+        {
+          heading: "Newton's Laws of Motion",
+          body: "**First Law (Inertia):** An object remains at rest or in uniform motion unless acted upon by a net external force.\n\n**Second Law:** The acceleration of an object is directly proportional to the net force and inversely proportional to its mass.\n\nF = ma (Force = mass × acceleration)\n\n**Third Law:** For every action, there is an equal and opposite reaction.",
+          examples: [
+            { label: "Applying Newton's Second Law", content: "A 5 kg object accelerates at 3 m/s². What is the net force?\n\nF = ma\nF = 5 × 3 = 15 N" },
+            { label: "Third Law in Action", content: "When you push against a wall with 10 N of force, the wall pushes back on you with 10 N in the opposite direction." }
+          ]
+        },
+        {
+          heading: "Work and Energy",
+          body: "**Work** is done when a force moves an object through a distance:\n\nW = F × d × cos θ\n\nwhere θ is the angle between force and displacement.\n\n**Kinetic Energy:** KE = ½mv²\n**Potential Energy:** PE = mgh\n\nThe **Work-Energy Theorem** states that the net work done equals the change in kinetic energy.",
+          examples: [
+            { label: "Calculating Work", content: "A force of 20 N pushes a box 5 m along the floor. How much work is done?\n\nW = F × d = 20 × 5 = 100 J" }
+          ]
+        }
+      ]
+    },
+    { title: "Momentum and Impulse", chapter: 1, chapterTitle: "Forces & Motion", order: 3, difficulty: "intermediate", notes: "Conservation of momentum, collisions, impulse, and force-time graphs.",
+      summary: ["Calculate momentum (p = mv)", "Apply conservation of momentum", "Understand impulse"],
+      content: [
+        {
+          heading: "Momentum",
+          body: "Momentum is the product of mass and velocity:\n\n**p = mv**\n\nMomentum is a vector quantity — it has both magnitude and direction.\n\n**Conservation of Momentum:** In a closed system (no external forces), the total momentum before a collision equals the total momentum after.",
+          examples: [
+            { label: "Conservation of Momentum", content: "A 2 kg ball moving at 3 m/s collides with a stationary 1 kg ball. After collision, the 2 kg ball moves at 1 m/s. Find the velocity of the 1 kg ball.\n\nBefore: (2×3) + (1×0) = 6 kg·m/s\nAfter: (2×1) + (1×v) = 6\n2 + v = 6\nv = 4 m/s" }
+          ]
+        }
+      ]
+    },
     // Chapter 2 – Electric Circuits
-    { title: "Electricity", chapter: 2, chapterTitle: "Electric Circuits", order: 1, difficulty: "intermediate", notes: "Current, voltage, resistance, Ohm's law, and circuits.", summary: [
-      "Current (I) is the rate of flow of charge, measured in amperes (A).",
-      "Voltage (V) is the energy per unit charge, measured in volts.",
-      "Ohm's law: V = IR; resistance is measured in ohms (Ω).",
-      "Series circuits: same current through all components; voltages add up.",
-      "Parallel circuits: same voltage across branches; currents add up."
-    ]},
-    { title: "Electromagnetism", chapter: 2, chapterTitle: "Electric Circuits", order: 2, difficulty: "intermediate", notes: "Magnetic fields, electromagnetic induction, transformers, and motors.", summary: [
-      "A current-carrying conductor produces a magnetic field around it.",
-      "Fleming's left-hand rule gives the direction of force on a conductor in a magnetic field.",
-      "Electromagnetic induction: a changing magnetic field induces an EMF (Faraday's law).",
-      "Transformers change voltage: Vp/Vs = Np/Ns (turns ratio).",
-      "Electric motors convert electrical energy to mechanical energy using the motor effect."
-    ]},
-    { title: "Electrostatics", chapter: 2, chapterTitle: "Electric Circuits", order: 3, difficulty: "advanced", notes: "Coulomb's law, electric fields, potential difference, and capacitors.", summary: [
-      "Like charges repel; opposite charges attract.",
-      "Coulomb's law: F = kQ₁Q₂/r² where k ≈ 9 × 10⁹ N·m²/C².",
-      "Electric field strength E = F/q = V/d (for uniform fields).",
-      "Capacitance C = Q/V, measured in farads (F).",
-      "Energy stored in a capacitor: E = ½CV²."
-    ]},
+    {
+      title: "Electricity", chapter: 2, chapterTitle: "Electric Circuits", order: 1, difficulty: "intermediate",
+      notes: "Current, voltage, resistance, Ohm's law, and circuits.",
+      summary: ["Define current, voltage, and resistance", "Apply Ohm's law", "Analyze series and parallel circuits"],
+      content: [
+        {
+          heading: "Ohm's Law",
+          body: "Ohm's law describes the relationship between voltage (V), current (I), and resistance (R):\n\n**V = IR**\n\n- **Voltage (V):** measured in volts (V)\n- **Current (I):** measured in amperes (A)\n- **Resistance (R):** measured in ohms (Ω)",
+          examples: [
+            { label: "Using Ohm's Law", content: "A 12 V battery is connected to a 4 Ω resistor. What is the current?\n\nI = V/R = 12/4 = 3 A" }
+          ]
+        },
+        {
+          heading: "Series and Parallel Circuits",
+          body: "**Series Circuit:**\n- Components are connected end-to-end\n- Same current flows through all components\n- Total resistance: R_total = R₁ + R₂ + R₃ + …\n\n**Parallel Circuit:**\n- Components are connected across the same two points\n- Same voltage across each branch\n- Total resistance: 1/R_total = 1/R₁ + 1/R₂ + 1/R₃ + …",
+          examples: [
+            { label: "Series Resistors", content: "Three resistors (2 Ω, 3 Ω, 5 Ω) in series:\n\nR_total = 2 + 3 + 5 = 10 Ω" },
+            { label: "Parallel Resistors", content: "Two resistors (6 Ω and 3 Ω) in parallel:\n\n1/R_total = 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2\nR_total = 2 Ω" }
+          ]
+        }
+      ]
+    },
+    { title: "Electromagnetism", chapter: 2, chapterTitle: "Electric Circuits", order: 2, difficulty: "intermediate", notes: "Magnetic fields, electromagnetic induction, transformers, and motors." },
+    { title: "Electrostatics", chapter: 2, chapterTitle: "Electric Circuits", order: 3, difficulty: "advanced", notes: "Coulomb's law, electric fields, potential difference, and capacitors." },
     // Chapter 3 – Light & Waves
-    { title: "Optics", chapter: 3, chapterTitle: "Light & Waves", order: 1, difficulty: "intermediate", notes: "Reflection, refraction, lenses, and the electromagnetic spectrum.", summary: [
-      "Law of reflection: angle of incidence = angle of reflection.",
-      "Refraction occurs when light changes speed between media; Snell's law: n₁ sin θ₁ = n₂ sin θ₂.",
-      "Convex lenses converge light; concave lenses diverge light.",
-      "The lens equation: 1/f = 1/v + 1/u.",
-      "The electromagnetic spectrum (radio → microwave → infrared → visible → UV → X-ray → gamma)."
-    ]},
-    { title: "Wave Motion", chapter: 3, chapterTitle: "Light & Waves", order: 2, difficulty: "advanced", notes: "Transverse and longitudinal waves, interference, diffraction, and standing waves.", summary: [
-      "Transverse waves: oscillation perpendicular to direction of travel (e.g. light).",
-      "Longitudinal waves: oscillation parallel to direction of travel (e.g. sound).",
-      "Wave equation: v = fλ (speed = frequency × wavelength).",
-      "Interference: constructive (waves in phase) or destructive (waves out of phase).",
-      "Standing waves form when two waves of equal frequency travel in opposite directions."
-    ]},
-    { title: "Sound", chapter: 3, chapterTitle: "Light & Waves", order: 3, difficulty: "advanced", notes: "Sound wave properties, resonance, Doppler effect, and musical instruments.", summary: [
-      "Sound is a longitudinal wave that requires a medium to travel.",
-      "Speed of sound: ~340 m/s in air; faster in solids and liquids.",
-      "Pitch depends on frequency; loudness depends on amplitude.",
-      "Resonance occurs when a forced vibration matches the natural frequency.",
-      "Doppler effect: apparent frequency changes when source or observer moves."
-    ]},
+    { title: "Optics", chapter: 3, chapterTitle: "Light & Waves", order: 1, difficulty: "intermediate", notes: "Reflection, refraction, lenses, and the electromagnetic spectrum.",
+      summary: ["State laws of reflection and refraction", "Apply Snell's law", "Describe lens behavior"],
+      content: [
+        {
+          heading: "Laws of Reflection",
+          body: "When light reflects off a surface:\n\n1. The angle of incidence equals the angle of reflection (θᵢ = θᵣ)\n2. The incident ray, reflected ray, and normal all lie in the same plane",
+          examples: []
+        },
+        {
+          heading: "Refraction & Snell's Law",
+          body: "Refraction occurs when light passes from one medium to another, changing speed and direction.\n\n**Snell's Law:** n₁ sin θ₁ = n₂ sin θ₂\n\nwhere n is the refractive index of each medium.",
+          examples: [
+            { label: "Applying Snell's Law", content: "Light travels from air (n=1.00) into glass (n=1.50) at an angle of 30°. Find the refracted angle.\n\n1.00 × sin 30° = 1.50 × sin θ₂\n0.5 = 1.50 × sin θ₂\nsin θ₂ = 0.333\nθ₂ ≈ 19.5°" }
+          ]
+        }
+      ]
+    },
+    { title: "Wave Motion", chapter: 3, chapterTitle: "Light & Waves", order: 2, difficulty: "advanced", notes: "Transverse and longitudinal waves, interference, diffraction, and standing waves." },
+    { title: "Sound", chapter: 3, chapterTitle: "Light & Waves", order: 3, difficulty: "advanced", notes: "Sound wave properties, resonance, Doppler effect, and musical instruments." },
     // Chapter 4 – Thermal Physics
-    { title: "Heat and Temperature", chapter: 4, chapterTitle: "Thermal Physics", order: 1, difficulty: "beginner", notes: "Temperature scales, thermal expansion, specific heat capacity, and latent heat.", summary: [
-      "Temperature measures the average kinetic energy of particles.",
-      "Celsius and Kelvin scales: K = °C + 273.",
-      "Specific heat capacity: energy to raise 1 kg by 1°C → Q = mcΔT.",
-      "Latent heat: energy for state change without temperature change → Q = mL.",
-      "Most materials expand when heated (thermal expansion)."
-    ]},
-    { title: "Gas Laws", chapter: 4, chapterTitle: "Thermal Physics", order: 2, difficulty: "intermediate", notes: "Boyle's law, Charles's law, pressure law, and the ideal gas equation.", summary: [
-      "Boyle's law: P₁V₁ = P₂V₂ (constant temperature).",
-      "Charles's law: V₁/T₁ = V₂/T₂ (constant pressure); temperature in Kelvin.",
-      "Pressure law: P₁/T₁ = P₂/T₂ (constant volume).",
-      "Ideal gas equation: PV = nRT.",
-      "Gas particles move randomly; pressure results from particle collisions with container walls."
-    ]},
+    { title: "Heat and Temperature", chapter: 4, chapterTitle: "Thermal Physics", order: 1, difficulty: "beginner", notes: "Temperature scales, thermal expansion, specific heat capacity, and latent heat." },
+    { title: "Gas Laws", chapter: 4, chapterTitle: "Thermal Physics", order: 2, difficulty: "intermediate", notes: "Boyle's law, Charles's law, pressure law, and the ideal gas equation." },
   ],
   "Biology": [
     // Chapter 1 – The Cell
-    { title: "Cell Biology", chapter: 1, chapterTitle: "The Cell", order: 1, difficulty: "beginner", notes: "Cell structure, organelles, mitosis, and meiosis.", summary: [
-      "All living things are made of cells — the basic unit of life.",
-      "Animal cells have a nucleus, cytoplasm, cell membrane, mitochondria, and ribosomes.",
-      "Plant cells additionally have a cell wall, chloroplasts, and a large vacuole.",
-      "Mitosis produces two identical daughter cells (for growth and repair).",
-      "Meiosis produces four genetically different cells (for gamete production)."
-    ]},
-    { title: "Cell Transport", chapter: 1, chapterTitle: "The Cell", order: 2, difficulty: "beginner", notes: "Osmosis, diffusion, active transport, and membrane structure.", summary: [
-      "Diffusion: movement of particles from high to low concentration (passive).",
-      "Osmosis: movement of water across a semi-permeable membrane from dilute to concentrated solution.",
-      "Active transport: movement against the concentration gradient using energy (ATP).",
-      "The cell membrane is a phospholipid bilayer with embedded proteins.",
-      "Factors affecting diffusion rate: temperature, concentration gradient, surface area."
-    ]},
-    { title: "Enzymes", chapter: 1, chapterTitle: "The Cell", order: 3, difficulty: "intermediate", notes: "Enzyme structure, function, factors affecting enzyme activity, and specificity.", summary: [
-      "Enzymes are biological catalysts — they speed up reactions without being used up.",
-      "Lock-and-key model: the substrate fits exactly into the enzyme's active site.",
-      "Each enzyme is specific to one substrate.",
-      "Enzyme activity is affected by temperature, pH, and substrate concentration.",
-      "Denaturation occurs when high temperature or extreme pH changes the active site shape."
-    ]},
+    {
+      title: "Cell Biology", chapter: 1, chapterTitle: "The Cell", order: 1, difficulty: "beginner",
+      notes: "Cell structure, organelles, mitosis, and meiosis.",
+      summary: ["Identify cell organelles and their functions", "Compare plant and animal cells", "Describe the stages of mitosis and meiosis"],
+      content: [
+        {
+          heading: "Cell Structure",
+          body: "All living organisms are made of cells. Cells are the basic units of life.\n\n**Key organelles:**\n- **Nucleus:** Contains DNA; controls cell activities\n- **Cell membrane:** Controls what enters and leaves the cell\n- **Cytoplasm:** Jelly-like substance where chemical reactions occur\n- **Mitochondria:** \"Powerhouse\" — site of aerobic respiration\n- **Ribosomes:** Site of protein synthesis\n- **Endoplasmic reticulum (ER):** Transport network within the cell",
+          examples: [
+            { label: "Plant vs Animal Cells", content: "Plant cells have three structures that animal cells lack:\n\n1. **Cell wall** — rigid outer layer made of cellulose\n2. **Chloroplasts** — contain chlorophyll for photosynthesis\n3. **Large central vacuole** — stores water and maintains turgor pressure" }
+          ]
+        },
+        {
+          heading: "Mitosis",
+          body: "Mitosis is cell division that produces two genetically identical daughter cells. It is used for growth and repair.\n\n**Stages:**\n1. **Prophase:** Chromosomes condense; nuclear membrane breaks down\n2. **Metaphase:** Chromosomes line up at the cell's equator\n3. **Anaphase:** Chromatids are pulled to opposite poles\n4. **Telophase:** Nuclear membranes reform; cytoplasm divides",
+          examples: [
+            { label: "Remembering the Stages", content: "Use the mnemonic: **PMAT**\n\nP — Prophase\nM — Metaphase\nA — Anaphase\nT — Telophase" }
+          ]
+        }
+      ]
+    },
+    { title: "Cell Transport", chapter: 1, chapterTitle: "The Cell", order: 2, difficulty: "beginner", notes: "Osmosis, diffusion, active transport, and membrane structure.",
+      summary: ["Explain diffusion and osmosis", "Distinguish passive from active transport"],
+      content: [
+        {
+          heading: "Diffusion and Osmosis",
+          body: "**Diffusion** is the net movement of particles from an area of higher concentration to an area of lower concentration. No energy is required.\n\n**Osmosis** is a special case of diffusion — the movement of **water molecules** through a semi-permeable membrane from a dilute solution to a more concentrated one.",
+          examples: [
+            { label: "Osmosis in Action", content: "When you place a red blood cell in distilled water (hypotonic solution), water enters the cell by osmosis. The cell swells and may burst (lysis).\n\nIn a concentrated salt solution (hypertonic), water leaves the cell, causing it to shrink (crenation)." }
+          ]
+        }
+      ]
+    },
+    { title: "Enzymes", chapter: 1, chapterTitle: "The Cell", order: 3, difficulty: "intermediate", notes: "Enzyme structure, function, factors affecting enzyme activity, and specificity." },
     // Chapter 2 – Human Anatomy
-    { title: "Human Body Systems", chapter: 2, chapterTitle: "Human Anatomy", order: 1, difficulty: "intermediate", notes: "Circulatory, respiratory, digestive, and nervous systems.", summary: [
-      "Circulatory: heart pumps blood; arteries carry oxygenated blood, veins return deoxygenated blood.",
-      "Respiratory: gas exchange in alveoli — O₂ diffuses in, CO₂ diffuses out.",
-      "Digestive: mouth → oesophagus → stomach → small intestine (absorption) → large intestine.",
-      "Nervous: brain, spinal cord, and nerves; signals travel as electrical impulses.",
-      "All systems work together to maintain homeostasis."
-    ]},
-    { title: "Reproduction", chapter: 2, chapterTitle: "Human Anatomy", order: 2, difficulty: "intermediate", notes: "Human reproductive system, menstrual cycle, fertilization, and fetal development.", summary: [
-      "Male reproductive system produces sperm in the testes.",
-      "Female reproductive system produces eggs (ova) in the ovaries.",
-      "The menstrual cycle (~28 days) is controlled by hormones: FSH, LH, oestrogen, progesterone.",
-      "Fertilization occurs when sperm meets egg, usually in the fallopian tube.",
-      "The embryo implants in the uterus wall and develops over ~9 months."
-    ]},
-    { title: "Nutrition and Diet", chapter: 2, chapterTitle: "Human Anatomy", order: 3, difficulty: "beginner", notes: "Food groups, balanced diet, vitamins, minerals, and deficiency diseases.", summary: [
-      "A balanced diet includes carbohydrates, proteins, fats, vitamins, minerals, fibre, and water.",
-      "Carbohydrates provide energy; proteins are needed for growth and repair.",
-      "Fats store energy and insulate the body.",
-      "Vitamin C prevents scurvy; vitamin D prevents rickets; iron prevents anaemia.",
-      "Fibre aids digestion and prevents constipation."
-    ]},
+    {
+      title: "Human Body Systems", chapter: 2, chapterTitle: "Human Anatomy", order: 1, difficulty: "intermediate",
+      notes: "Circulatory, respiratory, digestive, and nervous systems.",
+      summary: ["Describe the four major body systems", "Explain blood circulation", "Trace the path of food through the digestive system"],
+      content: [
+        {
+          heading: "The Circulatory System",
+          body: "The heart pumps blood through two circuits:\n\n- **Pulmonary circulation:** Heart → Lungs → Heart (picks up oxygen)\n- **Systemic circulation:** Heart → Body → Heart (delivers oxygen)\n\n**Components of blood:**\n- Red blood cells — carry oxygen (haemoglobin)\n- White blood cells — fight infection\n- Platelets — help clotting\n- Plasma — liquid that carries nutrients, hormones, and waste",
+          examples: [
+            { label: "Path of Blood", content: "Right atrium → Right ventricle → Pulmonary artery → Lungs → Pulmonary vein → Left atrium → Left ventricle → Aorta → Body" }
+          ]
+        },
+        {
+          heading: "The Digestive System",
+          body: "Digestion breaks down food into nutrients the body can absorb.\n\n**The journey of food:**\n1. **Mouth:** Mechanical digestion (chewing) + chemical digestion (amylase in saliva)\n2. **Oesophagus:** Peristalsis pushes food to the stomach\n3. **Stomach:** Acid and pepsin break down proteins\n4. **Small intestine:** Most absorption occurs here; villi increase surface area\n5. **Large intestine:** Water absorption; formation of faeces",
+          examples: []
+        }
+      ]
+    },
+    { title: "Reproduction", chapter: 2, chapterTitle: "Human Anatomy", order: 2, difficulty: "intermediate", notes: "Human reproductive system, menstrual cycle, fertilization, and fetal development." },
+    { title: "Nutrition and Diet", chapter: 2, chapterTitle: "Human Anatomy", order: 3, difficulty: "beginner", notes: "Food groups, balanced diet, vitamins, minerals, and deficiency diseases." },
     // Chapter 3 – Environment & Life
-    { title: "Ecology", chapter: 3, chapterTitle: "Environment & Life", order: 1, difficulty: "intermediate", notes: "Ecosystems, food chains, biodiversity, and conservation.", summary: [
-      "An ecosystem includes all living organisms and their physical environment.",
-      "Food chains show energy flow: producer → primary consumer → secondary consumer → tertiary consumer.",
-      "Energy is lost at each trophic level (mainly as heat from respiration).",
-      "Biodiversity is the variety of species in an ecosystem.",
-      "Conservation efforts include habitat protection, breeding programs, and legislation."
-    ]},
-    { title: "Classification of Living Things", chapter: 3, chapterTitle: "Environment & Life", order: 2, difficulty: "beginner", notes: "Kingdoms of life, binomial nomenclature, taxonomy, and dichotomous keys.", summary: [
-      "Living things are classified into 5 kingdoms: Animals, Plants, Fungi, Protists, Prokaryotes.",
-      "Classification hierarchy: Kingdom → Phylum → Class → Order → Family → Genus → Species.",
-      "Binomial nomenclature uses two Latin names: Genus species (e.g. Homo sapiens).",
-      "Organisms are grouped by shared characteristics.",
-      "Dichotomous keys use a series of yes/no questions to identify organisms."
-    ]},
-    { title: "Evolution and Adaptation", chapter: 3, chapterTitle: "Environment & Life", order: 3, difficulty: "advanced", notes: "Natural selection, speciation, fossil evidence, and genetic variation.", summary: [
-      "Natural selection: organisms with advantageous traits survive and reproduce more.",
-      "Variation within a population arises from mutations, meiosis, and sexual reproduction.",
-      "Over many generations, natural selection can lead to new species (speciation).",
-      "Fossils provide evidence for evolution by showing how organisms changed over time.",
-      "Adaptations can be structural, behavioural, or physiological."
-    ]},
+    { title: "Ecology", chapter: 3, chapterTitle: "Environment & Life", order: 1, difficulty: "intermediate", notes: "Ecosystems, food chains, biodiversity, and conservation." },
+    { title: "Classification of Living Things", chapter: 3, chapterTitle: "Environment & Life", order: 2, difficulty: "beginner", notes: "Kingdoms of life, binomial nomenclature, taxonomy, and dichotomous keys." },
+    { title: "Evolution and Adaptation", chapter: 3, chapterTitle: "Environment & Life", order: 3, difficulty: "advanced", notes: "Natural selection, speciation, fossil evidence, and genetic variation." },
     // Chapter 4 – Genetics
-    { title: "Heredity and Genetics", chapter: 4, chapterTitle: "Genetics", order: 1, difficulty: "advanced", notes: "Mendelian genetics, Punnett squares, genotype vs phenotype, and genetic disorders.", summary: [
-      "Genes are sections of DNA that code for specific proteins/traits.",
-      "Alleles are different versions of the same gene (dominant or recessive).",
-      "Genotype = the combination of alleles (e.g. Bb); phenotype = the observable trait.",
-      "Punnett squares predict the probability of offspring genotypes.",
-      "Genetic disorders include sickle cell anaemia (recessive) and Huntington's disease (dominant)."
-    ]},
-    { title: "DNA and Protein Synthesis", chapter: 4, chapterTitle: "Genetics", order: 2, difficulty: "advanced", notes: "DNA structure, replication, transcription, translation, and mutations.", summary: [
-      "DNA is a double helix made of nucleotides (A-T, C-G base pairs).",
-      "DNA replication is semi-conservative — each new molecule has one old and one new strand.",
-      "Transcription: DNA → mRNA in the nucleus.",
-      "Translation: mRNA → protein at ribosomes using tRNA and amino acids.",
-      "Mutations are changes in the DNA base sequence; they can be harmful, neutral, or beneficial."
-    ]},
+    { title: "Heredity and Genetics", chapter: 4, chapterTitle: "Genetics", order: 1, difficulty: "advanced", notes: "Mendelian genetics, Punnett squares, genotype vs phenotype, and genetic disorders." },
+    { title: "DNA and Protein Synthesis", chapter: 4, chapterTitle: "Genetics", order: 2, difficulty: "advanced", notes: "DNA structure, replication, transcription, translation, and mutations." },
   ],
   "English": [
     // Chapter 1 – Language Foundations
-    { title: "Grammar", chapter: 1, chapterTitle: "Language Foundations", order: 1, difficulty: "beginner", notes: "Tenses, sentence structure, parts of speech, and punctuation.", summary: [
-      "Parts of speech: nouns, verbs, adjectives, adverbs, pronouns, prepositions, conjunctions.",
-      "Tenses indicate time: past, present, future (simple, continuous, perfect forms).",
-      "Subject-verb agreement: singular subjects take singular verbs.",
-      "Punctuation marks: full stop, comma, semicolon, colon, apostrophe, question mark.",
-      "A complete sentence needs a subject and a predicate."
-    ]},
-    { title: "Vocabulary Building", chapter: 1, chapterTitle: "Language Foundations", order: 2, difficulty: "beginner", notes: "Word roots, prefixes, suffixes, synonyms, antonyms, and context clues.", summary: [
-      "Prefixes change meaning (un-, re-, pre-, dis-); suffixes change word class (-tion, -ly, -ful).",
-      "Latin/Greek roots help decode unfamiliar words (e.g. 'bio' = life, 'graph' = write).",
-      "Synonyms are words with similar meanings; antonyms have opposite meanings.",
-      "Context clues: use surrounding words and sentences to infer meaning.",
-      "Regular reading is the most effective way to expand vocabulary."
-    ]},
-    { title: "Sentence Construction", chapter: 1, chapterTitle: "Language Foundations", order: 3, difficulty: "intermediate", notes: "Simple, compound, and complex sentences, clauses, and conjunctions.", summary: [
-      "Simple sentence: one independent clause (e.g. 'The cat sat on the mat.').",
-      "Compound sentence: two independent clauses joined by a coordinating conjunction (and, but, or).",
-      "Complex sentence: one independent clause + one or more dependent clauses.",
-      "Subordinating conjunctions: because, although, when, if, while.",
-      "Varying sentence structure improves writing clarity and flow."
-    ]},
+    {
+      title: "Grammar", chapter: 1, chapterTitle: "Language Foundations", order: 1, difficulty: "beginner",
+      notes: "Tenses, sentence structure, parts of speech, and punctuation.",
+      summary: ["Identify the eight parts of speech", "Use verb tenses correctly", "Apply punctuation rules"],
+      content: [
+        {
+          heading: "Parts of Speech",
+          body: "Every word in English belongs to one of eight categories:\n\n1. **Noun** — names a person, place, thing, or idea (e.g., *Kigali*, *student*)\n2. **Pronoun** — replaces a noun (e.g., *he*, *they*, *it*)\n3. **Verb** — expresses an action or state (e.g., *run*, *is*)\n4. **Adjective** — describes a noun (e.g., *tall*, *green*)\n5. **Adverb** — modifies a verb, adjective, or another adverb (e.g., *quickly*, *very*)\n6. **Preposition** — shows relationship (e.g., *in*, *on*, *between*)\n7. **Conjunction** — joins words or clauses (e.g., *and*, *but*, *because*)\n8. **Interjection** — expresses emotion (e.g., *Wow!*, *Ouch!*)",
+          examples: [
+            { label: "Identifying Parts of Speech", content: "\"The tall student quickly answered the difficult question.\"\n\n- The → article (adjective)\n- tall → **adjective**\n- student → **noun**\n- quickly → **adverb**\n- answered → **verb**\n- the → article\n- difficult → **adjective**\n- question → **noun**" }
+          ]
+        },
+        {
+          heading: "Verb Tenses",
+          body: "English has three main time frames, each with four aspects:\n\n| | Simple | Continuous | Perfect | Perfect Continuous |\n|---|---|---|---|---|\n| **Past** | I walked | I was walking | I had walked | I had been walking |\n| **Present** | I walk | I am walking | I have walked | I have been walking |\n| **Future** | I will walk | I will be walking | I will have walked | I will have been walking |",
+          examples: [
+            { label: "Choosing the Right Tense", content: "\"By the time she arrived, I ______ (wait) for two hours.\"\n\n**Answer:** had been waiting (past perfect continuous — an action that was ongoing before another past action)" }
+          ]
+        }
+      ]
+    },
+    { title: "Vocabulary Building", chapter: 1, chapterTitle: "Language Foundations", order: 2, difficulty: "beginner", notes: "Word roots, prefixes, suffixes, synonyms, antonyms, and context clues." },
+    { title: "Sentence Construction", chapter: 1, chapterTitle: "Language Foundations", order: 3, difficulty: "intermediate", notes: "Simple, compound, and complex sentences, clauses, and conjunctions." },
     // Chapter 2 – Reading & Analysis
-    { title: "Comprehension", chapter: 2, chapterTitle: "Reading & Analysis", order: 1, difficulty: "intermediate", notes: "Reading passages, inference, and summary writing.", summary: [
-      "Read the passage carefully; underline key points and unfamiliar words.",
-      "Inference means reading between the lines — understanding what is implied, not just stated.",
-      "Summary writing: identify the main idea and supporting details; use your own words.",
-      "Answer questions by referring back to specific parts of the text.",
-      "Pay attention to the author's tone and purpose."
-    ]},
-    { title: "Literary Analysis", chapter: 2, chapterTitle: "Reading & Analysis", order: 2, difficulty: "advanced", notes: "Themes, symbolism, character development, figurative language, and literary devices.", summary: [
-      "Theme: the central message or lesson of a literary work.",
-      "Symbolism: using objects or actions to represent deeper meanings.",
-      "Character development: how characters change throughout the story.",
-      "Figurative language includes metaphor, simile, personification, and hyperbole.",
-      "Literary devices: foreshadowing, irony, allusion, and imagery add depth to writing."
-    ]},
-    { title: "Poetry Appreciation", chapter: 2, chapterTitle: "Reading & Analysis", order: 3, difficulty: "advanced", notes: "Rhyme schemes, meter, imagery, tone, and analysis of selected poems.", summary: [
-      "Rhyme scheme is the pattern of end rhymes (e.g. ABAB, ABBA, AABB).",
-      "Meter is the rhythmic pattern of stressed and unstressed syllables.",
-      "Imagery appeals to the five senses to create vivid mental pictures.",
-      "Tone = the poet's attitude toward the subject (e.g. joyful, melancholic, sarcastic).",
-      "Analyse poems by looking at structure, language, themes, and poetic devices."
-    ]},
+    { title: "Comprehension", chapter: 2, chapterTitle: "Reading & Analysis", order: 1, difficulty: "intermediate", notes: "Reading passages, inference, and summary writing." },
+    { title: "Literary Analysis", chapter: 2, chapterTitle: "Reading & Analysis", order: 2, difficulty: "advanced", notes: "Themes, symbolism, character development, figurative language, and literary devices." },
+    { title: "Poetry Appreciation", chapter: 2, chapterTitle: "Reading & Analysis", order: 3, difficulty: "advanced", notes: "Rhyme schemes, meter, imagery, tone, and analysis of selected poems." },
     // Chapter 3 – Written Expression
-    { title: "Essay Writing", chapter: 3, chapterTitle: "Written Expression", order: 1, difficulty: "intermediate", notes: "Narrative, descriptive, and argumentative essay techniques.", summary: [
-      "Essay structure: introduction (thesis), body paragraphs (evidence), conclusion (summary).",
-      "Narrative essays tell a story with a clear beginning, middle, and end.",
-      "Descriptive essays use sensory details to paint a picture for the reader.",
-      "Argumentative essays present a claim supported by evidence and reasoning.",
-      "Use transition words (however, furthermore, in addition) for smooth flow."
-    ]},
-    { title: "Creative Writing", chapter: 3, chapterTitle: "Written Expression", order: 2, difficulty: "advanced", notes: "Short stories, dialogue writing, point of view, and descriptive techniques.", summary: [
-      "A short story has characters, setting, plot (conflict), climax, and resolution.",
-      "Dialogue should sound natural and reveal character personality.",
-      "Point of view: first person (I), second person (you), third person (he/she).",
-      "Show, don't tell: use actions and details rather than stating emotions directly.",
-      "Strong openings hook the reader; satisfying endings leave a lasting impression."
-    ]},
-    { title: "Formal Writing", chapter: 3, chapterTitle: "Written Expression", order: 3, difficulty: "intermediate", notes: "Letter writing, report writing, email etiquette, and professional tone.", summary: [
-      "Formal letters include: sender's address, date, recipient's address, salutation, body, closing.",
-      "Reports have a title, introduction, findings, and conclusion/recommendations.",
-      "Use professional language — avoid slang, contractions, and informal expressions.",
-      "Emails should have a clear subject line, greeting, concise body, and sign-off.",
-      "Proofread for grammar, spelling, and tone before sending."
-    ]},
+    {
+      title: "Essay Writing", chapter: 3, chapterTitle: "Written Expression", order: 1, difficulty: "intermediate",
+      notes: "Narrative, descriptive, and argumentative essay techniques.",
+      summary: ["Structure an essay with introduction, body, and conclusion", "Write thesis statements", "Use linking words effectively"],
+      content: [
+        {
+          heading: "Essay Structure",
+          body: "Every good essay follows a clear structure:\n\n**1. Introduction**\n- Hook: grab the reader's attention\n- Background: give context\n- Thesis statement: state your main argument\n\n**2. Body Paragraphs** (typically 3)\n- Topic sentence → Supporting details → Explanation → Link to thesis\n\n**3. Conclusion**\n- Restate thesis (in different words)\n- Summarize main points\n- Final thought or call to action",
+          examples: [
+            { label: "Thesis Statement Examples", content: "**Weak:** \"Education is important.\"\n**Strong:** \"Investing in girls' education in Rwanda leads to improved health outcomes, economic growth, and stronger communities.\"" }
+          ]
+        },
+        {
+          heading: "Linking Words and Transitions",
+          body: "Transitions connect ideas and improve flow:\n\n- **Adding:** furthermore, moreover, in addition, also\n- **Contrasting:** however, on the other hand, nevertheless, although\n- **Cause/Effect:** therefore, consequently, as a result, because\n- **Sequencing:** firstly, next, then, finally\n- **Concluding:** in conclusion, to summarize, overall, in short",
+          examples: []
+        }
+      ]
+    },
+    { title: "Creative Writing", chapter: 3, chapterTitle: "Written Expression", order: 2, difficulty: "advanced", notes: "Short stories, dialogue writing, point of view, and descriptive techniques." },
+    { title: "Formal Writing", chapter: 3, chapterTitle: "Written Expression", order: 3, difficulty: "intermediate", notes: "Letter writing, report writing, email etiquette, and professional tone." },
     // Chapter 4 – Oral Communication
-    { title: "Speaking and Listening", chapter: 4, chapterTitle: "Oral Communication", order: 1, difficulty: "beginner", notes: "Pronunciation, public speaking, active listening, and group discussions.", summary: [
-      "Clear pronunciation helps your audience understand you.",
-      "Public speaking tips: prepare, practise, make eye contact, and project your voice.",
-      "Active listening: pay attention, don't interrupt, ask clarifying questions.",
-      "In group discussions, take turns, respect others' opinions, and stay on topic.",
-      "Body language (posture, gestures, facial expressions) supports verbal communication."
-    ]},
-    { title: "Debate and Presentation", chapter: 4, chapterTitle: "Oral Communication", order: 2, difficulty: "advanced", notes: "Argumentation, persuasion techniques, structuring debates, and slide presentations.", summary: [
-      "A debate has a proposition (for) and opposition (against) with structured arguments.",
-      "Persuasion techniques: ethos (credibility), pathos (emotion), logos (logic).",
-      "Structure: opening statement → arguments → rebuttals → closing statement.",
-      "Presentations should have clear slides, minimal text, and strong visuals.",
-      "Timing, confidence, and clarity are key to effective oral delivery."
-    ]},
+    { title: "Speaking and Listening", chapter: 4, chapterTitle: "Oral Communication", order: 1, difficulty: "beginner", notes: "Pronunciation, public speaking, active listening, and group discussions." },
+    { title: "Debate and Presentation", chapter: 4, chapterTitle: "Oral Communication", order: 2, difficulty: "advanced", notes: "Argumentation, persuasion techniques, structuring debates, and slide presentations." },
   ],
   "Chemistry": [
     // Chapter 1 – Matter & Atoms
-    { title: "Introduction to Chemistry", chapter: 1, chapterTitle: "Matter & Atoms", order: 1, difficulty: "beginner", notes: "States of matter, physical vs chemical changes, and laboratory safety.", summary: [
-      "Three states of matter: solid (fixed shape), liquid (fixed volume), gas (fills container).",
-      "Physical changes are reversible (e.g. melting); chemical changes form new substances (e.g. burning).",
-      "Particles in solids vibrate in place; in liquids they slide; in gases they move freely.",
-      "Lab safety: wear goggles, handle chemicals carefully, know emergency procedures.",
-      "Common lab equipment: Bunsen burner, beaker, measuring cylinder, test tube, pipette."
-    ]},
-    { title: "Atomic Structure", chapter: 1, chapterTitle: "Matter & Atoms", order: 2, difficulty: "beginner", notes: "Atoms, elements, periodic table, and electron configuration.", summary: [
-      "An atom has protons (+) and neutrons (neutral) in the nucleus, with electrons (−) orbiting.",
-      "Atomic number = number of protons; mass number = protons + neutrons.",
-      "Elements are arranged in the periodic table by increasing atomic number.",
-      "Groups (columns) have similar properties; periods (rows) show trends.",
-      "Electron configuration fills shells: 2, 8, 8 (e.g. sodium: 2,8,1)."
-    ]},
-    { title: "Chemical Bonding", chapter: 1, chapterTitle: "Matter & Atoms", order: 3, difficulty: "intermediate", notes: "Ionic, covalent, and metallic bonds, electronegativity, and Lewis structures.", summary: [
-      "Ionic bonds: metal transfers electrons to non-metal; forms ions held by electrostatic attraction.",
-      "Covalent bonds: non-metals share pairs of electrons.",
-      "Metallic bonds: positive metal ions surrounded by a 'sea' of delocalised electrons.",
-      "Electronegativity measures how strongly an atom attracts bonding electrons.",
-      "Lewis (dot-cross) diagrams show the arrangement of outer-shell electrons in bonds."
-    ]},
+    {
+      title: "Introduction to Chemistry", chapter: 1, chapterTitle: "Matter & Atoms", order: 1, difficulty: "beginner",
+      notes: "States of matter, physical vs chemical changes, and laboratory safety.",
+      summary: ["Describe the three states of matter", "Distinguish physical from chemical changes", "Follow laboratory safety rules"],
+      content: [
+        {
+          heading: "States of Matter",
+          body: "Matter exists in three common states:\n\n| Property | Solid | Liquid | Gas |\n|---|---|---|---|\n| Shape | Fixed | Takes container | Fills container |\n| Volume | Fixed | Fixed | Fills container |\n| Particle arrangement | Regular, closely packed | Irregular, close | Random, far apart |\n| Particle movement | Vibrate in place | Slide over each other | Move freely at high speed |",
+          examples: [
+            { label: "Changes of State", content: "Ice (solid) → Water (liquid) → Steam (gas)\n\n- Melting: solid → liquid (absorbs heat)\n- Boiling: liquid → gas (absorbs heat)\n- Condensation: gas → liquid (releases heat)\n- Freezing: liquid → solid (releases heat)" }
+          ]
+        },
+        {
+          heading: "Physical vs Chemical Changes",
+          body: "**Physical change:** No new substance is formed. The change is usually reversible.\n- Examples: melting ice, dissolving sugar, tearing paper\n\n**Chemical change:** A new substance is formed. Usually irreversible.\n- Examples: burning wood, rusting iron, cooking an egg\n\n**Signs of a chemical change:** colour change, gas production, temperature change, precipitate formation",
+          examples: []
+        }
+      ]
+    },
+    {
+      title: "Atomic Structure", chapter: 1, chapterTitle: "Matter & Atoms", order: 2, difficulty: "beginner",
+      notes: "Atoms, elements, periodic table, and electron configuration.",
+      summary: ["Describe the structure of an atom", "Read the periodic table", "Write electron configurations"],
+      content: [
+        {
+          heading: "Structure of the Atom",
+          body: "An atom consists of three sub-atomic particles:\n\n| Particle | Charge | Mass (amu) | Location |\n|---|---|---|---|\n| Proton | +1 | 1 | Nucleus |\n| Neutron | 0 | 1 | Nucleus |\n| Electron | −1 | ~0 | Electron shells |\n\n- **Atomic number (Z):** Number of protons\n- **Mass number (A):** Protons + Neutrons\n- **Isotopes:** Atoms of the same element with different numbers of neutrons",
+          examples: [
+            { label: "Reading the Periodic Table", content: "Carbon (C): Atomic number = 6, Mass number = 12\n\n- Protons: 6\n- Electrons: 6 (in a neutral atom)\n- Neutrons: 12 − 6 = 6" }
+          ]
+        },
+        {
+          heading: "Electron Configuration",
+          body: "Electrons are arranged in energy levels (shells) around the nucleus.\n\n- **1st shell:** holds up to 2 electrons\n- **2nd shell:** holds up to 8 electrons\n- **3rd shell:** holds up to 8 electrons (at O-Level)\n\nElectrons fill the lowest energy level first.",
+          examples: [
+            { label: "Writing Electron Configurations", content: "Sodium (Na), atomic number 11:\n\nElectron configuration: 2, 8, 1\n\n- 1st shell: 2 electrons\n- 2nd shell: 8 electrons\n- 3rd shell: 1 electron\n\nSodium has 1 electron in its outer shell, making it very reactive." }
+          ]
+        }
+      ]
+    },
+    { title: "Chemical Bonding", chapter: 1, chapterTitle: "Matter & Atoms", order: 3, difficulty: "intermediate", notes: "Ionic, covalent, and metallic bonds, electronegativity, and Lewis structures." },
     // Chapter 2 – Reactions & Equations
-    { title: "Chemical Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 1, difficulty: "intermediate", notes: "Balancing equations, reaction types, and stoichiometry.", summary: [
-      "In a balanced equation, the number of atoms of each element is equal on both sides.",
-      "Reaction types: synthesis, decomposition, single replacement, double replacement, combustion.",
-      "Stoichiometry uses mole ratios from balanced equations to calculate amounts of reactants/products.",
-      "State symbols: (s) solid, (l) liquid, (g) gas, (aq) aqueous solution.",
-      "Conservation of mass: matter is neither created nor destroyed in a reaction."
-    ]},
-    { title: "Acids, Bases, and Salts", chapter: 2, chapterTitle: "Reactions & Equations", order: 2, difficulty: "intermediate", notes: "pH scale, neutralization, indicators, and salt preparation.", summary: [
-      "Acids produce H⁺ ions in solution; bases produce OH⁻ ions.",
-      "pH scale: 0–6 acidic, 7 neutral, 8–14 alkaline.",
-      "Neutralization: acid + base → salt + water.",
-      "Indicators (litmus, phenolphthalein, universal indicator) show pH by colour change.",
-      "Salts are prepared by reacting acids with metals, bases, or carbonates."
-    ]},
-    { title: "Redox Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 3, difficulty: "advanced", notes: "Oxidation states, half-equations, electrochemical cells, and electrolysis.", summary: [
-      "Oxidation = loss of electrons; reduction = gain of electrons (OIL RIG).",
-      "Oxidation states track electron transfer; they increase in oxidation and decrease in reduction.",
-      "Half-equations show what happens at each electrode separately.",
-      "Electrolysis uses electrical energy to drive non-spontaneous reactions.",
-      "Electrochemical cells convert chemical energy to electrical energy (e.g. batteries)."
-    ]},
+    {
+      title: "Chemical Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 1, difficulty: "intermediate",
+      notes: "Balancing equations, reaction types, and stoichiometry.",
+      summary: ["Balance chemical equations", "Identify reaction types", "Perform simple stoichiometric calculations"],
+      content: [
+        {
+          heading: "Balancing Chemical Equations",
+          body: "In a balanced equation, the number of atoms of each element must be the same on both sides. This reflects the **Law of Conservation of Mass**.\n\n**Steps:**\n1. Write the unbalanced equation\n2. Count atoms on each side\n3. Add coefficients to balance\n4. Check your work",
+          examples: [
+            { label: "Balancing an Equation", content: "Balance: H₂ + O₂ → H₂O\n\n- Unbalanced: H₂ + O₂ → H₂O (O is unbalanced: 2 vs 1)\n- Add coefficient: H₂ + O₂ → **2**H₂O (now O is balanced, but H: 2 vs 4)\n- Balance H: **2**H₂ + O₂ → 2H₂O\n- Check: H: 4=4 ✓ O: 2=2 ✓" }
+          ]
+        },
+        {
+          heading: "Types of Chemical Reactions",
+          body: "Common reaction types:\n\n- **Combination:** A + B → AB\n- **Decomposition:** AB → A + B\n- **Single displacement:** A + BC → AC + B\n- **Double displacement:** AB + CD → AD + CB\n- **Combustion:** Fuel + O₂ → CO₂ + H₂O",
+          examples: []
+        }
+      ]
+    },
+    { title: "Acids, Bases, and Salts", chapter: 2, chapterTitle: "Reactions & Equations", order: 2, difficulty: "intermediate", notes: "pH scale, neutralization, indicators, and salt preparation." },
+    { title: "Redox Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 3, difficulty: "advanced", notes: "Oxidation states, half-equations, electrochemical cells, and electrolysis." },
     // Chapter 3 – Carbon Compounds
-    { title: "Organic Chemistry", chapter: 3, chapterTitle: "Carbon Compounds", order: 1, difficulty: "advanced", notes: "Hydrocarbons, functional groups, and naming conventions.", summary: [
-      "Organic chemistry is the study of carbon-containing compounds.",
-      "Hydrocarbons contain only carbon and hydrogen: alkanes (C-C), alkenes (C=C), alkynes (C≡C).",
-      "Functional groups determine chemical properties: -OH (alcohol), -COOH (carboxylic acid), -NH₂ (amine).",
-      "IUPAC naming: prefix (chain length) + suffix (functional group), e.g. methane, ethanol.",
-      "Isomers have the same formula but different structural arrangements."
-    ]},
-    { title: "Polymers and Plastics", chapter: 3, chapterTitle: "Carbon Compounds", order: 2, difficulty: "advanced", notes: "Addition and condensation polymerization, plastics, and environmental impact.", summary: [
-      "Polymers are long-chain molecules made by joining many small monomers.",
-      "Addition polymerization: monomers with C=C bonds join without losing atoms (e.g. polyethene).",
-      "Condensation polymerization: monomers join with loss of a small molecule like water (e.g. nylon).",
-      "Plastics are synthetic polymers — lightweight, durable, and versatile.",
-      "Environmental concern: most plastics are non-biodegradable; recycling and alternatives are important."
-    ]},
+    { title: "Organic Chemistry", chapter: 3, chapterTitle: "Carbon Compounds", order: 1, difficulty: "advanced", notes: "Hydrocarbons, functional groups, and naming conventions." },
+    { title: "Polymers and Plastics", chapter: 3, chapterTitle: "Carbon Compounds", order: 2, difficulty: "advanced", notes: "Addition and condensation polymerization, plastics, and environmental impact." },
     // Chapter 4 – Quantitative Chemistry
-    { title: "The Mole Concept", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 1, difficulty: "intermediate", notes: "Avogadro's number, molar mass, concentration, and dilution calculations.", summary: [
-      "One mole = 6.022 × 10²³ particles (Avogadro's number).",
-      "Molar mass = mass of one mole of a substance (in g/mol), equal to relative formula mass.",
-      "Number of moles = mass / molar mass.",
-      "Concentration = moles / volume (in mol/dm³ or mol/L).",
-      "Dilution formula: C₁V₁ = C₂V₂."
-    ]},
-    { title: "Rates of Reaction", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 2, difficulty: "advanced", notes: "Collision theory, factors affecting rate, catalysts, and energy profiles.", summary: [
-      "Rate of reaction = change in concentration (or mass/volume) per unit time.",
-      "Collision theory: reactions occur when particles collide with enough energy and correct orientation.",
-      "Factors increasing rate: higher temperature, concentration, surface area, and catalysts.",
-      "A catalyst lowers the activation energy without being consumed.",
-      "Energy profile diagrams show activation energy, reactants, products, and energy change."
-    ]},
-    { title: "Energetics", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 3, difficulty: "advanced", notes: "Exothermic and endothermic reactions, enthalpy changes, and Hess's law.", summary: [
-      "Exothermic reactions release heat (ΔH < 0); endothermic reactions absorb heat (ΔH > 0).",
-      "Enthalpy change (ΔH) is the heat energy change at constant pressure.",
-      "Bond breaking is endothermic; bond making is exothermic.",
-      "Hess's law: total enthalpy change is independent of the route taken.",
-      "Calorimetry: Q = mcΔT is used to measure enthalpy changes experimentally."
-    ]},
+    { title: "The Mole Concept", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 1, difficulty: "intermediate", notes: "Avogadro's number, molar mass, concentration, and dilution calculations." },
+    { title: "Rates of Reaction", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 2, difficulty: "advanced", notes: "Collision theory, factors affecting rate, catalysts, and energy profiles." },
+    { title: "Energetics", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 3, difficulty: "advanced", notes: "Exothermic and endothermic reactions, enthalpy changes, and Hess's law." },
   ],
   "Geography": [
     // Chapter 1 – Earth's Surface
-    { title: "Physical Geography", chapter: 1, chapterTitle: "Earth's Surface", order: 1, difficulty: "beginner", notes: "Landforms, weathering, erosion, and plate tectonics.", summary: [
-      "Weathering breaks down rocks in situ: physical (freeze-thaw), chemical (acid rain), biological (roots).",
-      "Erosion transports weathered material by water, wind, ice, or gravity.",
-      "Deposition occurs when transporting agents lose energy and drop sediment.",
-      "Major landforms: mountains, valleys, plains, plateaus, and coastal features.",
-      "The Earth's surface is constantly shaped by internal (tectonic) and external (weathering) forces."
-    ]},
-    { title: "Rocks and Minerals", chapter: 1, chapterTitle: "Earth's Surface", order: 2, difficulty: "beginner", notes: "Igneous, sedimentary, and metamorphic rocks, rock cycle, and mineral properties.", summary: [
-      "Igneous rocks form from cooled magma/lava (e.g. granite, basalt).",
-      "Sedimentary rocks form from layers of compacted sediment (e.g. sandstone, limestone).",
-      "Metamorphic rocks form when existing rocks are changed by heat/pressure (e.g. marble, slate).",
-      "The rock cycle shows how rocks transform between the three types over time.",
-      "Minerals are naturally occurring inorganic solids with a definite chemical composition."
-    ]},
-    { title: "Plate Tectonics", chapter: 1, chapterTitle: "Earth's Surface", order: 3, difficulty: "intermediate", notes: "Tectonic plates, earthquakes, volcanoes, and continental drift.", summary: [
-      "The Earth's crust is divided into tectonic plates that float on the mantle.",
-      "Plate boundaries: convergent (collision), divergent (moving apart), transform (sliding past).",
-      "Earthquakes occur at fault lines due to sudden release of built-up pressure.",
-      "Volcanoes form at convergent boundaries and hotspots where magma reaches the surface.",
-      "Continental drift theory (Wegener): continents were once joined as Pangaea."
-    ]},
+    {
+      title: "Physical Geography", chapter: 1, chapterTitle: "Earth's Surface", order: 1, difficulty: "beginner",
+      notes: "Landforms, weathering, erosion, and plate tectonics.",
+      summary: ["Identify major landforms", "Explain weathering and erosion processes", "Understand how landscapes change over time"],
+      content: [
+        {
+          heading: "Weathering",
+          body: "Weathering is the breakdown of rocks in situ (without movement).\n\n**Physical (mechanical) weathering:**\n- Freeze-thaw: Water enters cracks, freezes, expands, and breaks the rock\n- Onion-skin: Repeated heating and cooling causes layers to peel off\n\n**Chemical weathering:**\n- Acid rain dissolves limestone (calcium carbonate)\n- Water reacts with minerals to form new, weaker compounds\n\n**Biological weathering:**\n- Plant roots grow into cracks and widen them\n- Burrowing animals break up rock",
+          examples: [
+            { label: "Rwandan Context", content: "In Rwanda, chemical weathering is common due to the tropical climate with high rainfall. The red laterite soils seen across the country are a result of intense chemical weathering of the underlying rock." }
+          ]
+        },
+        {
+          heading: "Erosion and Deposition",
+          body: "**Erosion** is the wearing away and transport of rock material by agents:\n- **Rivers** — hydraulic action, abrasion, attrition, solution\n- **Wind** — deflation and abrasion in arid areas\n- **Glaciers** — plucking and abrasion\n- **Sea** — wave action on coastlines\n\n**Deposition** occurs when the agent of erosion loses energy and drops its load.",
+          examples: []
+        }
+      ]
+    },
+    { title: "Rocks and Minerals", chapter: 1, chapterTitle: "Earth's Surface", order: 2, difficulty: "beginner", notes: "Igneous, sedimentary, and metamorphic rocks, rock cycle, and mineral properties." },
+    { title: "Plate Tectonics", chapter: 1, chapterTitle: "Earth's Surface", order: 3, difficulty: "intermediate", notes: "Tectonic plates, earthquakes, volcanoes, and continental drift." },
     // Chapter 2 – Atmosphere
-    { title: "Climate and Weather", chapter: 2, chapterTitle: "Atmosphere", order: 1, difficulty: "intermediate", notes: "Atmospheric processes, climate zones, and weather patterns.", summary: [
-      "Weather = short-term atmospheric conditions; climate = long-term average weather.",
-      "Factors affecting climate: latitude, altitude, distance from sea, ocean currents, prevailing winds.",
-      "Climate zones: tropical, arid, temperate, continental, polar.",
-      "The water cycle: evaporation → condensation → precipitation → collection.",
-      "Weather instruments: thermometer, barometer, rain gauge, anemometer, weather vane."
-    ]},
-    { title: "Water Cycle and Rivers", chapter: 2, chapterTitle: "Atmosphere", order: 2, difficulty: "beginner", notes: "Evaporation, condensation, precipitation, river features, and flooding.", summary: [
-      "The water cycle is a continuous process: evaporation, condensation, precipitation, and runoff.",
-      "Rivers have three courses: upper (V-shaped valleys, waterfalls), middle (meanders), lower (floodplains, deltas).",
-      "Erosion processes in rivers: hydraulic action, abrasion, attrition, solution.",
-      "Flooding is caused by heavy rainfall, deforestation, impermeable surfaces, and snowmelt.",
-      "Flood management: dams, levees, flood walls, and land-use planning."
-    ]},
-    { title: "Natural Disasters", chapter: 2, chapterTitle: "Atmosphere", order: 3, difficulty: "advanced", notes: "Hurricanes, tsunamis, droughts, and disaster preparedness.", summary: [
-      "Hurricanes form over warm ocean water (>26°C) and bring strong winds, heavy rain, and storm surges.",
-      "Tsunamis are giant waves caused by underwater earthquakes or volcanic eruptions.",
-      "Droughts are prolonged periods of low rainfall leading to water shortages and crop failure.",
-      "Disaster preparedness: early warning systems, evacuation plans, emergency supplies.",
-      "Developing countries are often more vulnerable due to limited infrastructure and resources."
-    ]},
+    { title: "Climate and Weather", chapter: 2, chapterTitle: "Atmosphere", order: 1, difficulty: "intermediate", notes: "Atmospheric processes, climate zones, and weather patterns." },
+    { title: "Water Cycle and Rivers", chapter: 2, chapterTitle: "Atmosphere", order: 2, difficulty: "beginner", notes: "Evaporation, condensation, precipitation, river features, and flooding." },
+    { title: "Natural Disasters", chapter: 2, chapterTitle: "Atmosphere", order: 3, difficulty: "advanced", notes: "Hurricanes, tsunamis, droughts, and disaster preparedness." },
     // Chapter 3 – Spatial Skills
-    { title: "Map Reading", chapter: 3, chapterTitle: "Spatial Skills", order: 1, difficulty: "beginner", notes: "Contour lines, grid references, scale, and compass directions.", summary: [
-      "Contour lines connect points of equal elevation; close lines = steep slope.",
-      "Grid references: 4-figure (identifies a square), 6-figure (identifies a specific point).",
-      "Scale shows the ratio of map distance to real distance (e.g. 1:50,000).",
-      "8 compass directions: N, NE, E, SE, S, SW, W, NW.",
-      "Map symbols represent features like roads, rivers, buildings, and vegetation."
-    ]},
-    { title: "GIS and Remote Sensing", chapter: 3, chapterTitle: "Spatial Skills", order: 2, difficulty: "advanced", notes: "Satellite imagery, GPS technology, data layers, and geographic analysis.", summary: [
-      "GIS (Geographic Information Systems) stores, analyses, and displays spatial data.",
-      "Remote sensing collects data about the Earth from satellites or aircraft.",
-      "GPS uses satellites to determine precise location on Earth.",
-      "GIS data layers can be overlaid to analyse relationships (e.g. land use + flooding).",
-      "Applications: urban planning, disaster response, environmental monitoring, agriculture."
-    ]},
+    { title: "Map Reading", chapter: 3, chapterTitle: "Spatial Skills", order: 1, difficulty: "beginner", notes: "Contour lines, grid references, scale, and compass directions." },
+    { title: "GIS and Remote Sensing", chapter: 3, chapterTitle: "Spatial Skills", order: 2, difficulty: "advanced", notes: "Satellite imagery, GPS technology, data layers, and geographic analysis." },
     // Chapter 4 – Human Geography
-    { title: "Population and Settlement", chapter: 4, chapterTitle: "Human Geography", order: 1, difficulty: "intermediate", notes: "Population growth, urbanization, migration, and demographic transition model.", summary: [
-      "World population is unevenly distributed; dense in fertile, accessible, urban areas.",
-      "Birth rate, death rate, and migration determine population change.",
-      "The Demographic Transition Model (DTM) has 5 stages from high to low birth/death rates.",
-      "Urbanization: movement from rural to urban areas driven by jobs and services.",
-      "Push factors (poverty, conflict) and pull factors (employment, education) drive migration."
-    ]},
-    { title: "Agriculture and Industry", chapter: 4, chapterTitle: "Human Geography", order: 2, difficulty: "intermediate", notes: "Farming systems, industrialization, trade, and economic development.", summary: [
-      "Subsistence farming: growing food for the farmer's own use; commercial farming: for profit/sale.",
-      "Factors affecting farming: climate, soil, relief, market access, and technology.",
-      "Industrialization: shift from primary (farming/mining) to secondary (manufacturing) and tertiary (services).",
-      "Trade: exports and imports; developing countries often export raw materials.",
-      "Economic development is measured by GDP, HDI, literacy rate, and life expectancy."
-    ]},
-    { title: "Environmental Management", chapter: 4, chapterTitle: "Human Geography", order: 3, difficulty: "advanced", notes: "Deforestation, climate change, sustainability, and conservation strategies.", summary: [
-      "Deforestation causes habitat loss, soil erosion, and increased CO₂ levels.",
-      "Climate change is driven by greenhouse gases (CO₂, methane); effects include rising sea levels and extreme weather.",
-      "Sustainability means meeting present needs without compromising future generations.",
-      "Renewable energy sources: solar, wind, hydro, geothermal.",
-      "Conservation strategies: protected areas, reforestation, international agreements (e.g. Paris Agreement)."
-    ]},
+    { title: "Population and Settlement", chapter: 4, chapterTitle: "Human Geography", order: 1, difficulty: "intermediate", notes: "Population growth, urbanization, migration, and demographic transition model." },
+    { title: "Agriculture and Industry", chapter: 4, chapterTitle: "Human Geography", order: 2, difficulty: "intermediate", notes: "Farming systems, industrialization, trade, and economic development." },
+    { title: "Environmental Management", chapter: 4, chapterTitle: "Human Geography", order: 3, difficulty: "advanced", notes: "Deforestation, climate change, sustainability, and conservation strategies." },
   ],
+  "Mathematics (Advanced)": [
+    { title: "Algebra", chapter: 1, chapterTitle: "Algebra and Functions", order: 1, difficulty: "intermediate", notes: "Linear equations, quadratic functions, and polynomial operations." },
+    { title: "Trigonometry", chapter: 1, chapterTitle: "Algebra and Functions", order: 2, difficulty: "intermediate", notes: "Trigonometric ratios, identities, and inverse functions." },
+    { title: "Calculus", chapter: 1, chapterTitle: "Algebra and Functions", order: 3, difficulty: "advanced", notes: "Differentiation and integration of functions." },
+  ],
+  "Physics (Advanced)": [
+    { title: "Mechanics", chapter: 1, chapterTitle: "Forces & Motion", order: 1, difficulty: "intermediate", notes: "Kinematics, dynamics, work, energy, and power." },
+    { title: "Momentum and Impulse", chapter: 1, chapterTitle: "Forces & Motion", order: 2, difficulty: "intermediate", notes: "Conservation of momentum, collisions, impulse, and force-time graphs." },
+    { title: "Electricity", chapter: 2, chapterTitle: "Electric Circuits", order: 1, difficulty: "intermediate", notes: "Current, voltage, resistance, Ohm's law, and circuits." },
+    { title: "Electromagnetism", chapter: 2, chapterTitle: "Electric Circuits", order: 2, difficulty: "intermediate", notes: "Magnetic fields, electromagnetic induction, transformers, and motors." },
+    { title: "Electrostatics", chapter: 2, chapterTitle: "Electric Circuits", order: 3, difficulty: "advanced", notes: "Coulomb's law, electric fields, potential difference, and capacitors." },
+    { title: "Optics", chapter: 3, chapterTitle: "Light & Waves", order: 1, difficulty: "intermediate", notes: "Reflection, refraction, lenses, and the electromagnetic spectrum." },
+    { title: "Wave Motion", chapter: 3, chapterTitle: "Light & Waves", order: 2, difficulty: "advanced", notes: "Transverse and longitudinal waves, interference, diffraction, and standing waves." },
+    { title: "Sound", chapter: 3, chapterTitle: "Light & Waves", order: 3, difficulty: "advanced", notes: "Sound wave properties, resonance, Doppler effect, and musical instruments." },
+    { title: "Heat and Temperature", chapter: 4, chapterTitle: "Thermal Physics", order: 1, difficulty: "beginner", notes: "Temperature scales, thermal expansion, specific heat capacity, and latent heat." },
+    { title: "Gas Laws", chapter: 4, chapterTitle: "Thermal Physics", order: 2, difficulty: "intermediate", notes: "Boyle's law, Charles's law, pressure law, and the ideal gas equation." },
+  ],
+  "Biology (Advanced)": [
+    { title: "Cell Biology", chapter: 1, chapterTitle: "The Cell", order: 1, difficulty: "beginner", notes: "Cell structure, organelles, mitosis, and meiosis." },
+    { title: "Cell Transport", chapter: 1, chapterTitle: "The Cell", order: 2, difficulty: "beginner", notes: "Osmosis, diffusion, active transport, and membrane structure." },
+    { title: "Enzymes", chapter: 1, chapterTitle: "The Cell", order: 3, difficulty: "intermediate", notes: "Enzyme structure, function, factors affecting enzyme activity, and specificity." },
+    { title: "Human Body Systems", chapter: 2, chapterTitle: "Human Anatomy", order: 1, difficulty: "intermediate", notes: "Circulatory, respiratory, digestive, and nervous systems." },
+    { title: "Reproduction", chapter: 2, chapterTitle: "Human Anatomy", order: 2, difficulty: "intermediate", notes: "Human reproductive system, menstrual cycle, fertilization, and fetal development." },
+    { title: "Nutrition and Diet", chapter: 2, chapterTitle: "Human Anatomy", order: 3, difficulty: "beginner", notes: "Food groups, balanced diet, vitamins, minerals, and deficiency diseases." },
+    { title: "Ecology", chapter: 3, chapterTitle: "Environment & Life", order: 1, difficulty: "intermediate", notes: "Ecosystems, food chains, biodiversity, and conservation." },
+    { title: "Classification of Living Things", chapter: 3, chapterTitle: "Environment & Life", order: 2, difficulty: "beginner", notes: "Kingdoms of life, binomial nomenclature, taxonomy, and dichotomous keys." },
+    { title: "Evolution and Adaptation", chapter: 3, chapterTitle: "Environment & Life", order: 3, difficulty: "advanced", notes: "Natural selection, speciation, fossil evidence, and genetic variation." },
+    { title: "Heredity and Genetics", chapter: 4, chapterTitle: "Genetics", order: 1, difficulty: "advanced", notes: "Mendelian genetics, Punnett squares, genotype vs phenotype, and genetic disorders." },
+    { title: "DNA and Protein Synthesis", chapter: 4, chapterTitle: "Genetics", order: 2, difficulty: "advanced", notes: "DNA structure, replication, transcription, translation, and mutations." },
+  ],
+  "English (Advanced)": [
+    { title: "Grammar", chapter: 1, chapterTitle: "Language Foundations", order: 1, difficulty: "beginner", notes: "Tenses, sentence structure, parts of speech, and punctuation." },
+    { title: "Vocabulary Building", chapter: 1, chapterTitle: "Language Foundations", order: 2, difficulty: "beginner", notes: "Word roots, prefixes, suffixes, synonyms, antonyms, and context clues." },
+    { title: "Sentence Construction", chapter: 1, chapterTitle: "Language Foundations", order: 3, difficulty: "intermediate", notes: "Simple, compound, and complex sentences, clauses, and conjunctions." },
+    { title: "Comprehension", chapter: 2, chapterTitle: "Reading & Analysis", order: 1, difficulty: "intermediate", notes: "Reading passages, inference, and summary writing." },
+    { title: "Literary Analysis", chapter: 2, chapterTitle: "Reading & Analysis", order: 2, difficulty: "advanced", notes: "Themes, symbolism, character development, figurative language, and literary devices." },
+    { title: "Poetry Appreciation", chapter: 2, chapterTitle: "Reading & Analysis", order: 3, difficulty: "advanced", notes: "Rhyme schemes, meter, imagery, tone, and analysis of selected poems." },
+    { title: "Essay Writing", chapter: 3, chapterTitle: "Written Expression", order: 1, difficulty: "intermediate", notes: "Narrative, descriptive, and argumentative essay techniques." },
+    { title: "Creative Writing", chapter: 3, chapterTitle: "Written Expression", order: 2, difficulty: "advanced", notes: "Short stories, dialogue writing, point of view, and descriptive techniques." },
+    { title: "Formal Writing", chapter: 3, chapterTitle: "Written Expression", order: 3, difficulty: "intermediate", notes: "Letter writing, report writing, email etiquette, and professional tone." },
+    { title: "Speaking and Listening", chapter: 4, chapterTitle: "Oral Communication", order: 1, difficulty: "beginner", notes: "Pronunciation, public speaking, active listening, and group discussions." },
+    { title: "Debate and Presentation", chapter: 4, chapterTitle: "Oral Communication", order: 2, difficulty: "advanced", notes: "Argumentation, persuasion techniques, structuring debates, and slide presentations." },
+  ],
+  "Chemistry (Advanced)": [
+    { title: "Introduction to Chemistry", chapter: 1, chapterTitle: "Matter & Atoms", order: 1, difficulty: "beginner", notes: "States of matter, physical vs chemical changes, and laboratory safety." },
+    { title: "Atomic Structure", chapter: 1, chapterTitle: "Matter & Atoms", order: 2, difficulty: "beginner", notes: "Atoms, elements, periodic table, and electron configuration." },
+    { title: "Chemical Bonding", chapter: 1, chapterTitle: "Matter & Atoms", order: 3, difficulty: "intermediate", notes: "Ionic, covalent, and metallic bonds, electronegativity, and Lewis structures." },
+    { title: "Chemical Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 1, difficulty: "intermediate", notes: "Balancing equations, reaction types, and stoichiometry." },
+    { title: "Acids, Bases, and Salts", chapter: 2, chapterTitle: "Reactions & Equations", order: 2, difficulty: "intermediate", notes: "pH scale, neutralization, indicators, and salt preparation." },
+    { title: "Redox Reactions", chapter: 2, chapterTitle: "Reactions & Equations", order: 3, difficulty: "advanced", notes: "Oxidation states, half-equations, electrochemical cells, and electrolysis." },
+    { title: "Organic Chemistry", chapter: 3, chapterTitle: "Carbon Compounds", order: 1, difficulty: "advanced", notes: "Hydrocarbons, functional groups, and naming conventions." },
+    { title: "Polymers and Plastics", chapter: 3, chapterTitle: "Carbon Compounds", order: 2, difficulty: "advanced", notes: "Addition and condensation polymerization, plastics, and environmental impact." },
+    { title: "The Mole Concept", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 1, difficulty: "intermediate", notes: "Avogadro's number, molar mass, concentration, and dilution calculations." },
+    { title: "Rates of Reaction", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 2, difficulty: "advanced", notes: "Collision theory, factors affecting rate, catalysts, and energy profiles." },
+    { title: "Energetics", chapter: 4, chapterTitle: "Quantitative Chemistry", order: 3, difficulty: "advanced", notes: "Exothermic and endothermic reactions, enthalpy changes, and Hess's law." },
+  ]
 };
 
 const seedDB = async () => {

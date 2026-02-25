@@ -33,4 +33,20 @@ router.get("/:subjectId", async (req, res) => {
   }
 });
 
+// GET single topic by ID
+router.get("/detail/:topicId", async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.topicId)
+      .populate("subject", "name level");
+
+    if (!topic) {
+      return res.status(404).json({ message: "Topic not found" });
+    }
+
+    res.json(topic);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
