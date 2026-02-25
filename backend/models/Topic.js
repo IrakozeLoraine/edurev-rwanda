@@ -13,6 +13,14 @@ const topicSchema = new mongoose.Schema({
   },
   notes: String,
   summary: [String],
+  content: [{
+    heading: { type: String, required: true },
+    body: { type: String, default: "" },
+    examples: [{
+      label: { type: String, default: "Example" },
+      content: { type: String, required: true }
+    }]
+  }],
   references: [String]
 });
 
