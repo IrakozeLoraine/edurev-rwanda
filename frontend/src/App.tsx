@@ -7,6 +7,7 @@ import SignIn from './pages/SignIn';
 import ProtectedRoute from './components/ProtectedRoute';
 import { logout } from './store/actions/authActions';
 import type { RootState, AppDispatch } from './store/store';
+import TopicDetail from './pages/TopicDetail';
 
 const App = () => {
   const location = useLocation();
@@ -119,6 +120,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Topics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/topics/:topicId"
+            element={
+              <ProtectedRoute>
+                <TopicDetail />
               </ProtectedRoute>
             }
           />
