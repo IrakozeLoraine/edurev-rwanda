@@ -1,10 +1,23 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import Subjects from './pages/Subjects';
 import Topics from './pages/Topics';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { logout } from './store/actions/authActions';
+import type { RootState, AppDispatch } from './store/store';
 
 const App = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { token } = useSelector((state: RootState) => state.auth);
+
+  const handleLogout = () => {
+    (dispatch as unknown as (fn: ReturnType<typeof logout>) => void)(logout());
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-mongo-bg text-mongo-text">
@@ -34,9 +47,33 @@ const App = () => {
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="w-8 h-8 bg-mongo-green-light rounded-full flex items-center justify-center">
-              <span className="text-mongo-green text-xs font-bold">RW</span>
-            </div>
+            {token ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-md text-sm font-medium text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg transition-colors"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    location.pathname === '/login'
+                      ? 'text-mongo-green bg-mongo-green-light'
+                      : 'text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg'
+                  }`}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 rounded-md text-sm font-medium bg-mongo-green text-white hover:bg-mongo-green/90 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -46,6 +83,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Subjects />} />
           <Route path="/subjects/:subjectId/topics" element={<Topics />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="*"
             element={
