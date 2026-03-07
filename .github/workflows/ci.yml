@@ -41,3 +41,8 @@ jobs:
       - name: Run Tests
         run: |
           echo "Running tests"
+        
+      - name: Build Docker Image
+        run: docker build -t edurev-backend .
+
+      
