@@ -22,11 +22,7 @@ const Topics = () => {
   const [groupMode, setGroupMode] = useState<GroupMode>("chapter");
 
   useEffect(() => {
-    if (!subjectId) {
-      setError("Subject not found");
-      setLoading(false);
-      return;
-    }
+    if (!subjectId) return;
 
     api.get(`/subjects/${subjectId}`)
       .then((res) => {
@@ -90,6 +86,16 @@ const Topics = () => {
     for (const t of topics) counts[t.difficulty] = (counts[t.difficulty] || 0) + 1;
     return counts;
   }, [topics]);
+
+  // Validate required parameter
+  if (!subjectId)
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-600 text-sm">Subject not found</p>
+        </div>
+      </div>
+    );
 
   if (loading)
     return (

@@ -204,11 +204,7 @@ const TopicDetail = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!topicId) {
-      setError("Topic not found");
-      setLoading(false);
-      return;
-    }
+    if (!topicId) return;
 
     api
       .get(`/topics/detail/${topicId}`)
@@ -219,6 +215,16 @@ const TopicDetail = () => {
       })
       .finally(() => setLoading(false));
   }, [topicId]);
+
+  // Validate required parameter
+  if (!topicId)
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-16">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-600 text-sm">Topic not found</p>
+        </div>
+      </div>
+    );
 
   if (loading)
     return (
