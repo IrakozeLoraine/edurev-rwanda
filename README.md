@@ -101,6 +101,34 @@ The application will be available at `http://localhost:5173` (Vite default port)
 
 7. **Join the forum** - Participate in discussions, ask questions, and help fellow students
 
+## Docker Deployment
+
+The application can be run using Docker for easy deployment and development. There are two main approaches: running individual containers or using Docker Compose for a complete stack.
+
+### Prerequisites for Docker Deployment
+
+- Docker installed on your system
+- Docker Compose (usually included with Docker Desktop)
+
+### Environment Variables
+
+Before running with Docker, ensure you have the required environment files:
+
+#### Backend Environment Variables (`.env` in `/backend`)
+```
+MONGO_URI=mongodb://mongodb:27017/edurev-rwanda  # For docker-compose, use service name
+JWT_SECRET=your_jwt_secret_key_here_change_in_production
+PORT=5000
+CORS_ORIGIN=http://localhost:5173  # For development, or http://localhost:3000 for production
+```
+
+#### Frontend Environment Variables (`.env` in `/frontend`)
+```
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+**Note**: Copy `.env.example` files to `.env` in both backend and frontend directories and update the values as needed.
+
 ### API Endpoints
 
 #### Authentication
