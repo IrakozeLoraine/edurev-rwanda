@@ -2,12 +2,10 @@ import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import Subjects from './pages/Subjects';
 import Topics from './pages/Topics';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import { logout } from './store/actions/authActions';
 import type { RootState, AppDispatch } from './store/store';
-import TopicDetail from './pages/TopicDetail';
 
 const App = () => {
   const location = useLocation();
@@ -15,26 +13,24 @@ const App = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, token } = useSelector((state: RootState) => state.auth);
   const isHome = location.pathname === '/';
-  const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   const handleSignOut = () => {
-    dispatch(logout() as never);
-    navigate('/signin');
+    dispatch(logout());
+    navigate('/login');
   };
 
-  // Hide the main layout chrome on auth pages
   if (isAuthPage) {
     return (
       <Routes>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-mongo-bg text-mongo-text">
-      {/* Navigation */}
       <header className="bg-mongo-card border-b border-mongo-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 flex items-center h-14">
           <Link to="/" className="flex items-center gap-3 group">
@@ -67,7 +63,7 @@ const App = () => {
                     <span className="text-mongo-green text-xs font-bold">
                       {user.name
                         .split(' ')
-                        .map((n) => n[0])
+                        .map((n: string) => n[0])
                         .join('')
                         .toUpperCase()
                         .slice(0, 2)}
@@ -87,13 +83,13 @@ const App = () => {
             ) : (
               <>
                 <Link
-                  to="/signin"
+                  to="/login"
                   className="px-3 py-1.5 rounded-md text-sm font-medium text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
-                  to="/signup"
+                  to="/register"
                   className="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors"
                 >
                   Sign Up
@@ -104,33 +100,10 @@ const App = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Subjects />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/subjects/:subjectId/topics"
-            element={
-              <ProtectedRoute>
-                <Topics />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/topics/:topicId"
-            element={
-              <ProtectedRoute>
-                <TopicDetail />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<Subjects />} />
+          <Route path="/subjects/:subjectId/topics" element={<Topics />} />
           <Route
             path="*"
             element={
@@ -142,7 +115,6 @@ const App = () => {
         </Routes>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-mongo-border py-4 bg-mongo-card">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-xs text-mongo-muted">
           <span>EduRev Rwanda &mdash; Smart Revision for Rwandan Students</span>
