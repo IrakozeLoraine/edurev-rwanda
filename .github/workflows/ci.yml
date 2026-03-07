@@ -43,6 +43,6 @@ jobs:
           echo "Running tests"
         
       - name: Build Docker Image
-        run: docker build -t edurev-backend .
+        run: docker build -t edurev-backend ./backend
 
       
