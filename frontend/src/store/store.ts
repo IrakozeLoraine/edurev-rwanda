@@ -1,4 +1,6 @@
 import { createStore, applyMiddleware } from "redux";
+import type { ThunkDispatch } from "redux-thunk";
+import type { UnknownAction } from "redux";
 import { thunk } from "redux-thunk";
 import logger from "redux-logger";
 import { rootReducer } from "./reducers";
@@ -40,4 +42,4 @@ store.subscribe(() => {
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = ThunkDispatch<RootState, undefined, UnknownAction>;

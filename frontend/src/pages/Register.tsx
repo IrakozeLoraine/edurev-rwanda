@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../store/actions/authActions";
@@ -10,15 +10,13 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error, token } = useSelector((state: RootState) => state.auth);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await (dispatch as unknown as (fn: ReturnType<typeof register>) => Promise<void>)(register(name, email, password));
-    if (localStorage.getItem("token")) {
+  useEffect(() => {
+    if (token) {
       navigate("/");
     }
-  };
+  }, [token, navigate]);
 
   return (
     <div className="max-w-md mx-auto px-6 py-16">
@@ -38,12 +36,13 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); dispatch(register(name, email, password)); }} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-mongo-heading mb-1.5">
+            <label htmlFor="name" className="block text-sm font-medium text-mongo-heading mb-1.5">
               Full Name
             </label>
             <input
+              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -54,10 +53,11 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-mongo-heading mb-1.5">
+            <label htmlFor="email" className="block text-sm font-medium text-mongo-heading mb-1.5">
               Email
             </label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -68,10 +68,11 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-mongo-heading mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-mongo-heading mb-1.5">
               Password
             </label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

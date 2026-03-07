@@ -16,7 +16,7 @@ const App = () => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   const handleSignOut = () => {
-    dispatch(logout() as never);
+    dispatch(logout());
     navigate('/login');
   };
 

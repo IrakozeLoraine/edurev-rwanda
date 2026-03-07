@@ -29,7 +29,7 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
     case "AUTH_FAILURE":
       return { ...state, loading: false, error: action.payload };
     case "AUTH_LOGOUT":
-      return { ...initialState };
+      return { token: null, user: null, loading: false, error: null };
     case "AUTH_CLEAR_ERROR":
       return { ...state, error: null };
     default:
