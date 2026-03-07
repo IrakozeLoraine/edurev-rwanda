@@ -1,30 +1,20 @@
-# Frontend Dockerfile (multi-stage)
+# Use official Node image
+FROM node:20-alpine
 
-# ── Stage 1: Build ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
-
+# Set working directory
 WORKDIR /app
 
-# Install dependencies first (better layer caching)
+# Copy package files
 COPY package*.json ./
-RUN npm ci
 
-# Copy source and build
+# Install dependencies
+RUN npm install
+
+# Copy all frontend files
 COPY . .
-RUN npm run build
 
-# ── Stage 2: Serve ──────────────────────────────────────────────────────────
-FROM nginx:alpine AS runner
+# Expose Vite dev server port
+EXPOSE 5173
 
-# Remove default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy built assets from the builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy custom nginx config for SPA routing
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start the React development server
+CMD ["npm", "run", "dev", "--", "--host"]
