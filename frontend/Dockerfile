@@ -13,6 +13,15 @@ RUN npm install
 # Copy all frontend files
 COPY . .
 
+# Create a non-root user and group
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Change ownership of the app directory to the non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to the non-root user
+USER appuser
+
 # Expose Vite dev server port
 EXPOSE 5173
 
