@@ -42,10 +42,10 @@ jobs:
         run: |
           echo "Running tests"
         
-      - name: Build Docker Image
+      - name: Build Backend Docker Image
         run: docker build -t edurev-backend ./backend
 
-      - name: Build Docker Image
+      - name: Build Frontend Docker Image
         run: docker build -t edurev-frontend ./frontend
 
       
