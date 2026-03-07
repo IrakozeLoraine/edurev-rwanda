@@ -6,21 +6,30 @@ interface Question {
   _id: string;
   questionText: string;
   options: string[];
-  correctAnswer: number;
 }
 
-type QuizState = 'loading' | 'taking' | 'submitted' | 'empty' | 'error';
+interface SubmitResult {
+  score: number;
+  total: number;
+  results: { questionId: string; correctAnswer: number; isCorrect: boolean }[];
+}
+
+type QuizState = 'loading' | 'taking' | 'submitted' | 'empty' | 'error' | 'missing';
 
 const Quiz = () => {
-  const { topicId } = useParams<{ topicId: string }>();
+  const { topicId, subjectId } = useParams<{ topicId: string; subjectId: string }>();
   const navigate = useNavigate();
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [state, setQuizState] = useState<QuizState>('loading');
-  const [score, setScore] = useState(0);
+  const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
 
   useEffect(() => {
+    if (!topicId) {
+      setQuizState('missing');
+      return;
+    }
     const fetchQuestions = async () => {
       try {
         const res = await api.get(`/questions/${topicId}`);
@@ -41,16 +50,38 @@ const Quiz = () => {
     setSelected((prev) => ({ ...prev, [questionId]: optionIndex }));
   };
 
-  const handleSubmit = () => {
-    const correct = questions.reduce((acc, q) => {
-      return selected[q._id] === q.correctAnswer ? acc + 1 : acc;
-    }, 0);
-    setScore(correct);
-    setQuizState('submitted');
+  const handleSubmit = async () => {
+    try {
+      const res = await api.post(`/questions/${topicId}/submit`, { answers: selected });
+      setSubmitResult(res.data);
+      setQuizState('submitted');
+    } catch {
+      setQuizState('error');
+    }
   };
 
   const allAnswered = questions.length > 0 && questions.every((q) => selected[q._id] !== undefined);
-  const percentage = Math.round((score / questions.length) * 100);
+  const percentage = submitResult && submitResult.total > 0
+    ? Math.round((submitResult.score / submitResult.total) * 100)
+    : 0;
+  const backToTopics = () => navigate(`/subjects/${subjectId}/topics`);
+
+  const getCorrectAnswer = (questionId: string) =>
+    submitResult?.results.find((r) => r.questionId === questionId)?.correctAnswer ?? -1;
+
+  const getIsCorrect = (questionId: string) =>
+    submitResult?.results.find((r) => r.questionId === questionId)?.isCorrect ?? false;
+
+  if (state === 'missing') {
+    return (
+      <div className="max-w-3xl mx-auto px-6 py-16 text-center">
+        <p className="text-red-600 text-sm">Topic not found.</p>
+        <button onClick={backToTopics} className="mt-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors">
+          Back to Topics
+        </button>
+      </div>
+    );
+  }
 
   if (state === 'loading') {
     return (
@@ -65,7 +96,7 @@ const Quiz = () => {
       <div className="max-w-3xl mx-auto px-6 py-16 text-center">
         <p className="text-mongo-heading font-semibold text-lg mb-2">No questions yet</p>
         <p className="text-mongo-muted text-sm mb-6">There are no questions available for this topic.</p>
-        <button onClick={() => navigate(-1)} className="px-4 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors">
+        <button onClick={backToTopics} className="px-4 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors">
           Go Back
         </button>
       </div>
@@ -75,8 +106,8 @@ const Quiz = () => {
   if (state === 'error') {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16 text-center">
-        <p className="text-red-600 text-sm">Failed to load questions. Please try again.</p>
-        <button onClick={() => navigate(-1)} className="mt-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors">
+        <p className="text-red-600 text-sm">Something went wrong. Please try again.</p>
+        <button onClick={backToTopics} className="mt-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors">
           Go Back
         </button>
       </div>
@@ -86,11 +117,11 @@ const Quiz = () => {
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
       {/* Score banner */}
-      {state === 'submitted' && (
+      {state === 'submitted' && submitResult && (
         <div className={`mb-8 rounded-xl p-6 text-center border ${percentage >= 50 ? 'bg-mongo-green-light border-mongo-green' : 'bg-red-50 border-red-200'}`}>
           <p className="text-mongo-muted text-sm mb-1">Your Score</p>
           <p className={`text-4xl font-bold mb-1 ${percentage >= 50 ? 'text-mongo-green' : 'text-red-500'}`}>
-            {score} / {questions.length}
+            {submitResult.score} / {submitResult.total}
           </p>
           <p className={`text-lg font-medium ${percentage >= 50 ? 'text-mongo-green' : 'text-red-500'}`}>
             {percentage}%
@@ -105,7 +136,8 @@ const Quiz = () => {
       <div className="space-y-6">
         {questions.map((q, idx) => {
           const userAnswer = selected[q._id];
-          const isCorrect = userAnswer === q.correctAnswer;
+          const correctAnswer = getCorrectAnswer(q._id);
+          const isCorrect = getIsCorrect(q._id);
 
           return (
             <div key={q._id} className="bg-mongo-card border border-mongo-border rounded-xl p-6 shadow-sm">
@@ -120,7 +152,7 @@ const Quiz = () => {
                   }
 
                   if (state === 'submitted') {
-                    if (i === q.correctAnswer) {
+                    if (i === correctAnswer) {
                       optionStyle = 'border-mongo-green bg-mongo-green-light text-mongo-heading font-medium';
                     } else if (userAnswer === i && !isCorrect) {
                       optionStyle = 'border-red-400 bg-red-50 text-red-600';
@@ -138,7 +170,7 @@ const Quiz = () => {
                     >
                       <span className="font-medium mr-2">{String.fromCharCode(65 + i)}.</span>
                       {option}
-                      {state === 'submitted' && i === q.correctAnswer && (
+                      {state === 'submitted' && i === correctAnswer && (
                         <span className="ml-2 text-mongo-green text-xs font-semibold">✓ Correct</span>
                       )}
                       {state === 'submitted' && userAnswer === i && !isCorrect && (
@@ -156,7 +188,7 @@ const Quiz = () => {
       {/* Actions */}
       <div className="mt-8 flex gap-3 justify-end">
         <button
-          onClick={() => navigate(-1)}
+          onClick={backToTopics}
           className="px-4 py-2 rounded-md text-sm font-medium text-mongo-muted border border-mongo-border hover:bg-mongo-bg transition-colors"
         >
           Back to Topics
@@ -174,8 +206,8 @@ const Quiz = () => {
           <button
             onClick={() => {
               setSelected({});
+              setSubmitResult(null);
               setQuizState('taking');
-              setScore(0);
             }}
             className="px-6 py-2 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors"
           >

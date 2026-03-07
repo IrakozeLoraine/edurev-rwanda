@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const Subject = require("./models/Subject");
 const Topic = require("./models/Topic");
+const Question = require("./models/Question");
 
 dotenv.config();
 
@@ -547,6 +548,7 @@ const seedDB = async () => {
 
     await Subject.deleteMany({});
     await Topic.deleteMany({});
+    await Question.deleteMany({});
     console.log("Cleared existing data");
 
     const createdSubjects = await Subject.insertMany(subjects);
@@ -563,6 +565,42 @@ const seedDB = async () => {
       }
     }
     console.log(`Seeded ${topicCount} topics`);
+
+    // Seed questions for the first topic of each subject
+    const allTopics = await Topic.find({}).populate("subject", "name");
+    const questionsByTopicTitle = {
+      "Number Systems": [
+        { questionText: "Which of the following is an irrational number?", options: ["0.5", "√2", "3/4", "-7"], correctAnswer: 1 },
+        { questionText: "Which set contains only integers?", options: ["{1, 2.5, 3}", "{-2, 0, 4}", "{1/2, 3/4}", "{π, e}"], correctAnswer: 1 },
+        { questionText: "What is the value of 2³?", options: ["6", "5", "8", "9"], correctAnswer: 2 },
+      ],
+      "Algebraic Expressions": [
+        { questionText: "Simplify: 3x + 2x", options: ["5x²", "5x", "6x", "x⁵"], correctAnswer: 1 },
+        { questionText: "What is the value of x in: 2x = 10?", options: ["2", "5", "8", "20"], correctAnswer: 1 },
+        { questionText: "Expand: (x + 2)(x + 3)", options: ["x² + 5x + 6", "x² + 6x + 5", "x² + 5x + 5", "x² + 6"], correctAnswer: 0 },
+      ],
+      "Motion": [
+        { questionText: "What is the SI unit of velocity?", options: ["m/s²", "m/s", "km/h", "N"], correctAnswer: 1 },
+        { questionText: "An object moving at constant velocity has what acceleration?", options: ["Positive", "Negative", "Zero", "Variable"], correctAnswer: 2 },
+        { questionText: "What does the slope of a distance-time graph represent?", options: ["Acceleration", "Speed", "Force", "Mass"], correctAnswer: 1 },
+      ],
+      "Cell Structure": [
+        { questionText: "Which organelle is known as the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Vacuole"], correctAnswer: 2 },
+        { questionText: "What controls what enters and exits the cell?", options: ["Cell wall", "Cell membrane", "Nucleus", "Cytoplasm"], correctAnswer: 1 },
+        { questionText: "Which cells have a cell wall?", options: ["Animal cells", "Plant cells", "Blood cells", "Nerve cells"], correctAnswer: 1 },
+      ],
+    };
+
+    let questionCount = 0;
+    for (const topic of allTopics) {
+      const questions = questionsByTopicTitle[topic.title];
+      if (questions) {
+        const withTopic = questions.map((q) => ({ ...q, topic: topic._id }));
+        await Question.insertMany(withTopic);
+        questionCount += withTopic.length;
+      }
+    }
+    console.log(`Seeded ${questionCount} questions`);
 
     await mongoose.connection.close();
     console.log("Done!");
