@@ -74,13 +74,19 @@ npm install
 npm run dev
 ```
 
+6. Seed the database with initial subjects and topics (optional)
+```bash
+cd backend
+node seed.js
+```
+
 The application will be available at `http://localhost:5173` (Vite default port) with the backend running on `http://localhost:5000`.
 
 ### Usage
 
 1. **Open the application** in your browser at `http://localhost:5173`
 
-2. **Create an account** - Sign up with your email and password
+2. **Create an account and Login** - Sign up or sign in with your email and password
 
 3. **Select a subject** - Choose from available O-Level or A-Level subjects (Mathematics, English, Biology, etc.)
 

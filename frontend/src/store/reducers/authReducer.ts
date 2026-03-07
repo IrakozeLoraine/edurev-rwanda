@@ -1,37 +1,40 @@
 import type { AuthState } from "../../types";
 
-const AUTH_REQUEST = "AUTH_REQUEST";
-const AUTH_SUCCESS = "AUTH_SUCCESS";
-const AUTH_FAILURE = "AUTH_FAILURE";
-const AUTH_LOGOUT = "AUTH_LOGOUT";
-
-export type AuthAction =
-  | { type: typeof AUTH_REQUEST }
-  | { type: typeof AUTH_SUCCESS; payload: { token: string } }
-  | { type: typeof AUTH_FAILURE; payload: string }
-  | { type: typeof AUTH_LOGOUT };
-
 const initialState: AuthState = {
-  token: localStorage.getItem("token"),
   user: null,
+  token: null,
   loading: false,
   error: null,
 };
 
-export const authReducer = (
-  state = initialState,
-  action: AuthAction
-): AuthState => {
+type AuthAction =
+  | { type: "AUTH_REQUEST" }
+  | { type: "AUTH_SUCCESS"; payload: { user: AuthState["user"]; token: string } }
+  | { type: "AUTH_FAILURE"; payload: string }
+  | { type: "AUTH_LOGOUT" }
+  | { type: "AUTH_CLEAR_ERROR" };
+
+const authReducer = (state = initialState, action: AuthAction): AuthState => {
   switch (action.type) {
-    case AUTH_REQUEST:
+    case "AUTH_REQUEST":
       return { ...state, loading: true, error: null };
-    case AUTH_SUCCESS:
-      return { ...state, loading: false, token: action.payload.token, error: null };
-    case AUTH_FAILURE:
+    case "AUTH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        user: action.payload.user,
+        token: action.payload.token ?? state.token,
+        error: null,
+      };
+    case "AUTH_FAILURE":
       return { ...state, loading: false, error: action.payload };
-    case AUTH_LOGOUT:
-      return { ...state, token: null, user: null };
+    case "AUTH_LOGOUT":
+      return { ...initialState };
+    case "AUTH_CLEAR_ERROR":
+      return { ...state, error: null };
     default:
       return state;
   }
 };
+
+export default authReducer;

@@ -9,19 +9,28 @@ import type { RootState, AppDispatch } from './store/store';
 
 const App = () => {
   const location = useLocation();
-  const isHome = location.pathname === '/';
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { token } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, token } = useSelector((state: RootState) => state.auth);
+  const isHome = location.pathname === '/';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  const handleLogout = () => {
-    (dispatch as unknown as (fn: ReturnType<typeof logout>) => void)(logout());
+  const handleSignOut = () => {
+    dispatch(logout() as never);
     navigate('/login');
   };
 
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-mongo-bg text-mongo-text">
-      {/* Navigation */}
       <header className="bg-mongo-card border-b border-mongo-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 flex items-center h-14">
           <Link to="/" className="flex items-center gap-3 group">
@@ -47,28 +56,41 @@ const App = () => {
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
-            {token ? (
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-md text-sm font-medium text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg transition-colors"
-              >
-                Sign Out
-              </button>
+            {token && user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-mongo-green-light rounded-full flex items-center justify-center">
+                    <span className="text-mongo-green text-xs font-bold">
+                      {user.name
+                        .split(' ')
+                        .map((n: string) => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2)}
+                    </span>
+                  </div>
+                  <span className="text-sm text-mongo-heading font-medium hidden sm:inline">
+                    {user.name}
+                  </span>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-mongo-muted hover:text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  Sign Out
+                </button>
+              </>
             ) : (
               <>
                 <Link
                   to="/login"
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    location.pathname === '/login'
-                      ? 'text-mongo-green bg-mongo-green-light'
-                      : 'text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg'
-                  }`}
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-mongo-muted hover:text-mongo-heading hover:bg-mongo-bg transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 rounded-md text-sm font-medium bg-mongo-green text-white hover:bg-mongo-green/90 transition-colors"
+                  className="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -78,13 +100,10 @@ const App = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Subjects />} />
           <Route path="/subjects/:subjectId/topics" element={<Topics />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route
             path="*"
             element={
@@ -96,7 +115,6 @@ const App = () => {
         </Routes>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-mongo-border py-4 bg-mongo-card">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-xs text-mongo-muted">
           <span>EduRev Rwanda &mdash; Smart Revision for Rwandan Students</span>

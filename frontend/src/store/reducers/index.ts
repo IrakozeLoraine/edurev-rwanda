@@ -1,9 +1,6 @@
 import { combineReducers } from "redux";
-import { authReducer } from "./authReducer";
-
-const placeholderReducer = (state = {}) => state;
+import authReducer from "./authReducer";
 
 export const rootReducer = combineReducers({
-  app: placeholderReducer,
   auth: authReducer,
 });
