@@ -26,6 +26,7 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/subjects", require("./routes/subjectRoutes"));
 app.use("/api/topics", require("./routes/topicRoutes"));
+app.use("/api/questions", require("./routes/questionRoutes"));
 
 const PORT = process.env.PORT || 5000;
 
