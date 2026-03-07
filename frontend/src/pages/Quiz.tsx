@@ -22,14 +22,11 @@ const Quiz = () => {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selected, setSelected] = useState<Record<string, number>>({});
-  const [state, setQuizState] = useState<QuizState>('loading');
+  const [state, setQuizState] = useState<QuizState>(topicId ? 'loading' : 'missing');
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
 
   useEffect(() => {
-    if (!topicId) {
-      setQuizState('missing');
-      return;
-    }
+    if (!topicId) return;
     const fetchQuestions = async () => {
       try {
         const res = await api.get(`/questions/${topicId}`);
