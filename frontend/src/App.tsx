@@ -2,7 +2,9 @@ import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import Subjects from './pages/Subjects';
 import Topics from './pages/Topics';
+import TopicDetail from './pages/TopicDetail';
 import Quiz from './pages/Quiz';
+import TopicForum from './pages/TopicForum';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { logout } from './store/actions/authActions';
@@ -105,7 +107,9 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Subjects />} />
           <Route path="/subjects/:subjectId/topics" element={<Topics />} />
+          <Route path="/subjects/:subjectId/topics/:topicId" element={<TopicDetail />} />
           <Route path="/subjects/:subjectId/topics/:topicId/quiz" element={<Quiz />} />
+          <Route path="/subjects/:subjectId/topics/:topicId/forum" element={<TopicForum />} />
           <Route
             path="*"
             element={

@@ -42,3 +42,13 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
 }
+
+export interface ForumPost {
+  _id: string;
+  topic: string;
+  user: { _id: string; name: string };
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}

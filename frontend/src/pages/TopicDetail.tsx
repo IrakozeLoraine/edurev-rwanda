@@ -266,21 +266,45 @@ const TopicDetail = () => {
         <span className="text-mongo-heading font-medium">{topic.title}</span>
       </div>
 
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 flex-wrap mb-2">
-          <h1 className="text-2xl font-bold text-mongo-heading tracking-tight">
-            {topic.title}
-          </h1>
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${diffCfg.bg} ${diffCfg.color}`}>
-            {diffCfg.label}
-          </span>
+      <div className="flex flex-col md:flex-row gap-2 md:items-center justify-between mb-8">
+        {/* Header */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3 flex-wrap mb-2">
+            <h1 className="text-2xl font-bold text-mongo-heading tracking-tight">
+              {topic.title}
+            </h1>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${diffCfg.bg} ${diffCfg.color}`}>
+              {diffCfg.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-mongo-muted">
+            <span>Chapter {topic.chapter}{topic.chapterTitle ? `: ${topic.chapterTitle}` : ""}</span>
+            {hasStructuredContent && (
+              <span>{topic.content!.length} {topic.content!.length === 1 ? "section" : "sections"}</span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-mongo-muted">
-          <span>Chapter {topic.chapter}{topic.chapterTitle ? `: ${topic.chapterTitle}` : ""}</span>
-          {hasStructuredContent && (
-            <span>{topic.content!.length} {topic.content!.length === 1 ? "section" : "sections"}</span>
-          )}
+
+        {/* Actions */}
+        <div className="border-t border-mongo-border flex items-center gap-3 flex-wrap">
+          <Link
+            to={`/subjects/${topic.subject._id}/topics/${topicId}/quiz`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-mongo-green hover:bg-mongo-green/90 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            Start Quiz
+          </Link>
+          <Link
+            to={`/subjects/${topic.subject._id}/topics/${topicId}/forum`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-mongo-bg text-mongo-green border border-mongo-green hover:border-mongo-green/70 hover:text-mongo-green transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1m0-3V4a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H9l-4 4V8z" />
+            </svg>
+            Discussion Forum
+          </Link>
         </div>
       </div>
 
