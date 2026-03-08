@@ -569,25 +569,194 @@ const seedDB = async () => {
     // Seed questions for the first topic of each subject
     const allTopics = await Topic.find({}).populate("subject", "name");
     const questionsByTopicTitle = {
+      // Mathematics
       "Number Systems": [
         { questionText: "Which of the following is an irrational number?", options: ["0.5", "√2", "3/4", "-7"], correctAnswer: 1 },
         { questionText: "Which set contains only integers?", options: ["{1, 2.5, 3}", "{-2, 0, 4}", "{1/2, 3/4}", "{π, e}"], correctAnswer: 1 },
         { questionText: "What is the value of 2³?", options: ["6", "5", "8", "9"], correctAnswer: 2 },
       ],
-      "Algebraic Expressions": [
+      "Algebra": [
         { questionText: "Simplify: 3x + 2x", options: ["5x²", "5x", "6x", "x⁵"], correctAnswer: 1 },
         { questionText: "What is the value of x in: 2x = 10?", options: ["2", "5", "8", "20"], correctAnswer: 1 },
         { questionText: "Expand: (x + 2)(x + 3)", options: ["x² + 5x + 6", "x² + 6x + 5", "x² + 5x + 5", "x² + 6"], correctAnswer: 0 },
       ],
-      "Motion": [
-        { questionText: "What is the SI unit of velocity?", options: ["m/s²", "m/s", "km/h", "N"], correctAnswer: 1 },
-        { questionText: "An object moving at constant velocity has what acceleration?", options: ["Positive", "Negative", "Zero", "Variable"], correctAnswer: 2 },
-        { questionText: "What does the slope of a distance-time graph represent?", options: ["Acceleration", "Speed", "Force", "Mass"], correctAnswer: 1 },
+      "Indices and Logarithms": [
+        { questionText: "What is the value of log₁₀(100)?", options: ["1", "2", "10", "0"], correctAnswer: 1 },
+        { questionText: "Simplify: 2³ × 2⁴", options: ["2⁷", "2¹²", "4⁷", "2⁶"], correctAnswer: 0 },
+        { questionText: "What is x if log₂(x) = 3?", options: ["6", "8", "9", "16"], correctAnswer: 1 },
       ],
-      "Cell Structure": [
+      "Geometry": [
+        { questionText: "What is the sum of interior angles of a triangle?", options: ["90°", "180°", "270°", "360°"], correctAnswer: 1 },
+        { questionText: "What is the area of a circle with radius 7? (use π = 22/7)", options: ["44", "154", "22", "49"], correctAnswer: 1 },
+        { questionText: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], correctAnswer: 1 },
+      ],
+      "Trigonometry": [
+        { questionText: "What is sin(90°)?", options: ["0", "0.5", "1", "√2"], correctAnswer: 2 },
+        { questionText: "In a right triangle, which ratio defines cosine?", options: ["Opposite/Hypotenuse", "Adjacent/Hypotenuse", "Opposite/Adjacent", "Hypotenuse/Adjacent"], correctAnswer: 1 },
+        { questionText: "What is tan(45°)?", options: ["0", "0.5", "√3", "1"], correctAnswer: 3 },
+      ],
+      "Vectors": [
+        { questionText: "A vector has both magnitude and _?", options: ["Color", "Direction", "Temperature", "Mass"], correctAnswer: 1 },
+        { questionText: "What is the resultant of two equal and opposite vectors?", options: ["Doubled", "Zero vector", "Unit vector", "Scalar"], correctAnswer: 1 },
+        { questionText: "Which of the following is a scalar quantity?", options: ["Velocity", "Force", "Speed", "Displacement"], correctAnswer: 2 },
+      ],
+      "Statistics": [
+        { questionText: "What is the mean of: 4, 8, 6, 5, 3?", options: ["5", "6", "5.2", "4.8"], correctAnswer: 1 },
+        { questionText: "Which measure of central tendency is most affected by outliers?", options: ["Mode", "Median", "Mean", "Range"], correctAnswer: 2 },
+        { questionText: "What is the median of: 3, 5, 7, 9, 11?", options: ["5", "7", "9", "6"], correctAnswer: 1 },
+      ],
+      "Probability": [
+        { questionText: "What is the probability of getting a head when flipping a fair coin?", options: ["1", "0", "1/2", "1/4"], correctAnswer: 2 },
+        { questionText: "A bag has 3 red and 7 blue balls. What is P(red)?", options: ["3/7", "7/10", "3/10", "1/3"], correctAnswer: 2 },
+        { questionText: "Two events are mutually exclusive if they _?", options: ["Always happen together", "Cannot happen at the same time", "Have equal probability", "Are independent"], correctAnswer: 1 },
+      ],
+      "Sequences and Series": [
+        { questionText: "What is the 5th term of the arithmetic sequence: 2, 5, 8, …?", options: ["11", "14", "17", "20"], correctAnswer: 1 },
+        { questionText: "What is the common ratio of the geometric sequence: 3, 6, 12, 24?", options: ["2", "3", "4", "6"], correctAnswer: 0 },
+        { questionText: "What is the sum of the first 5 natural numbers?", options: ["10", "15", "20", "25"], correctAnswer: 1 },
+      ],
+      "Matrices": [
+        { questionText: "What is the order of a matrix with 3 rows and 2 columns?", options: ["2×3", "3×2", "6×1", "1×6"], correctAnswer: 1 },
+        { questionText: "What is the identity matrix property: A × I = ?", options: ["0", "I", "A", "A²"], correctAnswer: 2 },
+        { questionText: "Which operation is NOT defined for all pairs of matrices?", options: ["Addition", "Subtraction", "Multiplication", "All are always defined"], correctAnswer: 2 },
+      ],
+      // Physics
+      "Measurements and Units": [
+        { questionText: "What is the SI unit of mass?", options: ["Gram", "Kilogram", "Pound", "Newton"], correctAnswer: 1 },
+        { questionText: "Which instrument measures atmospheric pressure?", options: ["Thermometer", "Barometer", "Ammeter", "Voltmeter"], correctAnswer: 1 },
+        { questionText: "How many centimetres are in 1 metre?", options: ["10", "100", "1000", "10000"], correctAnswer: 1 },
+      ],
+      "Mechanics": [
+        { questionText: "What is Newton's Second Law?", options: ["F = mv", "F = ma", "F = m/a", "F = v/t"], correctAnswer: 1 },
+        { questionText: "What is the unit of force?", options: ["Joule", "Watt", "Newton", "Pascal"], correctAnswer: 2 },
+        { questionText: "An object at rest stays at rest unless acted upon by an external force. Which law is this?", options: ["Second Law", "Third Law", "First Law", "Law of Gravity"], correctAnswer: 2 },
+      ],
+      "Momentum and Impulse": [
+        { questionText: "What is the formula for momentum?", options: ["p = mv", "p = ma", "p = Ft", "p = mgh"], correctAnswer: 0 },
+        { questionText: "What is the SI unit of momentum?", options: ["N", "kg·m/s", "J", "W"], correctAnswer: 1 },
+        { questionText: "Impulse equals the change in _?", options: ["Velocity", "Acceleration", "Momentum", "Force"], correctAnswer: 2 },
+      ],
+      "Electricity": [
+        { questionText: "What is the SI unit of electric current?", options: ["Volt", "Ohm", "Ampere", "Watt"], correctAnswer: 2 },
+        { questionText: "Ohm's law states: V = ?", options: ["I/R", "IR", "I+R", "I²R"], correctAnswer: 1 },
+        { questionText: "What does a voltmeter measure?", options: ["Current", "Resistance", "Potential difference", "Power"], correctAnswer: 2 },
+      ],
+      "Electromagnetism": [
+        { questionText: "What is produced when a current flows through a wire?", options: ["Heat only", "Light only", "A magnetic field", "Sound"], correctAnswer: 2 },
+        { questionText: "What is the principle behind a transformer?", options: ["Ohm's law", "Electromagnetic induction", "Newton's law", "Coulomb's law"], correctAnswer: 1 },
+        { questionText: "Which device converts mechanical energy to electrical energy?", options: ["Motor", "Transformer", "Generator", "Capacitor"], correctAnswer: 2 },
+      ],
+      "Electrostatics": [
+        { questionText: "Like charges _?", options: ["Attract", "Repel", "Neutralise", "Have no effect"], correctAnswer: 1 },
+        { questionText: "What is the SI unit of electric charge?", options: ["Ampere", "Volt", "Coulomb", "Farad"], correctAnswer: 2 },
+        { questionText: "Which material is a good insulator?", options: ["Copper", "Aluminium", "Rubber", "Iron"], correctAnswer: 2 },
+      ],
+      "Optics": [
+        { questionText: "What is the angle of reflection equal to?", options: ["90°", "Angle of incidence", "Angle of refraction", "180°"], correctAnswer: 1 },
+        { questionText: "Which type of lens converges light rays?", options: ["Concave", "Convex", "Plane", "Diverging"], correctAnswer: 1 },
+        { questionText: "What is the speed of light in vacuum?", options: ["3×10⁶ m/s", "3×10⁸ m/s", "3×10¹⁰ m/s", "3×10⁴ m/s"], correctAnswer: 1 },
+      ],
+      "Wave Motion": [
+        { questionText: "What type of wave is sound?", options: ["Transverse", "Longitudinal", "Electromagnetic", "Surface"], correctAnswer: 1 },
+        { questionText: "What is the relationship between frequency and wavelength?", options: ["Direct proportion", "Inverse proportion", "No relation", "Equal always"], correctAnswer: 1 },
+        { questionText: "What is the unit of frequency?", options: ["Metre", "Second", "Hertz", "Newton"], correctAnswer: 2 },
+      ],
+      "Sound": [
+        { questionText: "Sound travels fastest through which medium?", options: ["Air", "Water", "Steel", "Vacuum"], correctAnswer: 2 },
+        { questionText: "What property of sound determines its pitch?", options: ["Amplitude", "Frequency", "Speed", "Wavelength"], correctAnswer: 1 },
+        { questionText: "What is the Doppler effect?", options: ["Change in speed of sound", "Change in apparent frequency due to relative motion", "Reflection of sound", "Absorption of sound"], correctAnswer: 1 },
+      ],
+      "Heat and Temperature": [
+        { questionText: "What is absolute zero in Celsius?", options: ["0°C", "-100°C", "-273°C", "-373°C"], correctAnswer: 2 },
+        { questionText: "What is the SI unit of temperature?", options: ["Celsius", "Fahrenheit", "Kelvin", "Rankine"], correctAnswer: 2 },
+        { questionText: "Which process transfers heat without a medium?", options: ["Conduction", "Convection", "Radiation", "Diffusion"], correctAnswer: 2 },
+      ],
+      "Gas Laws": [
+        { questionText: "Boyle's Law states that at constant temperature, pressure and volume are _?", options: ["Directly proportional", "Inversely proportional", "Equal", "Independent"], correctAnswer: 1 },
+        { questionText: "What does Charles's Law relate?", options: ["Pressure and volume", "Volume and temperature", "Pressure and temperature", "Mass and volume"], correctAnswer: 1 },
+        { questionText: "At STP, what is the standard temperature?", options: ["0°C", "25°C", "100°C", "-273°C"], correctAnswer: 0 },
+      ],
+      // Biology
+      "Cell Biology": [
         { questionText: "Which organelle is known as the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Vacuole"], correctAnswer: 2 },
         { questionText: "What controls what enters and exits the cell?", options: ["Cell wall", "Cell membrane", "Nucleus", "Cytoplasm"], correctAnswer: 1 },
         { questionText: "Which cells have a cell wall?", options: ["Animal cells", "Plant cells", "Blood cells", "Nerve cells"], correctAnswer: 1 },
+      ],
+      "Cell Transport": [
+        { questionText: "What is osmosis?", options: ["Movement of solutes from high to low concentration", "Movement of water across a semi-permeable membrane", "Active transport of ions", "Movement of gases by diffusion"], correctAnswer: 1 },
+        { questionText: "Which type of transport requires energy?", options: ["Diffusion", "Osmosis", "Active transport", "Facilitated diffusion"], correctAnswer: 2 },
+        { questionText: "In which direction does diffusion occur?", options: ["Low to high concentration", "High to low concentration", "Against the gradient", "Randomly"], correctAnswer: 1 },
+      ],
+      "Enzymes": [
+        { questionText: "Enzymes are biological _?", options: ["Lipids", "Carbohydrates", "Catalysts", "Nucleic acids"], correctAnswer: 2 },
+        { questionText: "What is the active site of an enzyme?", options: ["The entire enzyme surface", "The region where the substrate binds", "The product release site", "The enzyme core"], correctAnswer: 1 },
+        { questionText: "What happens to enzyme activity at very high temperatures?", options: ["Increases indefinitely", "Remains constant", "Denatures and stops", "Slows slightly"], correctAnswer: 2 },
+      ],
+      "Human Body Systems": [
+        { questionText: "What is the function of the heart?", options: ["Filter blood", "Produce blood cells", "Pump blood around the body", "Digest food"], correctAnswer: 2 },
+        { questionText: "Where does gas exchange occur in the lungs?", options: ["Bronchi", "Trachea", "Alveoli", "Diaphragm"], correctAnswer: 2 },
+        { questionText: "Which organ produces insulin?", options: ["Liver", "Kidney", "Pancreas", "Stomach"], correctAnswer: 2 },
+      ],
+      "Reproduction": [
+        { questionText: "What is fertilisation?", options: ["Division of cells", "Fusion of male and female gametes", "Growth of embryo", "Release of eggs"], correctAnswer: 1 },
+        { questionText: "How many chromosomes does a human body cell have?", options: ["23", "46", "48", "92"], correctAnswer: 1 },
+        { questionText: "What is the function of the placenta?", options: ["Produce hormones only", "Exchange nutrients and waste between mother and foetus", "Store eggs", "Produce sperm"], correctAnswer: 1 },
+      ],
+      "Nutrition and Diet": [
+        { questionText: "Which nutrient provides the most energy per gram?", options: ["Carbohydrates", "Proteins", "Fats", "Vitamins"], correctAnswer: 2 },
+        { questionText: "Which vitamin is produced when skin is exposed to sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], correctAnswer: 3 },
+        { questionText: "What deficiency disease is caused by lack of Vitamin C?", options: ["Rickets", "Scurvy", "Anaemia", "Goitre"], correctAnswer: 1 },
+      ],
+      "Ecology": [
+        { questionText: "What is a food chain?", options: ["A series of organisms where each feeds on the next", "A network of predators", "A cycle of nutrients", "A group of producers"], correctAnswer: 0 },
+        { questionText: "What are organisms at the base of a food chain called?", options: ["Consumers", "Decomposers", "Producers", "Predators"], correctAnswer: 2 },
+        { questionText: "What is biodiversity?", options: ["Number of ecosystems", "Variety of species in an area", "Amount of rainfall", "Size of a habitat"], correctAnswer: 1 },
+      ],
+      "Classification of Living Things": [
+        { questionText: "What is the binomial nomenclature system?", options: ["Classification by habitat", "Two-part Latin name for species", "Grouping by size", "Kingdom and order naming"], correctAnswer: 1 },
+        { questionText: "How many kingdoms are in the traditional classification system?", options: ["3", "4", "5", "6"], correctAnswer: 2 },
+        { questionText: "Which kingdom includes mushrooms and moulds?", options: ["Plantae", "Animalia", "Fungi", "Protista"], correctAnswer: 2 },
+      ],
+      "Evolution and Adaptation": [
+        { questionText: "Who proposed the theory of natural selection?", options: ["Mendel", "Darwin", "Lamarck", "Watson"], correctAnswer: 1 },
+        { questionText: "What is an adaptation?", options: ["A random mutation", "A feature that increases survival in an environment", "A learned behaviour", "An inherited disease"], correctAnswer: 1 },
+        { questionText: "What is the main evidence for evolution?", options: ["Laboratory experiments only", "Fossil record and genetic similarity", "Religious texts", "Observation of living species only"], correctAnswer: 1 },
+      ],
+      "Heredity and Genetics": [
+        { questionText: "What are alleles?", options: ["Types of chromosomes", "Different forms of a gene", "Sections of a protein", "Types of cell division"], correctAnswer: 1 },
+        { questionText: "In a Punnett square, if both parents are Bb, what fraction of offspring will be BB?", options: ["1/4", "1/2", "3/4", "0"], correctAnswer: 0 },
+        { questionText: "What is a dominant allele?", options: ["An allele that is always expressed", "An allele only expressed when homozygous", "A recessive allele", "An allele on the Y chromosome"], correctAnswer: 0 },
+      ],
+      "DNA and Protein Synthesis": [
+        { questionText: "DNA stands for _?", options: ["Deoxyribonucleic Acid", "Diribonucleic Acid", "Deoxyribose Nucleotide Array", "Double Nucleotide Acid"], correctAnswer: 0 },
+        { questionText: "Which base pairs with Adenine in DNA?", options: ["Cytosine", "Guanine", "Thymine", "Uracil"], correctAnswer: 2 },
+        { questionText: "What is the role of mRNA in protein synthesis?", options: ["Carries amino acids", "Carries genetic code from DNA to ribosome", "Forms the ribosome", "Breaks down proteins"], correctAnswer: 1 },
+      ],
+      // English
+      "Grammar": [
+        { questionText: "Which sentence is grammatically correct?", options: ["He go to school.", "He goes to school.", "He going to school.", "He gone to school."], correctAnswer: 1 },
+        { questionText: "What is a noun?", options: ["An action word", "A describing word", "A person, place, or thing", "A connecting word"], correctAnswer: 2 },
+        { questionText: "Which is a conjunction?", options: ["Quickly", "And", "Run", "Beautiful"], correctAnswer: 1 },
+      ],
+      "Vocabulary Building": [
+        { questionText: "What is a synonym?", options: ["A word with the opposite meaning", "A word with a similar meaning", "A word that sounds the same", "A word with no meaning"], correctAnswer: 1 },
+        { questionText: "What does the prefix 'un-' mean?", options: ["Again", "Before", "Not", "After"], correctAnswer: 2 },
+        { questionText: "Which word is an antonym of 'happy'?", options: ["Joyful", "Glad", "Sad", "Content"], correctAnswer: 2 },
+      ],
+      "Sentence Construction": [
+        { questionText: "Which is a complex sentence?", options: ["She ran fast.", "He ate and slept.", "Although it rained, we went out.", "The cat sat."], correctAnswer: 2 },
+        { questionText: "What is a subordinate clause?", options: ["A clause that can stand alone", "A clause that depends on the main clause", "A clause with no verb", "A clause with two subjects"], correctAnswer: 1 },
+        { questionText: "Which word joins two independent clauses?", options: ["Because", "Although", "However", "But"], correctAnswer: 3 },
+      ],
+      "Comprehension": [
+        { questionText: "What does 'inference' mean in reading comprehension?", options: ["Copying text directly", "Drawing a conclusion from evidence in the text", "Summarising the passage", "Identifying the title"], correctAnswer: 1 },
+        { questionText: "What is the main idea of a passage?", options: ["The last sentence", "The central point the author is making", "A supporting detail", "The title only"], correctAnswer: 1 },
+        { questionText: "Which reading strategy helps identify the author's purpose?", options: ["Skimming for keywords", "Asking why the author wrote the text", "Reading only the first paragraph", "Counting words"], correctAnswer: 1 },
+      ],
+      "Essay Writing": [
+        { questionText: "Which part of an essay introduces the topic?", options: ["Body paragraph", "Conclusion", "Introduction", "Bibliography"], correctAnswer: 2 },
+        { questionText: "What is a thesis statement?", options: ["The final sentence of an essay", "The main argument or claim of the essay", "A list of references", "A topic sentence in the body"], correctAnswer: 1 },
+        { questionText: "What should a conclusion do?", options: ["Introduce new arguments", "Summarise and reinforce the main points", "List all evidence", "Start a new topic"], correctAnswer: 1 },
       ],
     };
 
