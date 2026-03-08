@@ -80,7 +80,51 @@ cd backend
 node seed.js
 ```
 
-The application will be available at `http://localhost:5173` (Vite default port) with the backend running on `http://localhost:5000`.
+## Running with Docker Compose
+
+If you prefer to run the application using Docker Compose, follow these steps:
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
+cd edurev-rwanda
+```
+
+2. Create a `.env` file in the backend directory with the following variables:
+```
+MONGO_URI=mongodb://mongo:27017/edurev-rwanda
+PORT=4500
+JWT_SECRET=your_jwt_secret_key_here
+```
+
+3. Create a `.env` file in the frontend directory with the following variable:
+```
+VITE_API_BASE_URL=http://localhost:4500
+```
+
+### Running the Application
+
+1. Build and start the services
+```bash
+docker-compose up --build
+```
+
+2. Seed the database with initial subjects and topics (optional)
+```bash
+docker-compose exec backend node seed.js
+```
+
+The application will be available at `http://localhost:5173` with the backend running on `http://localhost:4500`.
+
+To stop the services, press `Ctrl+C` or run:
+```bash
+docker-compose down
+```
 
 ### Usage
 
