@@ -1,5 +1,8 @@
+/* global jest */
 const request = require('supertest');
 const app = require('../server');
+
+jest.mock('../config/db', () => jest.fn());
 
 describe('Health check', () => {
     it('responds with 200 on root path', async () => {
