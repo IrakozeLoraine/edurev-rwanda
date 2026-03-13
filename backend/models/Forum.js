@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 const forumPostSchema = new mongoose.Schema({
-  topic: { type: mongoose.Schema.Types.ObjectId, ref: "Topic" },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  content: String
+  topic: { type: mongoose.Schema.Types.ObjectId, ref: "Topic", required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  title: { type: String, required: true, trim: true },
+  content: { type: String, required: true, trim: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model("ForumPost", forumPostSchema);

@@ -61,8 +61,7 @@ const Quiz = () => {
   const percentage = submitResult && submitResult.total > 0
     ? Math.round((submitResult.score / submitResult.total) * 100)
     : 0;
-  const backToTopics = () => navigate(`/subjects/${subjectId}/topics`);
-
+  const backToTopics = () => navigate(`/subjects/${subjectId}/topics/${topicId}`);
   const getCorrectAnswer = (questionId: string) =>
     submitResult?.results.find((r) => r.questionId === questionId)?.correctAnswer ?? -1;
 
