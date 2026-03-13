@@ -28,8 +28,8 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use('/api/', (req, res) => {
-    res.send('Welcome to the Edurev Rwanda API');
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
 });
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/subjects', require('./routes/subjectRoutes'));
