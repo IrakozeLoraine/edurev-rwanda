@@ -33,19 +33,28 @@ jobs:
           cd frontend
           npm install
 
-      - name: Run Lint
+      - name: Lint Backend
+        run: |
+          cd backend
+          npm run lint
+
+      - name: Lint Frontend
         run: |
           cd frontend
           npm run lint
 
-      - name: Run Tests
+      - name: Test Backend
         run: |
-          echo "Running tests"
-        
+          cd backend
+          npm test
+
+      - name: Test Frontend
+        run: |
+          cd frontend
+          npm test
+
       - name: Build Backend Docker Image
         run: docker build -t edurev-backend ./backend
 
       - name: Build Frontend Docker Image
         run: docker build -t edurev-frontend ./frontend
-
-      
