@@ -1,5 +1,4 @@
 const { connectDB, closeDB } = require('./config/db');
-const initSchema = require('./config/schema');
 const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
@@ -8,7 +7,6 @@ let server;
 
 const startServer = async () => {
   await connectDB();
-  await initSchema();
   server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

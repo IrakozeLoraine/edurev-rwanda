@@ -56,10 +56,6 @@ Expected: Single object with `_id`, `name`, `level`.
 
 ```bash
 # Use a subject _id from step 3
-curl http://localhost:4500/api/subjects/<subject-id>/topics
-```
-Wait — topics are at `/api/topics/:subjectId`:
-```bash
 curl "http://localhost:4500/api/topics/<subject-id>"
 ```
 Expected: Array of topics. Each has:
