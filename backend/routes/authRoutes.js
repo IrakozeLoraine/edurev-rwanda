@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const { query } = require("../config/db");
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -11,18 +11,15 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Validate required fields
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    // Validate password strength (min 6 chars, at least one letter and one number)
     if (password.length < 6) {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
@@ -30,27 +27,26 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Password must contain at least one letter and one number" });
     }
 
-    // Check for existing email
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existing = await query("SELECT id FROM users WHERE email = $1", [email]);
+    if (existing.rows.length > 0) {
       return res.status(409).json({ message: "Email is already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
+    const result = await query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, role",
+      [name, email, hashedPassword]
+    );
+    const user = result.rows[0];
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
     res.status(201).json({
       token,
-      user: { _id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { _id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
     console.error("Register error:", error);
@@ -67,7 +63,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await User.findOne({ email });
+    const result = await query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = result.rows[0];
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -77,13 +74,13 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
     res.json({
       token,
-      user: { _id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { _id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -94,11 +91,15 @@ router.post("/login", async (req, res) => {
 // Get current user
 router.get("/me", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user).select("-password");
+    const result = await query(
+      "SELECT id, name, email, role FROM users WHERE id = $1",
+      [req.user]
+    );
+    const user = result.rows[0];
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({ _id: user._id, name: user.name, email: user.email, role: user.role });
+    res.json({ _id: user.id, name: user.name, email: user.email, role: user.role });
   } catch (error) {
     console.error("Get user error:", error);
     res.status(500).json({ message: "Server error" });
