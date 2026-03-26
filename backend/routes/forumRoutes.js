@@ -40,14 +40,12 @@ router.post("/:topicId", protect, async (req, res) => {
     const result = await query(
       `INSERT INTO forum_posts (topic_id, user_id, title, content)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, topic_id AS topic, title, content, created_at AS "createdAt", updated_at AS "updatedAt"`,
+       RETURNING id AS _id, topic_id AS topic, title, content, created_at AS "createdAt", updated_at AS "updatedAt"`,
       [req.params.topicId, req.user, title, content]
     );
     const post = result.rows[0];
 
-    // Fetch user info for the response
     const userResult = await query("SELECT id AS _id, name FROM users WHERE id = $1", [req.user]);
-    post._id = post.id;
     post.user = userResult.rows[0];
 
     res.status(201).json(post);

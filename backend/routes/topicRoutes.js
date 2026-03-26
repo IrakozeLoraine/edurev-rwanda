@@ -11,7 +11,13 @@ router.get("/:subjectId", async (req, res) => {
     let orderClause;
     switch (sortBy) {
       case "difficulty":
-        orderClause = "t.difficulty ASC, t.chapter ASC, t.\"order\" ASC";
+        orderClause =
+          "CASE t.difficulty " +
+          "WHEN 'beginner' THEN 1 " +
+          "WHEN 'intermediate' THEN 2 " +
+          "WHEN 'advanced' THEN 3 " +
+          "ELSE 4 END, " +
+          "t.chapter ASC, t.\"order\" ASC";
         break;
       case "title":
         orderClause = "t.title ASC";

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
+    "migrate": "node migrate.js",
     "lint": "eslint .",
     "test": "jest"
   },
