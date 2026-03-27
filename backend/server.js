@@ -1,8 +1,7 @@
-const connectDB = require('./config/db');
+const { connectDB, closeDB } = require('./config/db');
 const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
-connectDB();
 
 let server;
 
@@ -23,6 +22,11 @@ const stopServer = async () => {
       });
     });
   }
+  await closeDB();
 };
+
+if (require.main === module) {
+  startServer();
+}
 
 module.exports = { app, startServer, stopServer };

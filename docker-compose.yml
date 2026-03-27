@@ -1,33 +1,43 @@
 services:
 
-  mongo:
-    image: mongo:7
-    container_name: edurev-rwanda-mongo
+  postgres:
+    image: postgres:17-alpine
+    container_name: edurev-rwanda-postgres
     restart: always
     ports:
-      - "27017:27017"
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: edurev
+      POSTGRES_PASSWORD: edurev_pass
+      POSTGRES_DB: edurev_rwanda
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", mongodb://mongo:27017/edurev-rwanda, "--eval", "db.runCommand({ ping: 1 })"]
+      test: ["CMD-SHELL", "pg_isready -U edurev -d edurev_rwanda"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
 
-
   backend:
     build: ./backend
     container_name: edurev-rwanda-backend
     ports:
-      - "4500:4500"
-    env_file:
-      - ./backend/.env
+      - "4500:5000"
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: edurev
+      PGPASSWORD: edurev_pass
+      PGDATABASE: edurev_rwanda
+      JWT_SECRET: edurev-secret-key
+      PORT: 5000
+      CORS_ORIGIN: http://localhost:5173
     depends_on:
-      mongo:
+      postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4500/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,4 +55,4 @@ services:
         condition: service_healthy
 
 volumes:
-  mongo_data:
+  postgres_data:

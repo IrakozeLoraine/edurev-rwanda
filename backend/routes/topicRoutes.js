@@ -1,5 +1,5 @@
 const express = require("express");
-const Topic = require("../models/Topic");
+const { query } = require("../config/db");
 
 const router = express.Router();
 
@@ -8,26 +8,47 @@ router.get("/:subjectId", async (req, res) => {
   try {
     const { sortBy } = req.query;
 
-    let sortOption;
+    let orderClause;
     switch (sortBy) {
       case "difficulty":
-        // beginner → intermediate → advanced
-        sortOption = { difficulty: 1, chapter: 1, order: 1 };
+        orderClause =
+          "CASE t.difficulty " +
+          "WHEN 'beginner' THEN 1 " +
+          "WHEN 'intermediate' THEN 2 " +
+          "WHEN 'advanced' THEN 3 " +
+          "ELSE 4 END, " +
+          "t.chapter ASC, t.\"order\" ASC";
         break;
       case "title":
-        sortOption = { title: 1 };
+        orderClause = "t.title ASC";
         break;
       case "chapter":
       default:
-        sortOption = { chapter: 1, order: 1 };
+        orderClause = "t.chapter ASC, t.\"order\" ASC";
         break;
     }
 
-    const topics = await Topic.find({ subject: req.params.subjectId })
-      .sort(sortOption)
-      .populate("subject", "name level");
+    const result = await query(
+      `SELECT
+        t.id AS _id,
+        t.title,
+        t.chapter,
+        t.chapter_title AS "chapterTitle",
+        t."order",
+        t.difficulty,
+        t.notes,
+        t.summary,
+        t.content,
+        t."references",
+        json_build_object('_id', s.id, 'name', s.name, 'level', s.level) AS subject
+      FROM topics t
+      JOIN subjects s ON t.subject_id = s.id
+      WHERE t.subject_id = $1
+      ORDER BY ${orderClause}`,
+      [req.params.subjectId]
+    );
 
-    res.json(topics);
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,14 +57,30 @@ router.get("/:subjectId", async (req, res) => {
 // GET single topic by ID
 router.get("/detail/:topicId", async (req, res) => {
   try {
-    const topic = await Topic.findById(req.params.topicId)
-      .populate("subject", "name level");
+    const result = await query(
+      `SELECT
+        t.id AS _id,
+        t.title,
+        t.chapter,
+        t.chapter_title AS "chapterTitle",
+        t."order",
+        t.difficulty,
+        t.notes,
+        t.summary,
+        t.content,
+        t."references",
+        json_build_object('_id', s.id, 'name', s.name, 'level', s.level) AS subject
+      FROM topics t
+      JOIN subjects s ON t.subject_id = s.id
+      WHERE t.id = $1`,
+      [req.params.topicId]
+    );
 
-    if (!topic) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ message: "Topic not found" });
     }
 
-    res.json(topic);
+    res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

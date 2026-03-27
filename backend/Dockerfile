@@ -9,8 +9,8 @@ WORKDIR /app
 # 3. Copy only the package manifest files first.
 COPY package*.json ./
 
-# 4. Install production dependencies only (skip devDependencies since not needed at runtime).
-RUN npm ci --omit=dev
+# 4. Install curl for healthcheck and production dependencies.
+RUN apk add --no-cache curl && npm ci --omit=dev
 
 # 5. Copy the remaining application source code into the image.
 COPY . .

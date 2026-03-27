@@ -1,10 +1,8 @@
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Subject = require("./models/Subject");
-const Topic = require("./models/Topic");
-const Question = require("./models/Question");
-
 dotenv.config();
+
+const { query, connectDB, closeDB } = require("./config/db");
+const initSchema = require("./config/schema");
 
 const subjects = [
   { name: "Mathematics", level: "O-Level" },
@@ -543,31 +541,55 @@ const topicsBySubject = {
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("Connected to MongoDB");
+    await connectDB();
+    await initSchema();
 
-    await Subject.deleteMany({});
-    await Topic.deleteMany({});
-    await Question.deleteMany({});
+    await query("DELETE FROM questions");
+    await query("DELETE FROM forum_posts");
+    await query("DELETE FROM topics");
+    await query("DELETE FROM subjects");
     console.log("Cleared existing data");
 
-    const createdSubjects = await Subject.insertMany(subjects);
+    // Seed subjects
+    const createdSubjects = [];
+    for (const s of subjects) {
+      const result = await query(
+        "INSERT INTO subjects (name, level) VALUES ($1, $2) RETURNING id, name, level",
+        [s.name, s.level]
+      );
+      createdSubjects.push(result.rows[0]);
+    }
     console.log(`Seeded ${createdSubjects.length} subjects`);
 
+    // Seed topics
     let topicCount = 0;
     for (const subject of createdSubjects) {
-      const key = subject.name;
-      const topics = topicsBySubject[key];
-      if (topics) {
-        const topicsWithSubject = topics.map((t) => ({ ...t, subject: subject._id }));
-        await Topic.insertMany(topicsWithSubject);
-        topicCount += topicsWithSubject.length;
+      const subjectTopics = topicsBySubject[subject.name];
+      if (subjectTopics) {
+        for (const t of subjectTopics) {
+          await query(
+            `INSERT INTO topics (subject_id, title, chapter, chapter_title, "order", difficulty, notes, summary, content, "references")
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+            [
+              subject.id,
+              t.title,
+              t.chapter || 1,
+              t.chapterTitle || "",
+              t.order || 1,
+              t.difficulty || "beginner",
+              t.notes || null,
+              JSON.stringify(t.summary || []),
+              JSON.stringify(t.content || []),
+              JSON.stringify(t.references || []),
+            ]
+          );
+          topicCount++;
+        }
       }
     }
     console.log(`Seeded ${topicCount} topics`);
 
-    // Seed questions for the first topic of each subject
-    const allTopics = await Topic.find({}).populate("subject", "name");
+    // Seed questions
     const questionsByTopicTitle = {
       "Number Systems": [
         { questionText: "Which of the following is an irrational number?", options: ["0.5", "√2", "3/4", "-7"], correctAnswer: 1 },
@@ -591,18 +613,23 @@ const seedDB = async () => {
       ],
     };
 
+    const allTopics = await query("SELECT id, title FROM topics");
     let questionCount = 0;
-    for (const topic of allTopics) {
+    for (const topic of allTopics.rows) {
       const questions = questionsByTopicTitle[topic.title];
       if (questions) {
-        const withTopic = questions.map((q) => ({ ...q, topic: topic._id }));
-        await Question.insertMany(withTopic);
-        questionCount += withTopic.length;
+        for (const q of questions) {
+          await query(
+            "INSERT INTO questions (topic_id, question_text, options, correct_answer) VALUES ($1, $2, $3, $4)",
+            [topic.id, q.questionText, JSON.stringify(q.options), q.correctAnswer]
+          );
+          questionCount++;
+        }
       }
     }
     console.log(`Seeded ${questionCount} questions`);
 
-    await mongoose.connection.close();
+    await closeDB();
     console.log("Done!");
   } catch (error) {
     console.error("Seeding failed:", error.message);
