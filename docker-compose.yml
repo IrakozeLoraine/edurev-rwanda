@@ -1,32 +1,66 @@
 services:
 
-  mongo:
-    image: mongo:7
-    container_name: edurev-rwanda-mongo
+  # Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: edurev-rwanda-postgres
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-db
+  # API server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: edurev-rwanda-backend
     restart: always
     ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-  backend:
-    build: ./backend
-    container_name: edurev-rwanda-backend
-    ports:
-      - "4500:4500"
-    env_file:
-      - ./backend/.env
+      - "127.0.0.1:4500:4500"
+    environment:
+      NODE_ENV: development
+      PORT: 4500
+      PGHOST: postgres # service name, resolved inside backend-db net
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      CORS_ORIGIN: ${CORS_ORIGIN}
     depends_on:
-      - mongo
+      - postgres
+    networks:
+      - backend-db
+      - frontend-backend
 
+  # React (static build)
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     container_name: edurev-rwanda-frontend
+    restart: always
     ports:
-      - "5173:5173"
-    env_file:
-      - ./frontend/.env
+      - "127.0.0.1:3000:3000"
     depends_on:
       - backend
+    networks:
+      - frontend-backend
+
+networks:
+  backend-db:
+    driver: bridge
+  frontend-backend:
+    driver: bridge
+
 volumes:
-  mongo_data:
+  postgres_data:
+    driver: local
