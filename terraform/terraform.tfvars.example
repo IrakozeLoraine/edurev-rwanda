@@ -1,0 +1,49 @@
+# Copy this file to terraform.tfvars and fill in your specific values
+# DO NOT commit the actual terraform.tfvars file with sensitive values to version control
+
+# General Configuration
+aws_region   = "us-east-1"
+environment  = "dev"  # Options: dev, staging, prod
+project_name = "edurev-rwanda"
+
+# VPC and Network Configuration
+vpc_cidr                = "10.0.0.0/16"
+public_subnet_cidrs     = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs    = ["10.0.10.0/24", "10.0.11.0/24"]
+availability_zones      = ["us-east-1a", "us-east-1b"]
+
+# Bastion Host Configuration
+bastion_instance_type   = "t3.micro"
+bastion_ami_name        = "amzn2-ami-hvm-*-x86_64-gp2"
+allowed_ssh_cidrs       = ["0.0.0.0/0"]  # Change this to your IP for security
+
+# Application EC2 Configuration
+app_instance_type       = "t3.medium"
+app_instance_count      = 2
+
+# RDS Database Configuration
+db_instance_class       = "db.t3.micro"
+db_allocated_storage    = 20
+db_engine_version       = "17.1"
+db_name                 = "edurev_rwanda"
+db_username             = "edurev"
+db_password             = "ChangeMe123!@#"  # Change to a strong password
+db_backup_retention_days = 7
+db_multi_az             = true
+
+# ECR Configuration
+ecr_image_tag_mutability = "MUTABLE"
+ecr_scan_on_push         = true
+
+# Application Configuration
+jwt_secret              = "ChangeMeToASecureRandomValue123!@#"  # Change to a secure value
+backend_cors_origin     = "*"  # Change to your frontend domain in production
+enable_https            = false
+certificate_arn         = ""  # Provide your ACM certificate ARN if enable_https is true
+
+# Additional Tags
+tags = {
+  Team        = "Engineering"
+  CostCenter  = "Engineering"
+  Maintainer  = "Your Name"
+}
