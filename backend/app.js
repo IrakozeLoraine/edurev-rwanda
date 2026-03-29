@@ -7,6 +7,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy (required behind ALB for correct client IP in rate limiting)
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet());
 
@@ -27,9 +30,9 @@ const authLimiter = rateLimit({
 
 // CORS
 if (!process.env.CORS_ORIGIN) {
-    console.warn('WARNING: CORS_ORIGIN not set, defaulting to http://localhost:5173');
+    console.warn('WARNING: CORS_ORIGIN not set, defaulting to http://localhost:3000 and http://localhost:5173');
 }
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173')
     .split(',')
     .map((s) => s.trim());
 
