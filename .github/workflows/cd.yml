@@ -187,7 +187,7 @@ jobs:
           ansible_user=ec2-user
           ansible_ssh_private_key_file=~/.ssh/deploy_key
           ansible_ssh_common_args=-o ProxyCommand="ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}"
-          ansible_python_interpreter=/usr/bin/python3
+          ansible_python_interpreter=/usr/bin/python3.8
           EOF
 
       - name: Run Ansible Playbook
