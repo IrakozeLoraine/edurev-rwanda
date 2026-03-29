@@ -142,6 +142,34 @@ To remove the database volume and reset data:
 docker volume rm edurev-rwanda_postgres_data
 ```
 
+## GitHub Secrets Guidelines
+
+For CI/CD workflows, deployments, or GitHub Actions, you may need to add the following secrets to your repository or organization settings:
+
+| Secret Name                | Description                                                      |
+|----------------------------|------------------------------------------------------------------|
+| `AWS_ACCESS_KEY_ID`        | AWS access key for deploying infrastructure and pulling images    |
+| `AWS_SECRET_ACCESS_KEY`    | AWS secret key for deploying infrastructure and pulling images    |
+| `AWS_REGION`               | AWS region for resource deployment (e.g., `eu-central-1`)           |
+| `ECR_REPOSITORY_URL`       | URL of the Amazon ECR repository for Docker images               |
+| `DATABASE_URL`             | Connection string for the PostgreSQL database                    |
+| `PGHOST`                   | PostgreSQL host (if not using DATABASE_URL)                      |
+| `PGPORT`                   | PostgreSQL port (if not using DATABASE_URL)                      |
+| `PGUSER`                   | PostgreSQL user (if not using DATABASE_URL)                      |
+| `PGPASSWORD`               | PostgreSQL password (if not using DATABASE_URL)                  |
+| `PGDATABASE`               | PostgreSQL database name (if not using DATABASE_URL)              |
+| `JWT_SECRET`               | Secret key for JWT authentication                                |
+| `CORS_ORIGIN`              | Allowed CORS origin(s) for backend API                           |
+| `VITE_API_BASE_URL`        | Base URL for frontend to access backend API                      |
+
+**How to add secrets:**
+1. Go to your GitHub repository on github.com
+2. Click on `Settings` > `Secrets and variables` > `Actions`
+3. Click `New repository secret` and add each secret above as needed
+
+These secrets are required for CI/CD pipelines, GitHub Actions, and secure deployments. Never commit sensitive values to the repository.
+
+
 ## Terraform Deployment
 
 Deploy EduRev Rwanda to AWS infrastructure using Terraform for a scalable, production-ready environment.
