@@ -116,7 +116,7 @@ PGDATABASE=${db_name}
 
 # Application Configuration
 JWT_SECRET=${jwt_secret}
-PORT=5000
+PORT=4500
 CORS_ORIGIN=${backend_cors_origin}
 NODE_ENV=production
 
@@ -138,7 +138,7 @@ services:
     container_name: edurev-backend
     restart: always
     ports:
-      - "5000:5000"
+      - "4500:4500"
     environment:
       PGHOST: $${PGHOST}
       PGPORT: $${PGPORT}
@@ -152,7 +152,7 @@ services:
     depends_on:
       - postgres-client
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:4500/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
