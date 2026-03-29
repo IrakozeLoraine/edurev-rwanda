@@ -7,6 +7,9 @@ echo "Starting Application Server Setup..."
 # Update system
 yum update -y
 
+# Install Python 3.8 for Ansible compatibility
+amazon-linux-extras install python3.8 -y
+
 # Install essential tools
 yum install -y \
     curl \

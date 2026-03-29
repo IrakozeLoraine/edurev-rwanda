@@ -157,16 +157,16 @@ resource "aws_security_group" "app" {
   }
 
   ingress {
-    from_port       = 5000
-    to_port         = 5000
+    from_port       = 4500
+    to_port         = 4500
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
     description     = "Backend application port from ALB"
   }
 
   ingress {
-    from_port   = 5173
-    to_port     = 5173
+    from_port   = 3000
+    to_port     = 3000
     protocol    = "tcp"
     security_groups = [aws_security_group.alb.id]
     description = "Frontend application port from ALB"
@@ -332,7 +332,7 @@ resource "aws_lb" "main" {
 # ALB Target Group for Backend
 resource "aws_lb_target_group" "backend" {
   name        = "${var.project_name}-backend-tg"
-  port        = 5000
+  port        = 4500
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
@@ -354,7 +354,7 @@ resource "aws_lb_target_group" "backend" {
 # ALB Target Group for Frontend
 resource "aws_lb_target_group" "frontend" {
   name        = "${var.project_name}-frontend-tg"
-  port        = 5173
+  port        = 3000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"

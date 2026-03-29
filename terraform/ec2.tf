@@ -130,6 +130,7 @@ resource "aws_launch_template" "app" {
   name_prefix   = "${var.project_name}-app-"
   image_id      = data.aws_ami.amazon_linux_2.id
   instance_type = var.app_instance_type
+  key_name      = aws_key_pair.bastion.key_name
   iam_instance_profile {
     name = aws_iam_instance_profile.app.name
   }
