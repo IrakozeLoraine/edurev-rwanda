@@ -15,19 +15,34 @@
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Getting Started](#getting-started)
+- [Usage](#usage)
 - [Docker Deployment](#docker-deployment)
 - [Infrastructure (Terraform)](#infrastructure-terraform)
 - [Configuration Management (Ansible)](#configuration-management-ansible)
 - [CI/CD Pipelines](#cicd-pipelines)
 - [API Reference](#api-reference)
 - [Project Structure](#project-structure)
+- [Troubleshooting](#troubleshooting)
 - [Team](#team)
 
 ---
 
 ## Overview
 
-Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. EduRev Rwanda addresses this by providing:
+## Team
+
+| Name | Role | Contact |
+|------|------|---------|
+| Loraine Mukezwa Irakoze | Team Lead | l.irakoze2@alustudent.com |
+| Ninette Irisa Agatesi | Backend Developer | n.agatesi@alustudent.com |
+| John Kwizera | DevOps Engineer | j.kwizera@alustudent.com |
+| Nicole Ange Mukundwa | Frontend Developer | n.mukundwa@alustudent.com |
+
+## African Context
+
+Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. This leads to inefficient study habits and lower exam performance, which in turn affects future educational and career opportunities. By providing a smart revision companion, we aim to empower students with the tools they need to succeed academically and contribute to Rwanda's development.
+
+### Core Features
 
 - **Subject browsing** — O-Level and A-Level subjects from the REB curriculum
 - **Topic-based revision** — Structured notes organized by chapters with examples and references
@@ -80,59 +95,56 @@ Rwandan O-Level and A-Level secondary students preparing for national exams.
 
 ### Local Development (without Docker)
 
+1. Clone the repository:
 ```bash
 git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
 cd edurev-rwanda
 ```
 
-**Backend** (terminal 1):
+2. Create a PostgreSQL database and user:
+```bash
+createdb edurev_rwanda
+```
+
+3. Set up environment files:
 ```bash
 cp backend/.env.example backend/.env
-# Edit backend/.env with your Postgres credentials
+cp frontend/.env.example frontend/.env
+```
+Edit each `.env` file with your values. See `.env.example` files for required variables.
+
+4. Start the backend (terminal 1):
+```bash
 cd backend
 npm install
 npm run migrate
 npm run dev
 ```
 
-**Frontend** (terminal 2):
+5. Start the frontend (terminal 2):
 ```bash
-cp frontend/.env.example frontend/.env
-# Edit frontend/.env with your backend URL
 cd frontend
 npm install
 npm run dev
 ```
 
-**Seed the database** (optional):
+6. Seed the database with sample data (optional):
 ```bash
 cd backend
 node seed.js
 ```
 
-### Environment Variables
+---
 
-**Backend** (`backend/.env`):
-```
-PGHOST=localhost
-PGPORT=5432
-PGUSER=edurev
-PGPASSWORD=your_password
-PGDATABASE=edurev_rwanda
-JWT_SECRET=your_secret_min_32_chars
-PORT=5000
-CORS_ORIGIN=http://localhost:5173
-```
+## Usage
 
-Or use a connection string (for production/RDS):
-```
-DATABASE_URL=postgresql://user:password@host:5432/dbname
-```
-
-**Frontend** (`frontend/.env`):
-```
-VITE_API_BASE_URL=http://localhost:5000
-```
+1. **Open the application** in your browser at `http://localhost:5173` (local dev) or `http://localhost:3000` (Docker)
+2. **Create an account and login** — sign up with your email and password
+3. **Select a subject** — choose from available O-Level or A-Level subjects
+4. **Browse topics** — view all topics within your selected subject
+5. **Practice questions** — take multiple-choice quizzes for any topic, submit to see your score and review correct answers
+6. **Access notes** — view concise study notes and references for each topic
+7. **Join the forum** — participate in discussions, ask questions, and help fellow students
 
 ---
 
@@ -143,18 +155,8 @@ VITE_API_BASE_URL=http://localhost:5000
 ```bash
 cp .env.example .env
 ```
+Edit `.env` with your values. See `.env.example` for required variables.
 
-Ensure your `.env` includes:
-```
-POSTGRES_USER=edurev
-POSTGRES_DB=edurev_rwanda
-POSTGRES_PASSWORD=your_password
-JWT_SECRET=your_secret_min_32_chars
-CORS_ORIGIN=http://localhost:3000
-VITE_API_BASE_URL=http://localhost:4500
-```
-
-Then start the services:
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
 ```
@@ -169,6 +171,13 @@ The production `docker-compose.yml` uses pre-built images from ECR and connects 
 
 ```bash
 docker-compose up -d
+```
+
+### Persistence
+
+Database data is stored in the `postgres_data` Docker volume and persists across container restarts. To reset:
+```bash
+docker volume rm edurev-rwanda_postgres_data
 ```
 
 ---
@@ -378,14 +387,24 @@ edurev-rwanda/
 
 ---
 
-## Team
+## Troubleshooting
 
-| Name | Role | Contact |
-|------|------|---------|
-| Loraine Mukezwa Irakoze | Team Lead | l.irakoze2@alustudent.com |
-| Ninette Irisa Agatesi | Backend Developer | n.agatesi@alustudent.com |
-| John Kwizera | DevOps Engineer | j.kwizera@alustudent.com |
-| Nicole Ange Mukundwa | Frontend Developer | n.mukundwa@alustudent.com |
+**Terraform plan fails with authentication errors**
+- Verify AWS credentials: `aws configure`
+
+**RDS creation times out**
+- Check security group rules allow database port access from app servers
+
+**EC2 instances can't reach RDS**
+- Verify security group rules and subnet routing: `terraform plan`
+
+**Docker Compose fails to start**
+- Ensure `.env` file exists with all required variables
+- Check Docker daemon is running: `docker info`
+
+**Backend crashes on startup**
+- Verify `DATABASE_URL` or `PG*` environment variables are set
+- Ensure PostgreSQL is running and accessible
 
 ---
 
