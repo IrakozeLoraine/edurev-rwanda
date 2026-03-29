@@ -68,6 +68,8 @@
           BACKEND_IMAGE={{ backend_image }}
           FRONTEND_IMAGE={{ frontend_image }}
           DATABASE_URL={{ database_url }}
+          JWT_SECRET={{ jwt_secret }}
+          CORS_ORIGIN={{ cors_origin }}
 
     - name: Login to ECR
       ansible.builtin.shell: |
