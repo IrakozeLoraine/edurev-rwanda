@@ -135,20 +135,12 @@ jobs:
         run: |
           echo "${{ github.token }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
 
-      - name: Pull backend image from previous job
-        run: |
-          docker pull ${{ needs.build_and_test.outputs.backend_image }} || echo "Image present from previous steps"
-
-      - name: Pull frontend image from previous job
-        run: |
-          docker pull ${{ needs.build_and_test.outputs.frontend_image }} || echo "Image present from previous steps"
-
       - name: Push backend image to GHCR
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
-          docker push ${{ needs.build_and_test.outputs.backend_image }}
+          docker push $IMAGE_BACKEND:ci-${{ github.sha }}
 
       - name: Push frontend image to GHCR
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
-          docker push ${{ needs.build_and_test.outputs.frontend_image }}
+          docker push $IMAGE_FRONTEND:ci-${{ github.sha }}
