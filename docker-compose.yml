@@ -17,9 +17,7 @@ services:
       - backend-db
   # API server
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE}
     container_name: edurev-rwanda-backend
     restart: always
     ports:
@@ -41,15 +39,13 @@ services:
 
   # React (static build)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    image: ${FRONTEND_IMAGE}
     container_name: edurev-rwanda-frontend
     restart: always
     ports:
-      - "127.0.0.1:3000:3000"
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     depends_on:
       - backend
     networks:

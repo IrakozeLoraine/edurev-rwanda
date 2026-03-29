@@ -80,4 +80,4 @@
 
     - name: Deploy frontend + backend with docker-compose
       ansible.builtin.shell: |
-        cd /opt/devops-final && docker-compose --env-file .env up -d
+        cd /opt/devops-final && /usr/local/bin/docker-compose --env-file .env up -d
