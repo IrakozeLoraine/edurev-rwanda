@@ -1,0 +1,166 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # ── Step 1: Re-run CI checks ─────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: edurev
+          POSTGRES_PASSWORD: edurev_pass
+          POSTGRES_DB: edurev_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U edurev -d edurev_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Backend Dependencies
+        run: cd backend && npm install
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && npm install
+
+      - name: Lint Backend
+        run: cd backend && npm run lint
+
+      - name: Lint Frontend
+        run: cd frontend && npm run lint
+
+      - name: Test Backend
+        run: cd backend && npm test
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: edurev
+          PGPASSWORD: edurev_pass
+          PGDATABASE: edurev_test
+          JWT_SECRET: test-secret
+
+      - name: Test Frontend
+        run: cd frontend && npm test
+
+  # ── Step 2: Build and push Docker images to ECR ───────────────
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test
+
+    outputs:
+      backend_image: ${{ steps.images.outputs.backend }}
+      frontend_image: ${{ steps.images.outputs.frontend }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Backend Image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/edurev-rwanda-backend:${{ github.sha }} \
+                        -t $ECR_REGISTRY/edurev-rwanda-backend:latest ./backend
+          docker push $ECR_REGISTRY/edurev-rwanda-backend:${{ github.sha }}
+          docker push $ECR_REGISTRY/edurev-rwanda-backend:latest
+
+      - name: Build and Push Frontend Image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          docker build \
+            --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} \
+            -t $ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }} \
+            -t $ECR_REGISTRY/edurev-rwanda-frontend:latest ./frontend
+          docker push $ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }}
+          docker push $ECR_REGISTRY/edurev-rwanda-frontend:latest
+
+      - name: Set image outputs
+        id: images
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          echo "backend=$ECR_REGISTRY/edurev-rwanda-backend:${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo "frontend=$ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  # ── Step 3: Deploy to app VM via Ansible ──────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Configure SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Generate Ansible Inventory
+        run: |
+          cat > ansible/inventory.ini << EOF
+          [app_server]
+          app-vm ansible_host=${{ secrets.APP_HOST }}
+
+          [app_server:vars]
+          ansible_user=ec2-user
+          ansible_ssh_private_key_file=~/.ssh/deploy_key
+          ansible_ssh_common_args=-o ProxyCommand="ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}"
+          ansible_python_interpreter=/usr/bin/python3
+          EOF
+
+      - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"
+          BACKEND_IMAGE: ${{ needs.build-and-push.outputs.backend_image }}
+          FRONTEND_IMAGE: ${{ needs.build-and-push.outputs.frontend_image }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.ini \
+            ansible/deploy.yml
+
+      - name: Cleanup SSH Key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts ansible/inventory.ini
