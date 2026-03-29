@@ -11,6 +11,7 @@
 
 ## Table of Contents
 
+- [Team Member Contributions](#team-member-contributions)
 - [Overview](#overview)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
@@ -23,22 +24,23 @@
 - [API Reference](#api-reference)
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
-- [Team](#team)
 
 ---
 
+## Team Member Contributions
+
+| Name | Contributions | Role | Contact |
+|------|---------------|------|---------|
+| Loraine Mukezwa Irakoze | Ansible Configuration, CI Pipelines and Security Scanning, Docker Compose Revision | Team Lead | l.irakoze2@alustudent.com |
+| Ninette Irisa Agatesi | Terraform Scripting, gitignore Optimization | Backend Developer | n.agatesi@alustudent.com |
+| John Kwizera | Dockerization & Infrastructure Provisioning | DevOps Engineer | j.kwizera@alustudent.com |
+| Nicole Ange Mukundwa | CD Pipeline, Migration from MongoDB to PostgreSQL | Frontend Developer | n.mukundwa@alustudent.com |
+
 ## Overview
 
-## Team
+EduRev Rwanda is a web application designed to help Rwandan secondary students efficiently revise for their national exams. The platform offers randomized practice questions based on the REB (Rwanda Education Board) curriculum, allowing students to test their knowledge and identify areas for improvement. Additionally, EduRev offers forums where students can discuss topics, share resources, and support each other in their revision journey. EduRev aims to create a collaborative learning environment that fosters academic success and builds a strong community of learners.
 
-| Name | Role | Contact |
-|------|------|---------|
-| Loraine Mukezwa Irakoze | Team Lead | l.irakoze2@alustudent.com |
-| Ninette Irisa Agatesi | Backend Developer | n.agatesi@alustudent.com |
-| John Kwizera | DevOps Engineer | j.kwizera@alustudent.com |
-| Nicole Ange Mukundwa | Frontend Developer | n.mukundwa@alustudent.com |
-
-## African Context
+### African Context
 
 Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. This leads to inefficient study habits and lower exam performance, which in turn affects future educational and career opportunities. By providing a smart revision companion, we aim to empower students with the tools they need to succeed academically and contribute to Rwanda's development.
 
