@@ -108,7 +108,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'image'
-          image-ref: '${{ needs.build_and_test.outputs.backend_image }}'
+          image-ref: '${{ env.IMAGE_BACKEND }}:ci-${{ github.sha }}'
           format: 'sarif'
           output: 'trivy-backend.sarif'
           severity: 'CRITICAL,HIGH'
@@ -123,7 +123,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'image'
-          image-ref: '${{ needs.build_and_test.outputs.frontend_image }}'
+          image-ref: '${{ env.IMAGE_FRONTEND }}:ci-${{ github.sha }}'
           format: 'sarif'
           output: 'trivy-frontend.sarif'
           severity: 'CRITICAL,HIGH'
