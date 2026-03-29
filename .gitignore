@@ -199,3 +199,7 @@ terraform.tfvars
 
 # Pem files
 *.pem
+
+*.pem
+bastion-key
+bastion-key.pub
