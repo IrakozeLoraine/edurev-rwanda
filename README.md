@@ -290,11 +290,17 @@ ansible/
 3. Edit `ansible/inventory.ini` to match your bastion and app server IP addresses.
 4. Export required environment variables for the deployment:
    ```bash
-   export APP_IMAGE=<ecr_repository_url>/edurev-backend:latest
+   export BACKEND_IMAGE=<ecr_repository_url>/edurev-backend:latest
+   export FRONTEND_IMAGE=<ecr_repository_url>/edurev-frontend:latest
    export DATABASE_URL=<your_database_url>
    export AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
    export AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
    export AWS_REGION=<your_aws_region>
+
+   export APP_HOST=your_app_server_private_ip
+   export APP_SSH_USER=your_app_server_ssh_user
+   export BASTION_KEY_PATH=path_to_your_bastion_key
+   export BASTION_PROXY_COMMAND=proxy_command_for_ssh_through_bastion
    ```
 
 ### Running the Ansible Playbook
