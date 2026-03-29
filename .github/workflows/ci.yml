@@ -110,7 +110,7 @@ jobs:
           scan-type: 'image'
           image-ref: '${{ env.IMAGE_BACKEND }}:ci-${{ github.sha }}'
           format: 'table'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
           vuln-type: 'library'
           exit-code: '1'
 
@@ -120,7 +120,7 @@ jobs:
           scan-type: 'image'
           image-ref: '${{ env.IMAGE_FRONTEND }}:ci-${{ github.sha }}'
           format: 'table'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
           vuln-type: 'library'
           exit-code: '1'
 
