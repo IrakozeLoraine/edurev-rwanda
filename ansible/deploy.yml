@@ -8,6 +8,10 @@
     frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') }}"
     database_url: "{{ lookup('env', 'DATABASE_URL') }}"
     ecr_registry: "{{ backend_image.split('/')[0] }}"
+    aws_region: "lookup('env','AWS_REGION')"
+    aws_access_key_id: "lookup('env','AWS_ACCESS_KEY_ID')"
+    aws_secret_access_key: "lookup('env','AWS_SECRET_ACCESS_KEY')"
+
 
   tasks:
     - name: Install required base packages with yum
@@ -65,12 +69,12 @@
 
     - name: Login to ECR
       ansible.builtin.shell: |
-        aws ecr get-login-password --region {{ lookup('env','AWS_REGION') }} \
+        aws ecr get-login-password --region {{ aws_region }} \
           | docker login --username AWS --password-stdin {{ ecr_registry }}
       environment:
-        AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
-        AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
-        AWS_DEFAULT_REGION: "{{ lookup('env','AWS_REGION') }}"
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
 
     - name: Pull backend image
       ansible.builtin.shell: docker pull {{ backend_image }}

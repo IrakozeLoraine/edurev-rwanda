@@ -262,8 +262,7 @@ ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
 
 ## Ansible Deployment
 
-
-Deploy EduRev Rwanda to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
+Deploy EduRev Rwanda application to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
 
 ### Prerequisites for Ansible Deployment
 
@@ -311,6 +310,11 @@ ansible/
    export AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
    export AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
    export AWS_REGION=<your_aws_region>
+
+   export APP_HOST=your_app_server_private_ip
+   export APP_SSH_USER=your_app_server_ssh_user
+   export BASTION_KEY_PATH=path_to_your_bastion_key
+   export BASTION_PROXY_COMMAND=proxy_command_for_ssh_through_bastion
    ```
 
 ### Running the Ansible Playbook
