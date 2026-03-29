@@ -262,13 +262,14 @@ ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
 
 ## Ansible Deployment
 
-Deploy EduRev Rwanda application to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
+
+Deploy EduRev Rwanda to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
 
 ### Prerequisites for Ansible Deployment
 
 - AWS infrastructure (bastion host and app server) provisioned via Terraform (see below)
 - Ansible installed on your local machine (`pip install ansible`)
-- SSH private key for EC2 access (e.g., `edurev-rwanda.pem`)
+- SSH private key for EC2 access (`bastion-key` in the `ansible/` directory)
 - AWS credentials with access to ECR (for pulling Docker images)
 
 ### Ansible Directory Structure
@@ -277,17 +278,31 @@ Deploy EduRev Rwanda application to your AWS EC2 infrastructure using Ansible fo
 ansible/
 ├── deploy.yml         # Main Ansible playbook
 ├── inventory.ini      # Inventory file with bastion and app server details
-└── edurev-rwanda.pem  # SSH private key (not committed to git)
+├── bastion-key        # SSH private key (not committed to git)
 ```
 
 ### Setup
 
 1. Ensure your AWS infrastructure is running (see Terraform section below).
-2. Place your SSH private key (e.g., `edurev-rwanda.pem`) in the `ansible/` directory and set permissions:
+2. Place your SSH private key (`bastion-key`) in the `ansible/` directory and set permissions:
    ```bash
-   chmod 600 ansible/edurev-rwanda.pem
+   chmod 600 ansible/bastion-key
    ```
-3. Edit `ansible/inventory.ini` to match your bastion and app server IP addresses.
+
+3. Generate `inventory.ini` from the provided template using your environment variables and the Ansible template module. For example:
+   ```bash
+   cd ansible
+   export APP_HOST="$APP_HOST"
+   export APP_SSH_USER="$APP_SSH_USER"
+   export BASTION_KEY_PATH="$BASTION_KEY_PATH"
+   export BASTION_PROXY_COMMAND="$BASTION_PROXY_COMMAND"
+
+   ansible localhost -m template \
+     -a "src=inventory.tpl dest=inventory.ini" \
+     -e "app_host=$APP_HOST app_ssh_user=$APP_SSH_USER bastion_key_path=$BASTION_KEY_PATH bastion_proxy_command=\"$BASTION_PROXY_COMMAND\""
+   ```
+   This command will render `inventory.ini` with your specific host, user, and SSH proxy settings.
+
 4. Export required environment variables for the deployment:
    ```bash
    export BACKEND_IMAGE=<ecr_repository_url>/edurev-backend:latest
@@ -296,11 +311,6 @@ ansible/
    export AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
    export AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
    export AWS_REGION=<your_aws_region>
-
-   export APP_HOST=your_app_server_private_ip
-   export APP_SSH_USER=your_app_server_ssh_user
-   export BASTION_KEY_PATH=path_to_your_bastion_key
-   export BASTION_PROXY_COMMAND=proxy_command_for_ssh_through_bastion
    ```
 
 ### Running the Ansible Playbook
@@ -313,7 +323,7 @@ ansible-playbook -i inventory.ini deploy.yml
 This will:
 - Install Docker and Docker Compose on the app server
 - Copy the Docker Compose file and environment variables
-- Pull the latest Docker image from ECR
+- Pull the latest Docker images from ECR
 - Start the application using Docker Compose
 
 If you encounter SSH issues, ensure your security groups and SSH key are correct, and that the bastion host is accessible.
