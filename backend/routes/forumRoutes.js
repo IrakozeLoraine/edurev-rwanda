@@ -24,7 +24,8 @@ router.get("/:topicId", async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -50,7 +51,8 @@ router.post("/:topicId", protect, async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

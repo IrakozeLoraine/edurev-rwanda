@@ -12,7 +12,8 @@ router.get("/:topicId", async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -36,7 +37,8 @@ router.post("/:topicId/submit", async (req, res) => {
 
     res.json({ score, total: questions.length, results });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

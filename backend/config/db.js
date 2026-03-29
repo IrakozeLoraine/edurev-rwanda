@@ -1,12 +1,19 @@
 const { Pool } = require("pg");
 
-const pool = new Pool({
-  host: process.env.PGHOST,
-  port: parseInt(process.env.PGPORT, 10),
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-});
+if (!process.env.DATABASE_URL && (!process.env.PGHOST || !process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGDATABASE)) {
+  console.error("Missing DATABASE_URL or PG* environment variables");
+  process.exit(1);
+}
+
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : new Pool({
+      host: process.env.PGHOST,
+      port: parseInt(process.env.PGPORT || "5432", 10),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+    });
 
 const query = (text, params) => pool.query(text, params);
 

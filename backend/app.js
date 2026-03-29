@@ -1,18 +1,42 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
 const app = express();
 
-const allowedOrigins = (process.env.CORS_ORIGIN || '*')
+// Security headers
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { message: 'Too many requests, please try again later' },
+});
+app.use(limiter);
+
+// Stricter rate limit for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { message: 'Too many auth attempts, please try again later' },
+});
+
+// CORS
+if (!process.env.CORS_ORIGIN) {
+    console.warn('WARNING: CORS_ORIGIN not set, defaulting to http://localhost:5173');
+}
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
     .split(',')
     .map((s) => s.trim());
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin || '*');
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
     }
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header(
@@ -26,12 +50,13 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json());
+// Body parsing with size limit
+app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
-app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/subjects", require("./routes/subjectRoutes"));
 app.use("/api/topics", require("./routes/topicRoutes"));
 app.use("/api/questions", require("./routes/questionRoutes"));

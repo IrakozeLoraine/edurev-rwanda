@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
     const user = result.rows[0];
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "2h",
     });
 
     res.status(201).json({
@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const result = await query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await query("SELECT id, name, email, password, role FROM users WHERE email = $1", [email]);
     const user = result.rows[0];
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "2h",
     });
 
     res.json({

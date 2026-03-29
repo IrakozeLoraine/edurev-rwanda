@@ -9,7 +9,8 @@ router.get("/", async (req, res) => {
     const result = await query("SELECT id AS _id, name, level FROM subjects ORDER BY name");
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -20,7 +21,8 @@ router.get("/:id", async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ message: "Subject not found" });
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
