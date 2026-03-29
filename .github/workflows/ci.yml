@@ -74,13 +74,6 @@ jobs:
           npm run lint
 
       - name: Test backend
-        env:
-          PGHOST: ${{ secrets.CI_PGHOST }}
-          PGPORT: ${{ secrets.CI_PGPORT }}
-          PGUSER: ${{ secrets.CI_PGUSER }}
-          PGPASSWORD: ${{ secrets.CI_PGPASSWORD }}
-          PGDATABASE: ${{ secrets.CI_PGDATABASE }}
-          JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
         run: |
           cd backend
           npm test -- --runInBand
