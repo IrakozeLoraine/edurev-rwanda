@@ -142,7 +142,7 @@ jobs:
 
   publish_images:
     runs-on: ubuntu-latest
-    needs: security_scans
+    needs: build_and_test
 
     permissions:
       contents: read
