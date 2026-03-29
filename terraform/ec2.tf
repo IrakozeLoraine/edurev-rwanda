@@ -14,6 +14,16 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
+# SSH Key Pair for Bastion Host
+resource "aws_key_pair" "bastion" {
+  key_name   = "${var.project_name}-bastion-key"
+  public_key = file("${path.module}/bastion-key.pub")
+
+  tags = merge(local.default_tags, {
+    Name = "${var.project_name}-bastion-key"
+  })
+}
+
 # Bastion Host (SSH Jump Box)
 resource "aws_instance" "bastion" {
   ami                    = data.aws_ami.amazon_linux_2.id
@@ -21,6 +31,7 @@ resource "aws_instance" "bastion" {
   subnet_id              = aws_subnet.public[0].id
   vpc_security_group_ids = [aws_security_group.bastion.id]
   iam_instance_profile   = aws_iam_instance_profile.bastion.name
+  key_name               = aws_key_pair.bastion.key_name
 
   user_data = base64encode(templatefile("${path.module}/bastion-setup.sh", {
     project_name = var.project_name
