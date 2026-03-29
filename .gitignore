@@ -203,3 +203,4 @@ terraform.tfvars
 *.pem
 bastion-key
 bastion-key.pub
+inventory.ini

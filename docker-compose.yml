@@ -1,66 +1,33 @@
 services:
-
-  # Database
-  postgres:
-    image: postgres:17-alpine
-    container_name: edurev-rwanda-postgres
-    restart: always
-    expose:
-      - "5432"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend-db
   # API server
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE}
     container_name: edurev-rwanda-backend
     restart: always
     ports:
       - "4500:4500"
     environment:
-      NODE_ENV: development
       PORT: 4500
-      PGHOST: postgres # service name, resolved inside backend-db net
-      PGPORT: 5432
-      PGUSER: ${POSTGRES_USER}
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-      PGDATABASE: ${POSTGRES_DB}
+      DATABASE_URL: ${DATABASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN}
-    depends_on:
-      - postgres
+      JWT_SECRET: ${JWT_SECRET}
     networks:
-      - backend-db
       - frontend-backend
 
   # React (static build)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    image: ${FRONTEND_IMAGE}
     container_name: edurev-rwanda-frontend
     restart: always
     ports:
-      - "127.0.0.1:3000:3000"
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     depends_on:
       - backend
     networks:
       - frontend-backend
 
 networks:
-  backend-db:
-    driver: bridge
   frontend-backend:
     driver: bridge
-
-volumes:
-  postgres_data:
-    driver: local

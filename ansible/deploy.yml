@@ -1,0 +1,91 @@
+---
+- name: Deploy Application to Production
+  hosts: app_server
+  become: yes
+
+  vars:
+    backend_image: "{{ lookup('env', 'BACKEND_IMAGE') }}"
+    frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') }}"
+    database_url: "{{ lookup('env', 'DATABASE_URL') }}"
+    ecr_registry: "{{ backend_image.split('/')[0] }}"
+    aws_region: "{{ lookup('env','AWS_REGION') }}"
+    aws_access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    aws_secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    cors_origin: "{{ lookup('env', 'CORS_ORIGIN' )}}"
+    jwt_secret: "{{ lookup('env', 'JWT_SECRET')}}"
+
+
+  tasks:
+    - name: Install required base packages with yum
+      ansible.builtin.shell: >
+        yum install -y
+        ca-certificates
+        curl
+        gnupg2
+      register: base_pkgs
+      changed_when: base_pkgs.rc == 0
+
+    - name: Install Docker engine (amazon-linux-extras)
+      ansible.builtin.command: amazon-linux-extras install -y docker
+      args:
+        creates: /usr/bin/docker
+
+    - name: Ensure docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Download Docker Compose with curl
+      ansible.builtin.shell: |
+        curl -L "https://github.com/docker/compose/releases/download/v2.29.0/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+      args:
+        creates: /usr/local/bin/docker-compose
+
+    - name: Ensure Docker Compose is executable
+      ansible.builtin.file:
+        path: /usr/local/bin/docker-compose
+        mode: '0755'
+        state: file
+
+    - name: Create app directory
+      ansible.builtin.file:
+        path: /opt/devops-final
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: /opt/devops-final/docker-compose.yml
+        mode: '0644'
+
+    - name: Create environment file
+      ansible.builtin.copy:
+        dest: /opt/devops-final/.env
+        mode: '0600'
+        content: |
+          BACKEND_IMAGE={{ backend_image }}
+          FRONTEND_IMAGE={{ frontend_image }}
+          DATABASE_URL={{ database_url }}
+          JWT_SECRET={{ jwt_secret }}
+          CORS_ORIGIN={{ cors_origin }}
+
+    - name: Login to ECR
+      ansible.builtin.shell: |
+        aws ecr get-login-password --region {{ aws_region }} \
+          | docker login --username AWS --password-stdin {{ ecr_registry }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+
+    - name: Pull backend image
+      ansible.builtin.shell: docker pull {{ backend_image }}
+
+    - name: Pull frontend image
+      ansible.builtin.shell: docker pull {{ frontend_image }}
+
+    - name: Deploy frontend + backend with docker-compose
+      ansible.builtin.shell: |
+        cd /opt/devops-final && /usr/local/bin/docker-compose --env-file .env up -d

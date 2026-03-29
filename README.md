@@ -31,16 +31,21 @@ Rwandan O-Level and A-Level secondary students preparing for national exams.
 
 - **Backend**: Node.js/Express
 - **Frontend**: React
-- **Database**: MongoDB
+- **Database**: PostgreSQL (for structured data)
 - **Other**: Tailwind CSS for styling, JWT for authentication
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 16+
-- MongoDB instance
+You can run EduRev Rwanda in two ways:
+- **Local Development** (without Docker): Run services directly on your machine
+- **Docker Deployment** (production-ready): Use Docker Compose with secure secret management
 
-### Installation
+### Prerequisites for Local Development
+- Node.js 16+
+- PostgreSQL 14+
+- Create a PostgreSQL database and user with appropriate permissions
+
+### Local Development Installation
 
 1. Clone the repository
 ```bash
@@ -50,14 +55,20 @@ cd edurev-rwanda
 
 2. Create a `.env` file in the backend directory with the following variables:
 ```
-MONGO_URI=mongodb://localhost:27017/edurev-rwanda
-PORT=5000
-JWT_SECRET=your_jwt_secret_key_here
+PGHOST=${PGHOST}
+PGPORT=${PGPORT}
+PGUSER=${PGUSER}
+PGPASSWORD=${PGPASSWORD}
+PGDATABASE=${PGDATABASE}
+
+JWT_SECRET=${JWT_SECRET}
+PORT=${PORT}
+CORS_ORIGIN=${CORS_ORIGIN}
 ```
 
 3. Create a `.env` file in the frontend directory with the following variable:
 ```
-VITE_API_BASE_URL=http://localhost:5000
+VITE_API_BASE_URL=${VITE_API_BASE_URL}
 ```
 
 4. Install backend dependencies and start the server
@@ -82,10 +93,17 @@ node seed.js
 
 ## Running with Docker Compose
 
-If you prefer to run the application using Docker Compose, follow these steps:
+Run the application using Docker Compose for an isolated, containerized environment.
 
 ### Prerequisites
 - Docker and Docker Compose installed on your system
+
+### Compose Files
+
+There are two Compose files:
+
+- `docker-compose.yml`: For production/staging deployments. Assumes you are using pre-built images and an external/managed Postgres database. No local Postgres container is included.
+- `docker-compose.dev.yml`: For local development. Includes a local Postgres container, and builds backend/frontend images from source.
 
 ### Setup
 
@@ -95,40 +113,318 @@ git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
 cd edurev-rwanda
 ```
 
-2. Create a `.env` file in the backend directory with the following variables:
-```
-MONGO_URI=mongodb://mongo:27017/edurev-rwanda
-PORT=4500
-JWT_SECRET=your_jwt_secret_key_here
-```
-
-3. Create a `.env` file in the frontend directory with the following variable:
-```
-VITE_API_BASE_URL=http://localhost:4500
-```
-
-### Running the Application
-
-1. Build and start the services
+2. Copy .env.example to .env and modify the values as needed
 ```bash
-docker-compose up --build
+cp .env.example .env
 ```
 
-2. Seed the database with initial subjects and topics (optional)
+### Running the Application (Local Development)
+
+1. Build and start the services with the development Compose file:
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+2. The application will be available at:
+   - **Frontend**: `http://localhost:3000`
+   - **Backend API**: `http://localhost:4500/api`
+   - **Database**: Local Postgres container (internal only)
+
+3. Seed the database with initial subjects and topics (optional)
+```bash
+docker-compose -f docker-compose.dev.yml exec backend node seed.js
+```
+
+To stop the services, press `Ctrl+C` or run:
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
+### Running the Application (Production/External DB)
+
+1. Copy .env.example to .env and set the database connection variables to point to your external Postgres instance. Ensure you have built and pushed your backend and frontend images to a container registry (e.g., Docker Hub, Amazon ECR) and update the image references in `docker-compose.yml`.
+
+2. Start the services:
+```bash
+docker-compose up -d
+```
+
+3. (Optional) Seed the database:
 ```bash
 docker-compose exec backend node seed.js
 ```
 
-The application will be available at `http://localhost:5173` with the backend running on `http://localhost:4500`.
-
-To stop the services, press `Ctrl+C` or run:
+To stop the services:
 ```bash
 docker-compose down
 ```
 
+### Persistence
+
+- **Database Data**: For local development, data is stored in the `postgres_data` Docker volume and persists across container restarts.
+
+To remove the database volume and reset data:
+```bash
+docker volume rm edurev-rwanda_postgres_data
+```
+
+## GitHub Secrets Guidelines
+
+For CI/CD workflows, deployments, or GitHub Actions, you may need to add the following secrets to your repository or organization settings:
+
+| Secret Name                | Description                                                      |
+|----------------------------|------------------------------------------------------------------|
+| `AWS_ACCESS_KEY_ID`        | AWS access key for deploying infrastructure and pulling images    |
+| `AWS_SECRET_ACCESS_KEY`    | AWS secret key for deploying infrastructure and pulling images    |
+| `AWS_REGION`               | AWS region for resource deployment (e.g., `eu-central-1`)           |
+| `ECR_REPOSITORY_URL`       | URL of the Amazon ECR repository for Docker images               |
+| `DATABASE_URL`             | Connection string for the PostgreSQL database                    |
+| `PGHOST`                   | PostgreSQL host (if not using DATABASE_URL)                      |
+| `PGPORT`                   | PostgreSQL port (if not using DATABASE_URL)                      |
+| `PGUSER`                   | PostgreSQL user (if not using DATABASE_URL)                      |
+| `PGPASSWORD`               | PostgreSQL password (if not using DATABASE_URL)                  |
+| `PGDATABASE`               | PostgreSQL database name (if not using DATABASE_URL)              |
+| `JWT_SECRET`               | Secret key for JWT authentication                                |
+| `CORS_ORIGIN`              | Allowed CORS origin(s) for backend API                           |
+| `VITE_API_BASE_URL`        | Base URL for frontend to access backend API                      |
+
+**How to add secrets:**
+1. Go to your GitHub repository on github.com
+2. Click on `Settings` > `Secrets and variables` > `Actions`
+3. Click `New repository secret` and add each secret above as needed
+
+These secrets are required for CI/CD pipelines, GitHub Actions, and secure deployments. Never commit sensitive values to the repository.
+
+
+## Terraform Deployment
+
+Deploy EduRev Rwanda to AWS infrastructure using Terraform for a scalable, production-ready environment.
+
+### Prerequisites for Terraform Deployment
+
+- Terraform >= 1.0
+- AWS CLI configured with appropriate credentials
+- AWS Account with permissions to create VPC, EC2, RDS, and ECR resources
+- SSH key pair for EC2 access
+
+### Architecture Overview
+
+The Terraform configuration deploys the following AWS resources:
+
+- **VPC & Networking**: Custom VPC with public and private subnets across multiple availability zones
+- **Bastion Host**: Jump server for secure access to private resources
+- **Application Servers**: EC2 instances running the backend and frontend in private subnets
+- **RDS Database**: Managed PostgreSQL database for data persistence
+- **Container Registry**: Amazon ECR for Docker image storage
+- **Security Groups**: Network security configured with least-privilege access
+
+### Setup
+
+1. Navigate to the terraform directory
+```bash
+cd terraform
+```
+
+2. Copy and customize the terraform variables
+```bash
+cp terraform.tfvars.example terraform.tfvars
+```
+
+3. Edit `terraform.tfvars` with your specific values:
+```hcl
+aws_region              = "us-east-1"          # Your preferred AWS region
+environment             = "dev"                 # dev, staging, or prod
+db_password             = "YourStrongPassword" # Create a strong password
+allowed_ssh_cidrs       = ["YOUR_IP/32"]       # Restrict SSH access to your IP
+```
+
+### Deploying Infrastructure
+
+1. Initialize Terraform (downloads providers and sets up the working directory)
+```bash
+terraform init
+```
+
+2. Validate the configuration
+```bash
+terraform validate
+```
+
+3. Review the planned changes
+```bash
+terraform plan
+```
+
+4. Import existing resources (if any) - If you have already created some AWS resources manually, you can import them into Terraform state to manage them going forward. For example:
+
+```bash
+terraform import aws_iam_role.bastion edurev-rwanda-bastion-role
+terraform import aws_iam_role.app edurev-rwanda-app-role
+terraform import aws_iam_role.rds_monitoring edurev-rwanda-rds-monitoring-role
+```
+
+5. Apply the configuration to create AWS resources
+```bash
+terraform apply
+```
+
+Review the proposed changes and type `yes` to confirm. This will:
+- Create VPC and networking infrastructure
+- Launch EC2 instances for bastion and application servers
+- Provision RDS PostgreSQL database
+- Create ECR repository for container images
+- Configure security groups and access controls
+
+### Post-Deployment
+
+1. Obtain the outputs
+```bash
+terraform output
+```
+
+Notable outputs include:
+- `bastion_public_ip` - IP address to SSH into the bastion host
+- `rds_endpoint` - Database connection endpoint
+- `ecr_repository_url` - Container registry URL for pushing Docker images
+
+2. SSH into the bastion host
+```bash
+ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
+```
+
+3. From the bastion, access application servers and RDS
+
+### Deploying Application to Infrastructure
+
+1. Build and push Docker images to ECR
+```bash
+docker build -t edurev-backend ./backend
+docker build -t edurev-frontend ./frontend
+docker push <ecr_repository_url>/edurev-backend:latest
+docker push <ecr_repository_url>/edurev-frontend:latest
+```
+
+2. Run deployment scripts on application servers (via bastion)
+```bash
+# Connect to bastion first
+ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
+
+# Execute app-setup.sh on the application server
+# This sets up Docker, pulls images, and starts containers
+```
+
+
+## Ansible Deployment
+
+Deploy EduRev Rwanda application to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
+
+### Prerequisites for Ansible Deployment
+
+- AWS infrastructure (bastion host and app server) provisioned via Terraform (see below)
+- Ansible installed on your local machine (`pip install ansible`)
+- SSH private key for EC2 access (`bastion-key` in the `ansible/` directory)
+- AWS credentials with access to ECR (for pulling Docker images)
+
+### Ansible Directory Structure
+
+```
+ansible/
+├── deploy.yml         # Main Ansible playbook
+├── inventory.ini      # Inventory file with bastion and app server details
+├── bastion-key        # SSH private key (not committed to git)
+```
+
+### Setup
+
+1. Ensure your AWS infrastructure is running (see Terraform section below).
+2. Place your SSH private key (`bastion-key`) in the `ansible/` directory and set permissions:
+   ```bash
+   chmod 600 ansible/bastion-key
+   ```
+
+3. Generate `inventory.ini` from the provided template using your environment variables and the Ansible template module. For example:
+   ```bash
+   cd ansible
+   export APP_HOST="$APP_HOST"
+   export APP_SSH_USER="$APP_SSH_USER"
+   export BASTION_KEY_PATH="$BASTION_KEY_PATH"
+   export BASTION_PROXY_COMMAND="$BASTION_PROXY_COMMAND"
+
+   ansible localhost -m template \
+     -a "src=inventory.tpl dest=inventory.ini" \
+     -e "app_host=$APP_HOST app_ssh_user=$APP_SSH_USER bastion_key_path=$BASTION_KEY_PATH bastion_proxy_command=\"$BASTION_PROXY_COMMAND\""
+   ```
+   This command will render `inventory.ini` with your specific host, user, and SSH proxy settings.
+
+4. Export required environment variables for the deployment:
+   ```bash
+   export BACKEND_IMAGE=<ecr_repository_url>/edurev-backend:latest
+   export FRONTEND_IMAGE=<ecr_repository_url>/edurev-frontend:latest
+   export DATABASE_URL=<your_database_url>
+   export AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
+   export AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
+   export AWS_REGION=<your_aws_region>
+
+   export APP_HOST=your_app_server_private_ip
+   export APP_SSH_USER=your_app_server_ssh_user
+   export BASTION_KEY_PATH=path_to_your_bastion_key
+   export BASTION_PROXY_COMMAND=proxy_command_for_ssh_through_bastion
+   ```
+
+### Running the Ansible Playbook
+
+From the `ansible/` directory, run:
+```bash
+ansible-playbook -i inventory.ini deploy.yml
+```
+
+This will:
+- Install Docker and Docker Compose on the app server
+- Copy the Docker Compose file and environment variables
+- Pull the latest Docker images from ECR
+- Start the application using Docker Compose
+
+If you encounter SSH issues, ensure your security groups and SSH key are correct, and that the bastion host is accessible.
+
+### Managing Infrastructure
+
+### Scaling
+
+Update instance counts in `terraform.tfvars`:
+```hcl
+app_instance_count = 3  # Increase from 2 to 3
+```
+
+Then apply the changes:
+```bash
+terraform apply
+```
+
+### Destroying Infrastructure
+
+To tear down all AWS resources:
+```bash
+terraform destroy
+```
+
+Type `yes` to confirm. This will delete all provisioned infrastructure.
+
+**Warning**: This will permanently delete databases and other resources. Ensure backups exist before destroying.
+
+### Troubleshooting
+
+**Issue**: Terraform plan fails with authentication errors
+- **Solution**: Verify AWS credentials are configured: `aws configure`
+
+**Issue**: RDS creation times out
+- **Solution**: Check security group rules allow database port access from app servers
+
+**Issue**: EC2 instances can't reach RDS
+- **Solution**: Verify all security group rules and subnet routing are correct: `terraform plan`
+
 ### Usage
 
-1. **Open the application** in your browser at `http://localhost:5173`
+1. **Open the application** in your browser at `http://localhost:3000`
 
 2. **Create an account and Login** - Sign up or sign in with your email and password
 
@@ -147,31 +443,24 @@ docker-compose down
 
 ## Docker Deployment
 
-The application can be run using Docker for easy deployment and development. There are two main approaches: running individual containers or using Docker Compose for a complete stack.
+The application uses Docker containers with Docker Compose orchestrating the full stack including PostgreSQL, backend API, and frontend.
 
 ### Prerequisites for Docker Deployment
 
 - Docker installed on your system
 - Docker Compose (usually included with Docker Desktop)
 
-### Environment Variables
+### Architecture Overview
 
-Before running with Docker, ensure you have the required environment files:
+- **Database Tier**: PostgreSQL 17 running on an internal `backend-db` network (not exposed externally)
+- **Backend Tier**: Node.js/Express API on the `backend-db` and `frontend-backend` networks
+- **Frontend Tier**: React SPA served by a static file server on the `frontend-backend` network
 
-#### Backend Environment Variables (`.env` in `/backend`)
-```
-MONGO_URI=mongodb://mongodb:27017/edurev-rwanda  # For docker-compose, use service name
-JWT_SECRET=your_jwt_secret_key_here_change_in_production
-PORT=5000
-CORS_ORIGIN=http://localhost:5173  # For development, or http://localhost:3000 for production
-```
+### Configuration
 
-#### Frontend Environment Variables (`.env` in `/frontend`)
-```
-VITE_API_BASE_URL=http://localhost:5000
-```
+Copy the provided `.env.example` file in the root directory to `.env` and fill in the appropriate values for your environment.
 
-**Note**: Copy `.env.example` files to `.env` in both backend and frontend directories and update the values as needed.
+The Docker Compose file reads these values from the `.env` file and passes them to the containers.
 
 ### API Endpoints
 
@@ -197,10 +486,10 @@ VITE_API_BASE_URL=http://localhost:5000
 edurev-rwanda/
 ├── backend/                    # Node.js/Express server
 │   ├── config/
-│   │   └── db.js             # MongoDB connection setup
+│   │   └── db.js             # PostgreSQL connection setup
 │   ├── middleware/
 │   │   └── authMiddleware.js  # JWT authentication middleware
-│   ├── models/                # Mongoose schemas
+│   ├── models/                # PostgreSQL schemas
 │   │   ├── Forum.js
 │   │   ├── Question.js
 │   │   ├── Subject.js
