@@ -10,8 +10,6 @@ services:
       PORT: 4500
       DATABASE_URL: ${DATABASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN}
-    depends_on:
-      - postgres
     networks:
       - frontend-backend
 
