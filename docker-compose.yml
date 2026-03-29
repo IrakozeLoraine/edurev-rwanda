@@ -10,6 +10,7 @@ services:
       PORT: 4500
       DATABASE_URL: ${DATABASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      JWT_SECRET: ${JWT_SECRET}
     networks:
       - frontend-backend
 

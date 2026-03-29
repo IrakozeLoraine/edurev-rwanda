@@ -11,6 +11,8 @@
     aws_region: "{{ lookup('env','AWS_REGION') }}"
     aws_access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
     aws_secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    cors_origin: "{{ lookup('env', CORS_ORIGIN )}}"
+    jwt_secret: "{{ lookup('env', 'JWT_SECRET')}}"
 
 
   tasks:
