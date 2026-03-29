@@ -98,6 +98,13 @@ Run the application using Docker Compose for an isolated, containerized environm
 ### Prerequisites
 - Docker and Docker Compose installed on your system
 
+### Compose Files
+
+There are two Compose files:
+
+- `docker-compose.yml`: For production/staging deployments. Assumes you are using pre-built images and an external/managed Postgres database. No local Postgres container is included.
+- `docker-compose.dev.yml`: For local development. Includes a local Postgres container, and builds backend/frontend images from source.
+
 ### Setup
 
 1. Clone the repository
@@ -111,31 +118,50 @@ cd edurev-rwanda
 cp .env.example .env
 ```
 
-### Running the Application
+### Running the Application (Local Development)
 
-1. Build and start the services
+1. Build and start the services with the development Compose file:
 ```bash
-docker-compose up --build
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
 2. The application will be available at:
    - **Frontend**: `http://localhost:3000`
    - **Backend API**: `http://localhost:4500/api`
-   - **Database**: Internal only (not exposed externally)
+   - **Database**: Local Postgres container (internal only)
 
 3. Seed the database with initial subjects and topics (optional)
+```bash
+docker-compose -f docker-compose.dev.yml exec backend node seed.js
+```
+
+To stop the services, press `Ctrl+C` or run:
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
+### Running the Application (Production/External DB)
+
+1. Copy .env.example to .env and set the database connection variables to point to your external Postgres instance. Ensure you have built and pushed your backend and frontend images to a container registry (e.g., Docker Hub, Amazon ECR) and update the image references in `docker-compose.yml`.
+
+2. Start the services:
+```bash
+docker-compose up -d
+```
+
+3. (Optional) Seed the database:
 ```bash
 docker-compose exec backend node seed.js
 ```
 
-To stop the services, press `Ctrl+C` or run:
+To stop the services:
 ```bash
 docker-compose down
 ```
 
 ### Persistence
 
-- **Database Data**: Stored in the `postgres_data` Docker volume persists across container restarts
+- **Database Data**: For local development, data is stored in the `postgres_data` Docker volume and persists across container restarts.
 
 To remove the database volume and reset data:
 ```bash
