@@ -1,535 +1,375 @@
 # EduRev Rwanda
 
-> A smart revision companion for Rwandan secondary students.
+> A smart revision companion for Rwandan secondary students preparing for national exams.
 
-## African Context
+<!-- Uncomment when deployed:
+**Live Application:** [http://edurev-rwanda-alb-xxxx.eu-central-1.elb.amazonaws.com](http://edurev-rwanda-alb-xxxx.eu-central-1.elb.amazonaws.com)
+**Video Demo:** [Link to demo video]()
+-->
 
-Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. This leads to inefficient study habits and lower exam performance, which in turn affects future educational and career opportunities. By providing a smart revision companion, we aim to empower students with the tools they need to succeed academically and contribute to Rwanda's development.
+---
 
-## Team Members
+## Table of Contents
 
-- Loraine Mukezwa Irakoze - Team Lead - l.irakoze2@alustudent.com
-- Ninette Irisa Agatesi - Backend Developer - n.agatesi@alustudent.com
-- John Kwizera - DevOps Engineer - j.kwizera@alustudent.com
-- Nicole Ange Umukundwa - Frontend Developer - n.mukundwa@alustudent.com
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Getting Started](#getting-started)
+- [Docker Deployment](#docker-deployment)
+- [Infrastructure (Terraform)](#infrastructure-terraform)
+- [Configuration Management (Ansible)](#configuration-management-ansible)
+- [CI/CD Pipelines](#cicd-pipelines)
+- [API Reference](#api-reference)
+- [Project Structure](#project-structure)
+- [Team](#team)
 
-## Project Overview
+---
 
-EduRev Rwanda is a web application designed to help Rwandan secondary students efficiently revise for their national exams. The platform offers randomized practice questions based on the REB (Rwanda Education Board) curriculum, allowing students to test their knowledge and identify areas for improvement. Additionally, EduRev offers forums where students can discuss topics, share resources, and support each other in their revision journey. EduRev aims to create a collaborative learning environment that fosters academic success and builds a strong community of learners.
+## Overview
+
+Many secondary students in Rwanda preparing for national exams (REB curriculum) lack a simple, organized way to revise topics and practice questions. EduRev Rwanda addresses this by providing:
+
+- **Subject browsing** — O-Level and A-Level subjects from the REB curriculum
+- **Topic-based revision** — Structured notes organized by chapters with examples and references
+- **Multiple-choice quizzes** — Practice questions with immediate scoring and answer review
+- **Discussion forum** — Topic-based forums for students to ask questions and collaborate
+- **User authentication** — Secure JWT-based login and registration
 
 ### Target Users
 
 Rwandan O-Level and A-Level secondary students preparing for national exams.
 
-### Core Features
-- Feature 1: List key topics for a chosen subject.
-- Feature 2: Serve multiple-choice questions for a topic and show correct answers after submission with scoring.
-- Feature 3: Provide short notes and references per topic.
-- Feature 4: Provide a forum for students to discuss topics and share resources.
+---
+
+## Architecture
+
+### Infrastructure Diagram
+
+![Infrastructure Architecture](docs/architecture.png)
+
+### CI/CD Flow
+
+![CI/CD Pipeline](docs/cicd-flow.png)
+
+---
 
 ## Technology Stack
 
-- **Backend**: Node.js/Express
-- **Frontend**: React
-- **Database**: PostgreSQL (for structured data)
-- **Other**: Tailwind CSS for styling, JWT for authentication
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 19, TypeScript, Tailwind CSS, Redux |
+| **Backend** | Node.js, Express 5 |
+| **Database** | PostgreSQL 17 (local: Docker, production: AWS RDS) |
+| **Authentication** | JWT with bcryptjs |
+| **Security** | Helmet, express-rate-limit |
+| **Containerization** | Docker, Docker Compose |
+| **CI/CD** | GitHub Actions (CI + CD pipelines) |
+| **IaC** | Terraform |
+| **Configuration** | Ansible |
+| **Cloud** | AWS (VPC, EC2, RDS, ECR, ALB, CloudWatch, KMS) |
+| **Security Scanning** | Trivy (container), tfsec (IaC) |
+
+---
 
 ## Getting Started
 
-You can run EduRev Rwanda in two ways:
-- **Local Development** (without Docker): Run services directly on your machine
-- **Docker Deployment** (production-ready): Use Docker Compose with secure secret management
-
-### Prerequisites for Local Development
-- Node.js 16+
-- PostgreSQL 14+
-- Create a PostgreSQL database and user with appropriate permissions
-
-### Local Development Installation
-
-1. Clone the repository
-```bash
-git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
-cd edurev-rwanda
-```
-
-2. Create a `.env` file in the backend directory with the following variables:
-```
-PGHOST=${PGHOST}
-PGPORT=${PGPORT}
-PGUSER=${PGUSER}
-PGPASSWORD=${PGPASSWORD}
-PGDATABASE=${PGDATABASE}
-
-JWT_SECRET=${JWT_SECRET}
-PORT=${PORT}
-CORS_ORIGIN=${CORS_ORIGIN}
-```
-
-3. Create a `.env` file in the frontend directory with the following variable:
-```
-VITE_API_BASE_URL=${VITE_API_BASE_URL}
-```
-
-4. Install backend dependencies and start the server
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-5. In a new terminal, install frontend dependencies and start the development server
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-6. Seed the database with initial subjects and topics (optional)
-```bash
-cd backend
-node seed.js
-```
-
-## Running with Docker Compose
-
-Run the application using Docker Compose for an isolated, containerized environment.
-
 ### Prerequisites
-- Docker and Docker Compose installed on your system
 
-### Compose Files
+- Node.js 20+
+- PostgreSQL 17+ (or Docker)
 
-There are two Compose files:
+### Local Development (without Docker)
 
-- `docker-compose.yml`: For production/staging deployments. Assumes you are using pre-built images and an external/managed Postgres database. No local Postgres container is included.
-- `docker-compose.dev.yml`: For local development. Includes a local Postgres container, and builds backend/frontend images from source.
-
-### Setup
-
-1. Clone the repository
 ```bash
+# Clone
 git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
 cd edurev-rwanda
+
+# Backend
+cp backend/.env.example backend/.env
+# Edit backend/.env with your Postgres credentials
+cd backend && npm install && npm run migrate && npm run dev
+
+# Frontend (new terminal)
+cp frontend/.env.example frontend/.env
+cd frontend && npm install && npm run dev
 ```
 
-2. Copy .env.example to .env and modify the values as needed
+Seed the database (optional):
+```bash
+cd backend && node seed.js
+```
+
+### Environment Variables
+
+**Backend** (`backend/.env`):
+```
+PGHOST=localhost
+PGPORT=5432
+PGUSER=edurev
+PGPASSWORD=your_password
+PGDATABASE=edurev_rwanda
+JWT_SECRET=your_secret_min_32_chars
+PORT=5000
+CORS_ORIGIN=http://localhost:5173
+```
+
+Or use a connection string (for production/RDS):
+```
+DATABASE_URL=postgresql://user:password@host:5432/dbname
+```
+
+**Frontend** (`frontend/.env`):
+```
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+---
+
+## Docker Deployment
+
+### Development (with local Postgres)
+
 ```bash
 cp .env.example .env
-```
-
-### Running the Application (Local Development)
-
-1. Build and start the services with the development Compose file:
-```bash
+# Edit .env with your values
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
-2. The application will be available at:
-   - **Frontend**: `http://localhost:3000`
-   - **Backend API**: `http://localhost:4500/api`
-   - **Database**: Local Postgres container (internal only)
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:4500
+- Postgres: internal only (not exposed)
 
-3. Seed the database with initial subjects and topics (optional)
-```bash
-docker-compose -f docker-compose.dev.yml exec backend node seed.js
-```
+### Production (with external DB)
 
-To stop the services, press `Ctrl+C` or run:
-```bash
-docker-compose -f docker-compose.dev.yml down
-```
+The production `docker-compose.yml` uses pre-built images from ECR and connects to AWS RDS. No local database container.
 
-### Running the Application (Production/External DB)
-
-1. Copy .env.example to .env and set the database connection variables to point to your external Postgres instance. Ensure you have built and pushed your backend and frontend images to a container registry (e.g., Docker Hub, Amazon ECR) and update the image references in `docker-compose.yml`.
-
-2. Start the services:
 ```bash
 docker-compose up -d
 ```
 
-3. (Optional) Seed the database:
-```bash
-docker-compose exec backend node seed.js
-```
+---
 
-To stop the services:
-```bash
-docker-compose down
-```
+## Infrastructure (Terraform)
 
-### Persistence
+All infrastructure is defined in `terraform/` and provisions the following on AWS:
 
-- **Database Data**: For local development, data is stored in the `postgres_data` Docker volume and persists across container restarts.
+| Resource | Description |
+|----------|-------------|
+| **VPC** | Private network (10.0.0.0/16) with 2 public + 2 private subnets across 2 AZs |
+| **Bastion Host** | t3.micro in public subnet — SSH jump server to access private resources |
+| **App Server** | EC2 in private subnet via Auto Scaling Group — runs Docker containers |
+| **RDS** | PostgreSQL 17.9 managed database in private subnet with encryption |
+| **ALB** | Application Load Balancer for routing public traffic to backend/frontend |
+| **ECR** | Private container registry for backend + frontend Docker images |
+| **Security Groups** | Least-privilege network rules for ALB, bastion, app, and RDS |
+| **CloudWatch** | Log groups and metric alarms (CPU, storage, connections) |
+| **KMS** | Encryption keys for ECR and RDS |
 
-To remove the database volume and reset data:
-```bash
-docker volume rm edurev-rwanda_postgres_data
-```
+### Deploy Infrastructure
 
-## GitHub Secrets Guidelines
-
-For CI/CD workflows, deployments, or GitHub Actions, you may need to add the following secrets to your repository or organization settings:
-
-| Secret Name                | Description                                                      |
-|----------------------------|------------------------------------------------------------------|
-| `AWS_ACCESS_KEY_ID`        | AWS access key for deploying infrastructure and pulling images    |
-| `AWS_SECRET_ACCESS_KEY`    | AWS secret key for deploying infrastructure and pulling images    |
-| `AWS_REGION`               | AWS region for resource deployment (e.g., `eu-central-1`)           |
-| `ECR_REPOSITORY_URL`       | URL of the Amazon ECR repository for Docker images               |
-| `DATABASE_URL`             | Connection string for the PostgreSQL database                    |
-| `JWT_SECRET`               | Secret key for JWT authentication                                |
-| `CORS_ORIGIN`              | Allowed CORS origin(s) for backend API                           |
-| `VITE_API_BASE_URL`        | Base URL for frontend to access backend API                      |
-| `POSTGRES_HOST`            | Host for the PostgreSQL database                                 |
-| `POSTGRES_USER`            | User for the PostgreSQL database                                 |
-| `POSTGRES_DB`              | Database name for the PostgreSQL database                        |
-| `POSTGRES_PASSWORD`        | Password for the PostgreSQL database                             |
-
-**How to add secrets:**
-1. Go to your GitHub repository on github.com
-2. Click on `Settings` > `Secrets and variables` > `Actions`
-3. Click `New repository secret` and add each secret above as needed
-
-These secrets are required for CI/CD pipelines, GitHub Actions, and secure deployments. Never commit sensitive values to the repository.
-
-
-## Terraform Deployment
-
-Deploy EduRev Rwanda to AWS infrastructure using Terraform for a scalable, production-ready environment.
-
-### Prerequisites for Terraform Deployment
-
-- Terraform >= 1.0
-- AWS CLI configured with appropriate credentials
-- AWS Account with permissions to create VPC, EC2, RDS, and ECR resources
-- SSH key pair for EC2 access
-
-### Architecture Overview
-
-The Terraform configuration deploys the following AWS resources:
-
-- **VPC & Networking**: Custom VPC with public and private subnets across multiple availability zones
-- **Bastion Host**: Jump server for secure access to private resources
-- **Application Servers**: EC2 instances running the backend and frontend in private subnets
-- **RDS Database**: Managed PostgreSQL database for data persistence
-- **Container Registry**: Amazon ECR for Docker image storage
-- **Security Groups**: Network security configured with least-privilege access
-
-### Setup
-
-1. Navigate to the terraform directory
 ```bash
 cd terraform
-```
-
-2. Copy and customize the terraform variables
-```bash
 cp terraform.tfvars.example terraform.tfvars
-```
+# Edit terraform.tfvars with your values
 
-3. Edit `terraform.tfvars` with your specific values:
-```hcl
-aws_region              = "us-east-1"          # Your preferred AWS region
-environment             = "dev"                 # dev, staging, or prod
-db_password             = "YourStrongPassword" # Create a strong password
-allowed_ssh_cidrs       = ["YOUR_IP/32"]       # Restrict SSH access to your IP
-```
-
-### Deploying Infrastructure
-
-1. Initialize Terraform (downloads providers and sets up the working directory)
-```bash
 terraform init
-```
-
-2. Validate the configuration
-```bash
 terraform validate
-```
-
-3. Review the planned changes
-```bash
 terraform plan
-```
-
-4. Import existing resources (if any) - If you have already created some AWS resources manually, you can import them into Terraform state to manage them going forward. For example:
-
-```bash
-terraform import aws_iam_role.bastion edurev-rwanda-bastion-role
-terraform import aws_iam_role.app edurev-rwanda-app-role
-terraform import aws_iam_role.rds_monitoring edurev-rwanda-rds-monitoring-role
-```
-
-5. Apply the configuration to create AWS resources
-```bash
 terraform apply
 ```
 
-Review the proposed changes and type `yes` to confirm. This will:
-- Create VPC and networking infrastructure
-- Launch EC2 instances for bastion and application servers
-- Provision RDS PostgreSQL database
-- Create ECR repository for container images
-- Configure security groups and access controls
+### Destroy Infrastructure
 
-### Post-Deployment
-
-1. Obtain the outputs
-```bash
-terraform output
-```
-
-Notable outputs include:
-- `bastion_public_ip` - IP address to SSH into the bastion host
-- `rds_endpoint` - Database connection endpoint
-- `ecr_repository_url` - Container registry URL for pushing Docker images
-
-2. SSH into the bastion host
-```bash
-ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
-```
-
-3. From the bastion, access application servers and RDS
-
-### Deploying Application to Infrastructure
-
-1. Build and push Docker images to ECR
-```bash
-docker build -t edurev-backend ./backend
-docker build -t edurev-frontend ./frontend
-docker push <ecr_repository_url>/edurev-backend:latest
-docker push <ecr_repository_url>/edurev-frontend:latest
-```
-
-2. Run deployment scripts on application servers (via bastion)
-```bash
-# Connect to bastion first
-ssh -i /path/to/your/key.pem ec2-user@<bastion_public_ip>
-
-# Execute app-setup.sh on the application server
-# This sets up Docker, pulls images, and starts containers
-```
-
-
-## Ansible Deployment
-
-Deploy EduRev Rwanda application to your AWS EC2 infrastructure using Ansible for automated provisioning and deployment.
-
-### Prerequisites for Ansible Deployment
-
-- AWS infrastructure (bastion host and app server) provisioned via Terraform (see below)
-- Ansible installed on your local machine (`pip install ansible`)
-- SSH private key for EC2 access (`bastion-key` in the `ansible/` directory)
-- AWS credentials with access to ECR (for pulling Docker images)
-
-### Ansible Directory Structure
-
-```
-ansible/
-├── deploy.yml         # Main Ansible playbook
-├── inventory.ini      # Inventory file with bastion and app server details
-├── bastion-key        # SSH private key (not committed to git)
-```
-
-### Setup
-
-1. Ensure your AWS infrastructure is running (see Terraform section below).
-2. Place your SSH private key (`bastion-key`) in the `ansible/` directory and set permissions:
-   ```bash
-   chmod 600 ansible/bastion-key
-   ```
-
-3. Generate `inventory.ini` from the provided template using your environment variables and the Ansible template module. For example:
-   ```bash
-   cd ansible
-   export APP_HOST="$APP_HOST"
-   export APP_SSH_USER="$APP_SSH_USER"
-   export BASTION_KEY_PATH="$BASTION_KEY_PATH"
-   export BASTION_PROXY_COMMAND="$BASTION_PROXY_COMMAND"
-
-   ansible localhost -m template \
-     -a "src=inventory.tpl dest=inventory.ini" \
-     -e "app_host=$APP_HOST app_ssh_user=$APP_SSH_USER bastion_key_path=$BASTION_KEY_PATH bastion_proxy_command=\"$BASTION_PROXY_COMMAND\""
-   ```
-   This command will render `inventory.ini` with your specific host, user, and SSH proxy settings.
-
-4. Export required environment variables for the deployment:
-   ```bash
-   export BACKEND_IMAGE=<ecr_repository_url>/edurev-backend:latest
-   export FRONTEND_IMAGE=<ecr_repository_url>/edurev-frontend:latest
-   export DATABASE_URL=<your_database_url>
-   export AWS_ACCESS_KEY_ID=<your_aws_access_key_id>
-   export AWS_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
-   export AWS_REGION=<your_aws_region>
-
-   export APP_HOST=your_app_server_private_ip
-   export APP_SSH_USER=your_app_server_ssh_user
-   export BASTION_KEY_PATH=path_to_your_bastion_key
-   export BASTION_PROXY_COMMAND=proxy_command_for_ssh_through_bastion
-   ```
-
-### Running the Ansible Playbook
-
-From the `ansible/` directory, run:
-```bash
-ansible-playbook -i inventory.ini deploy.yml
-```
-
-This will:
-- Install Docker and Docker Compose on the app server
-- Copy the Docker Compose file and environment variables
-- Pull the latest Docker images from ECR
-- Start the application using Docker Compose
-
-If you encounter SSH issues, ensure your security groups and SSH key are correct, and that the bastion host is accessible.
-
-### Managing Infrastructure
-
-### Scaling
-
-Update instance counts in `terraform.tfvars`:
-```hcl
-app_instance_count = 3  # Increase from 2 to 3
-```
-
-Then apply the changes:
-```bash
-terraform apply
-```
-
-### Destroying Infrastructure
-
-To tear down all AWS resources:
 ```bash
 terraform destroy
 ```
 
-Type `yes` to confirm. This will delete all provisioned infrastructure.
+---
 
-**Warning**: This will permanently delete databases and other resources. Ensure backups exist before destroying.
+## Configuration Management (Ansible)
 
-### Troubleshooting
+The Ansible playbook (`ansible/deploy.yml`) configures the EC2 app server:
 
-**Issue**: Terraform plan fails with authentication errors
-- **Solution**: Verify AWS credentials are configured: `aws configure`
+1. Installs Docker and Docker Compose
+2. Copies `docker-compose.yml` to the server
+3. Creates `.env` with database, auth, and CORS configuration
+4. Logs into AWS ECR
+5. Pulls backend and frontend Docker images
+6. Starts the application with `docker-compose up -d`
 
-**Issue**: RDS creation times out
-- **Solution**: Check security group rules allow database port access from app servers
+### Run Manually
 
-**Issue**: EC2 instances can't reach RDS
-- **Solution**: Verify all security group rules and subnet routing are correct: `terraform plan`
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
+```
 
-### Usage
+In production, the CD pipeline runs this automatically on every merge to main.
 
-1. **Open the application** in your browser at `http://localhost:3000`
+---
 
-2. **Create an account and Login** - Sign up or sign in with your email and password
+## CI/CD Pipelines
 
-3. **Select a subject** - Choose from available O-Level or A-Level subjects (Mathematics, English, Biology, etc.)
+### CI Pipeline (`ci.yml`)
 
-4. **Browse topics** - View all topics within your selected subject
+**Triggers:** PRs to main, pushes to non-main branches
 
-5. **Practice questions** - Take randomized multiple-choice quizzes for any topic:
-   - Answer all questions
-   - Submit to see your score
-   - Review correct answers and explanations
+| Step | Description |
+|------|-------------|
+| Lint | ESLint on backend + frontend |
+| Test | Jest (backend) + Vitest (frontend) with Postgres service |
+| Build | Docker images for both services |
+| Trivy | Container vulnerability scan — fails on CRITICAL |
+| tfsec | Terraform security scan — fails on issues |
 
-6. **Access notes** - View concise study notes and references for each topic
+### CD Pipeline (`cd.yml`)
 
-7. **Join the forum** - Participate in discussions, ask questions, and help fellow students
+**Triggers:** Push to main (after PR merge)
 
-## Docker Deployment
+| Step | Description |
+|------|-------------|
+| Test | Re-runs all CI checks (lint, test, build, Trivy, tfsec) |
+| Build & Push | Docker images to AWS ECR (tagged with commit SHA + latest) |
+| Deploy | Generates Ansible inventory, deploys via playbook through bastion |
 
-The application uses Docker containers with Docker Compose orchestrating the full stack including PostgreSQL, backend API, and frontend.
+### Required GitHub Secrets
 
-### Prerequisites for Docker Deployment
+| Secret | Description |
+|--------|-------------|
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key |
+| `AWS_REGION` | AWS region (e.g. `eu-central-1`) |
+| `SSH_PRIVATE_KEY` | SSH key for EC2 access via bastion |
+| `APP_HOST` | App server private IP |
+| `BASTION_HOST` | Bastion server public IP |
+| `DATABASE_URL` | PostgreSQL connection string for RDS |
+| `JWT_SECRET` | JWT signing secret (min 32 chars) |
+| `CORS_ORIGIN` | Allowed frontend origin URL |
+| `VITE_API_BASE_URL` | Backend API URL (baked into frontend at build time) |
+| `POSTGRES_USER` | Postgres user for CI test database |
+| `POSTGRES_PASSWORD` | Postgres password for CI test database |
+| `POSTGRES_DB` | Postgres database name for CI tests |
 
-- Docker installed on your system
-- Docker Compose (usually included with Docker Desktop)
+---
 
-### Architecture Overview
+## API Reference
 
-- **Database Tier**: PostgreSQL 17 running on an internal `backend-db` network (not exposed externally)
-- **Backend Tier**: Node.js/Express API on the `backend-db` and `frontend-backend` networks
-- **Frontend Tier**: React SPA served by a static file server on the `frontend-backend` network
+### Authentication
 
-### Configuration
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/auth/register` | Register a new user | No |
+| POST | `/api/auth/login` | Login and receive JWT token | No |
+| GET | `/api/auth/me` | Get current user profile | Yes |
 
-Copy the provided `.env.example` file in the root directory to `.env` and fill in the appropriate values for your environment.
+### Subjects
 
-The Docker Compose file reads these values from the `.env` file and passes them to the containers.
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/subjects` | List all subjects | No |
+| GET | `/api/subjects/:id` | Get a single subject | No |
 
-### API Endpoints
+### Topics
 
-#### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login and receive JWT token
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/topics/:subjectId` | Get topics for a subject (sortable) | No |
+| GET | `/api/topics/detail/:topicId` | Get full topic with content | No |
 
-#### Subjects & Topics
-- `GET /api/subjects` - List all subjects
-- `GET /api/subjects/:id` - Get a single subject
-- `GET /api/topics/:subjectId` - Get topics for a subject
+### Questions
 
-#### Questions (Coming Soon)
-- `GET /api/topics/:id/questions` - Get questions for a topic
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/questions/:topicId` | Get questions (answers hidden) | No |
+| POST | `/api/questions/:topicId/submit` | Submit answers, get score | No |
 
-#### Forum (Coming Soon)
-- `GET /api/forum` - List forum threads
-- `POST /api/forum` - Create a new thread
+### Forum
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/forum/:topicId` | Get forum posts for a topic | No |
+| POST | `/api/forum/:topicId` | Create a forum post | Yes |
+
+### Health
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check |
+
+---
 
 ## Project Structure
 
 ```
 edurev-rwanda/
-├── backend/                    # Node.js/Express server
+├── .github/workflows/
+│   ├── ci.yml                  # CI pipeline (lint, test, scan)
+│   └── cd.yml                  # CD pipeline (build, push ECR, deploy)
+├── backend/
 │   ├── config/
-│   │   └── db.js             # PostgreSQL connection setup
+│   │   ├── db.js               # PostgreSQL connection (supports DATABASE_URL)
+│   │   └── schema.js           # Database schema initialization
 │   ├── middleware/
-│   │   └── authMiddleware.js  # JWT authentication middleware
-│   ├── models/                # PostgreSQL schemas
-│   │   ├── Forum.js
-│   │   ├── Question.js
-│   │   ├── Subject.js
-│   │   ├── Topic.js
-│   │   └── User.js
-│   ├── routes/                # Express route handlers
-│   │   ├── authRoutes.js
-│   │   ├── subjectRoutes.js
-│   │   └── topicRoutes.js
-│   ├── server.js              # Express app entry point
+│   │   └── authMiddleware.js   # JWT authentication middleware
+│   ├── routes/
+│   │   ├── authRoutes.js       # Auth endpoints (register, login, me)
+│   │   ├── subjectRoutes.js    # Subject listing
+│   │   ├── topicRoutes.js      # Topic listing with sort/filter
+│   │   ├── questionRoutes.js   # Quiz questions and scoring
+│   │   └── forumRoutes.js      # Forum posts (CRUD)
+│   ├── tests/
+│   │   ├── health.test.js      # Health check test
+│   │   ├── routes.test.js      # Route unit tests (mocked DB)
+│   │   └── integration.test.js # Integration tests (real Postgres)
+│   ├── app.js                  # Express app (helmet, rate limiting, CORS)
+│   ├── server.js               # Server entry point
+│   ├── migrate.js              # Database migration script
+│   ├── seed.js                 # Database seed script
+│   ├── Dockerfile              # Multi-stage production build
 │   └── package.json
-│
-├── frontend/                   # React + TypeScript application
+├── frontend/
 │   ├── src/
-│   │   ├── components/        # Reusable React components
-│   │   ├── pages/             # Page components
-│   │   ├── store/             # Redux store configuration
-│   │   │   ├── reducers/      # Redux reducers
-│   │   │   └── store.ts
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   ├── axios.ts           # Axios API client configuration
-│   │   ├── types.ts           # TypeScript type definitions
-│   │   └── index.css
-│   ├── vite.config.ts         # Vite configuration
-│   ├── tsconfig.json          # TypeScript configuration
-│   ├── index.html
+│   │   ├── pages/              # Page components (Subjects, Topics, Quiz, Login, Register)
+│   │   ├── store/              # Redux store, reducers, actions
+│   │   ├── App.tsx             # Router and layout
+│   │   ├── axios.ts            # API client with auth interceptor
+│   │   └── types.ts            # TypeScript interfaces
+│   ├── Dockerfile              # Multi-stage production build (serve static)
 │   └── package.json
-│
-├── README.md
-└── LICENSE
+├── terraform/
+│   ├── main.tf                 # Provider configuration
+│   ├── variables.tf            # Input variables with validation
+│   ├── outputs.tf              # Output values
+│   ├── network.tf              # VPC, subnets, NAT, ALB, security groups
+│   ├── ec2.tf                  # Bastion + app instances (ASG)
+│   ├── rds.tf                  # PostgreSQL RDS with monitoring
+│   └── ecr.tf                  # Container registries with KMS
+├── ansible/
+│   ├── deploy.yml              # Deployment playbook
+│   └── inventory.tpl           # Inventory template
+├── docker-compose.yml          # Production (pre-built images, external DB)
+├── docker-compose.dev.yml      # Development (build from source, local Postgres)
+├── .env.example                # Environment variable template
+└── README.md
 ```
+
+---
+
+## Team
+
+| Name | Role | Contact |
+|------|------|---------|
+| Loraine Mukezwa Irakoze | Team Lead | l.irakoze2@alustudent.com |
+| Ninette Irisa Agatesi | Backend Developer | n.agatesi@alustudent.com |
+| John Kwizera | DevOps Engineer | j.kwizera@alustudent.com |
+| Nicole Ange Mukundwa | Frontend Developer | n.mukundwa@alustudent.com |
+
+---
 
 ## Links
 
 - [Project Board](https://github.com/users/IrakozeLoraine/projects/1)
 - [GitHub Repository](https://github.com/IrakozeLoraine/edurev-rwanda)
-
-## Contributing
-
-To contribute submit pull requests or open issues for bugs and feature requests.
 
 ## License
 
