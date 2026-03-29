@@ -27,10 +27,15 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Set lowercase image names
+        run: |
+          echo "IMAGE_BACKEND=ghcr.io/${GITHUB_REPOSITORY,,}/backend" >> $GITHUB_ENV
+          echo "IMAGE_FRONTEND=ghcr.io/${GITHUB_REPOSITORY,,}/frontend" >> $GITHUB_ENV
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -39,30 +44,61 @@ jobs:
             backend/package-lock.json
             frontend/package-lock.json
 
-      - name: Install Backend Dependencies
+      - name: Install backend dependencies
         run: cd backend && npm ci
 
-      - name: Install Frontend Dependencies
+      - name: Install frontend dependencies
         run: cd frontend && npm ci
 
-      - name: Lint Backend
+      - name: Lint backend
         run: cd backend && npm run lint
 
-      - name: Lint Frontend
+      - name: Lint frontend
         run: cd frontend && npm run lint
 
-      - name: Test Backend
-        run: cd backend && npm test
-        env:
-          PGHOST: ${{ secrets.CI_PGHOST }}
-          PGPORT: ${{ secrets.CI_PGPORT }}
-          PGUSER: ${{ secrets.POSTGRES_USER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          PGDATABASE: ${{ secrets.POSTGRES_DB }}
-          JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+      - name: Test backend
+        run: cd backend && npm test -- --runInBand
 
-      - name: Test Frontend
-        run: cd frontend && npm test
+      - name: Test frontend
+        run: cd frontend && npm test -- --watch=false
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            -t $IMAGE_BACKEND:ci-${{ github.sha }} \
+            ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            -t $IMAGE_FRONTEND:ci-${{ github.sha }} \
+            ./frontend
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: '${{ env.IMAGE_BACKEND }}:ci-${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL'
+          vuln-type: 'library'
+          exit-code: '1'
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: '${{ env.IMAGE_FRONTEND }}:ci-${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL'
+          vuln-type: 'library'
+          exit-code: '1'
+
+      - name: Run tfsec on Terraform
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: terraform/
+          soft_fail: false
 
   # ── Step 2: Build and push Docker images to ECR ───────────────
   build-and-push:
