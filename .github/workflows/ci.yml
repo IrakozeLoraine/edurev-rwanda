@@ -8,75 +8,139 @@ on:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  
 jobs:
-  build:
-
+  build_and_test:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: edurev
-          POSTGRES_PASSWORD: edurev_pass
-          POSTGRES_DB: edurev_test
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U edurev -d edurev_test"
+          --health-cmd "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
-    steps:
+    permissions:
+      contents: read
+      packages: write
 
-      - name: Checkout Code
+    outputs:
+      backend_image: ${{ steps.set-images.outputs.backend_image }}
+      frontend_image: ${{ steps.set-images.outputs.frontend_image }}
+
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Set lowercase image names
+        run: |
+          echo "IMAGE_BACKEND=ghcr.io/${GITHUB_REPOSITORY,,}/backend" >> $GITHUB_ENV
+          echo "IMAGE_FRONTEND=ghcr.io/${GITHUB_REPOSITORY,,}/frontend" >> $GITHUB_ENV
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
 
-      - name: Install Backend Dependencies
+      - name: Install backend dependencies
         run: |
           cd backend
-          npm install
+          npm ci
 
-      - name: Install Frontend Dependencies
+      - name: Install frontend dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
 
-      - name: Lint Backend
+      - name: Lint backend
         run: |
           cd backend
           npm run lint
 
-      - name: Lint Frontend
+      - name: Lint frontend
         run: |
           cd frontend
           npm run lint
 
-      - name: Test Backend
+      - name: Test backend
         run: |
           cd backend
-          npm test
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: edurev
-          PGPASSWORD: edurev_pass
-          PGDATABASE: edurev_test
-          JWT_SECRET: test-secret
+          npm test -- --runInBand
 
-      - name: Test Frontend
+      - name: Test frontend
         run: |
           cd frontend
-          npm test
+          npm test -- --watch=false
 
-      - name: Build Backend Docker Image
-        run: docker build -t edurev-backend ./backend
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            -t $IMAGE_BACKEND:ci-${{ github.sha }} \
+            ./backend
 
-      - name: Build Frontend Docker Image
-        run: docker build -t edurev-frontend ./frontend
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            -t $IMAGE_FRONTEND:ci-${{ github.sha }} \
+            ./frontend
+
+      - name: Set image outputs
+        id: set-images
+        run: |
+          echo "backend_image=$IMAGE_BACKEND:ci-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "frontend_image=$IMAGE_FRONTEND:ci-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: '${{ env.IMAGE_BACKEND }}:ci-${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL'
+          vuln-type: 'library'
+          exit-code: '1'
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: '${{ env.IMAGE_FRONTEND }}:ci-${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL'
+          vuln-type: 'library'
+          exit-code: '1'
+
+      - name: Run tfsec on Terraform
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: terraform/
+          soft_fail: false
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          echo "${{ github.token }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
+
+      - name: Push backend image to GHCR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          docker push $IMAGE_BACKEND:ci-${{ github.sha }}
+
+      - name: Push frontend image to GHCR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          docker push $IMAGE_FRONTEND:ci-${{ github.sha }}

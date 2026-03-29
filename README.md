@@ -179,14 +179,13 @@ For CI/CD workflows, deployments, or GitHub Actions, you may need to add the fol
 | `AWS_REGION`               | AWS region for resource deployment (e.g., `eu-central-1`)           |
 | `ECR_REPOSITORY_URL`       | URL of the Amazon ECR repository for Docker images               |
 | `DATABASE_URL`             | Connection string for the PostgreSQL database                    |
-| `PGHOST`                   | PostgreSQL host (if not using DATABASE_URL)                      |
-| `PGPORT`                   | PostgreSQL port (if not using DATABASE_URL)                      |
-| `PGUSER`                   | PostgreSQL user (if not using DATABASE_URL)                      |
-| `PGPASSWORD`               | PostgreSQL password (if not using DATABASE_URL)                  |
-| `PGDATABASE`               | PostgreSQL database name (if not using DATABASE_URL)              |
 | `JWT_SECRET`               | Secret key for JWT authentication                                |
 | `CORS_ORIGIN`              | Allowed CORS origin(s) for backend API                           |
 | `VITE_API_BASE_URL`        | Base URL for frontend to access backend API                      |
+| `POSTGRES_HOST`            | Host for the PostgreSQL database                                 |
+| `POSTGRES_USER`            | User for the PostgreSQL database                                 |
+| `POSTGRES_DB`              | Database name for the PostgreSQL database                        |
+| `POSTGRES_PASSWORD`        | Password for the PostgreSQL database                             |
 
 **How to add secrets:**
 1. Go to your GitHub repository on github.com
