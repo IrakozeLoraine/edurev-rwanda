@@ -10,68 +10,52 @@
     ecr_registry: "{{ backend_image.split('/')[0] }}"
 
   tasks:
-    - name: Ensure apt cache is up to date
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+    - name: Install required base packages with yum
+      ansible.builtin.shell: >
+        yum install -y
+        ca-certificates
+        curl
+        gnupg2
+      register: base_pkgs
+      changed_when: base_pkgs.rc == 0
 
-    - name: Install required packages
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
-        state: present
-
-    - name: Add Docker GPG key
-      ansible.builtin.shell: |
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    - name: Install Docker engine (amazon-linux-extras)
+      ansible.builtin.command: amazon-linux-extras install -y docker
       args:
-        creates: /usr/share/keyrings/docker-archive-keyring.gpg
-
-    - name: Add Docker APT repository
-      copy:
-        dest: /etc/apt/sources.list.d/docker.list
-        content: |
-          deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable
-
-    - name: Install Docker
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-        update_cache: yes
-
-    - name: Install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/v2.29.0/docker-compose-linux-x86_64
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
+        creates: /usr/bin/docker
 
     - name: Ensure docker service is running
-      service:
+      ansible.builtin.service:
         name: docker
         state: started
         enabled: yes
 
+    - name: Download Docker Compose with curl
+      ansible.builtin.shell: |
+        curl -L "https://github.com/docker/compose/releases/download/v2.29.0/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+      args:
+        creates: /usr/local/bin/docker-compose
+
+    - name: Ensure Docker Compose is executable
+      ansible.builtin.file:
+        path: /usr/local/bin/docker-compose
+        mode: '0755'
+        state: file
+
     - name: Create app directory
-      file:
+      ansible.builtin.file:
         path: /opt/devops-final
         state: directory
         mode: '0755'
 
     - name: Copy docker-compose.yml
-      copy:
+      ansible.builtin.copy:
         src: ../docker-compose.yml
         dest: /opt/devops-final/docker-compose.yml
         mode: '0644'
 
     - name: Create environment file
-      copy:
+      ansible.builtin.copy:
         dest: /opt/devops-final/.env
         mode: '0600'
         content: |
@@ -80,7 +64,7 @@
           DATABASE_URL={{ database_url }}
 
     - name: Login to ECR
-      shell: |
+      ansible.builtin.shell: |
         aws ecr get-login-password --region {{ lookup('env','AWS_REGION') }} \
           | docker login --username AWS --password-stdin {{ ecr_registry }}
       environment:
@@ -89,13 +73,11 @@
         AWS_DEFAULT_REGION: "{{ lookup('env','AWS_REGION') }}"
 
     - name: Pull backend image
-      shell: |
-        docker pull {{ backend_image }}
+      ansible.builtin.shell: docker pull {{ backend_image }}
 
     - name: Pull frontend image
-      shell: |
-        docker pull {{ frontend_image }}
+      ansible.builtin.shell: docker pull {{ frontend_image }}
 
     - name: Deploy frontend + backend with docker-compose
-      shell: |
+      ansible.builtin.shell: |
         cd /opt/devops-final && docker-compose --env-file .env up -d

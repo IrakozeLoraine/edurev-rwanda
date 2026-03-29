@@ -301,7 +301,7 @@ ansible/
 
 From the `ansible/` directory, run:
 ```bash
-ansible-playbook -i inventory.ini deploy.yml --private-key edurev-rwanda.pem
+ansible-playbook -i inventory.ini deploy.yml
 ```
 
 This will:
