@@ -81,23 +81,33 @@ Rwandan O-Level and A-Level secondary students preparing for national exams.
 ### Local Development (without Docker)
 
 ```bash
-# Clone
 git clone https://github.com/IrakozeLoraine/edurev-rwanda.git
 cd edurev-rwanda
-
-# Backend
-cp backend/.env.example backend/.env
-# Edit backend/.env with your Postgres credentials
-cd backend && npm install && npm run migrate && npm run dev
-
-# Frontend (new terminal)
-cp frontend/.env.example frontend/.env
-cd frontend && npm install && npm run dev
 ```
 
-Seed the database (optional):
+**Backend** (terminal 1):
 ```bash
-cd backend && node seed.js
+cp backend/.env.example backend/.env
+# Edit backend/.env with your Postgres credentials
+cd backend
+npm install
+npm run migrate
+npm run dev
+```
+
+**Frontend** (terminal 2):
+```bash
+cp frontend/.env.example frontend/.env
+# Edit frontend/.env with your backend URL
+cd frontend
+npm install
+npm run dev
+```
+
+**Seed the database** (optional):
+```bash
+cd backend
+node seed.js
 ```
 
 ### Environment Variables
@@ -132,7 +142,20 @@ VITE_API_BASE_URL=http://localhost:5000
 
 ```bash
 cp .env.example .env
-# Edit .env with your values
+```
+
+Ensure your `.env` includes:
+```
+POSTGRES_USER=edurev
+POSTGRES_DB=edurev_rwanda
+POSTGRES_PASSWORD=your_password
+JWT_SECRET=your_secret_min_32_chars
+CORS_ORIGIN=http://localhost:3000
+VITE_API_BASE_URL=http://localhost:4500
+```
+
+Then start the services:
+```bash
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
@@ -159,7 +182,7 @@ All infrastructure is defined in `terraform/` and provisions the following on AW
 | **VPC** | Private network (10.0.0.0/16) with 2 public + 2 private subnets across 2 AZs |
 | **Bastion Host** | t3.micro in public subnet — SSH jump server to access private resources |
 | **App Server** | EC2 in private subnet via Auto Scaling Group — runs Docker containers |
-| **RDS** | PostgreSQL 17.9 managed database in private subnet with encryption |
+| **RDS** | PostgreSQL 17.x managed database in private subnet with encryption |
 | **ALB** | Application Load Balancer for routing public traffic to backend/frontend |
 | **ECR** | Private container registry for backend + frontend Docker images |
 | **Security Groups** | Least-privilege network rules for ALB, bastion, app, and RDS |
