@@ -36,6 +36,11 @@ output "bastion_instance_id" {
   value       = aws_instance.bastion.id
 }
 
+output "bastion_key_name" {
+  description = "Name of the SSH key pair for bastion host"
+  value       = aws_key_pair.bastion.key_name
+}
+
 output "bastion_security_group_id" {
   description = "Security group ID of bastion host"
   value       = aws_security_group.bastion.id
