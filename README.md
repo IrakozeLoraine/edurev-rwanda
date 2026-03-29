@@ -14,6 +14,7 @@
 - [Team Member Contributions](#team-member-contributions)
 - [Overview](#overview)
 - [Architecture](#architecture)
+- [Component Description](#component-description)
 - [Technology Stack](#technology-stack)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
@@ -70,21 +71,35 @@ Rwandan O-Level and A-Level secondary students preparing for national exams.
 
 ---
 
+## Component Description
+Describe:
+- VPC with public + private subnets.
+- Bastion host in public subnet (SSH only from your IP).
+- App VM in private subnet (HTTP from internet via SG, SSH only from Bastion).
+- RDS in private subnet (5432 only from App SG).
+- ECR as private registry.
+- GitHub Actions CI/CD pipelines.
+
 ## Technology Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 19, TypeScript, Tailwind CSS, Redux |
-| **Backend** | Node.js, Express 5 |
-| **Database** | PostgreSQL 17 (local: Docker, production: AWS RDS) |
+| **Cloud Provider** | AWS |
+| **Frontend** | React (Vite) |
+| **Backend** | Node.js (Express) |
+| **Database** | PostgreSQL (RDS) |
+| **Testing** | Jest, Vitest, Supertest |
+| **Linting** | ESLint |
 | **Authentication** | JWT with bcryptjs |
 | **Security** | Helmet, express-rate-limit |
 | **Containerization** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions (CI + CD pipelines) |
-| **IaC** | Terraform |
-| **Configuration** | Ansible |
-| **Cloud** | AWS (VPC, EC2, RDS, ECR, ALB, CloudWatch, KMS) |
-| **Security Scanning** | Trivy (container), tfsec (IaC) |
+| **CI/CD** | GitHub Actions |
+| **Infrastructure as Code** | Terraform |
+| **Configuration Management** | Ansible |
+| **Container Registry** | AWS ECR |
+| **Monitoring** | AWS CloudWatch |
+| **Secrets Management** | AWS KMS |
+| **Security Scanning** | Trivy (containers), tfsec (Terraform) |
 
 ---
 
