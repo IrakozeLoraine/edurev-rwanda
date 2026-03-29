@@ -34,12 +34,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
 
       - name: Install Backend Dependencies
-        run: cd backend && npm install
+        run: cd backend && npm ci
 
       - name: Install Frontend Dependencies
-        run: cd frontend && npm install
+        run: cd frontend && npm ci
 
       - name: Lint Backend
         run: cd backend && npm run lint
@@ -129,7 +133,7 @@ jobs:
       - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          printf '%s' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
       - name: Generate Ansible Inventory
