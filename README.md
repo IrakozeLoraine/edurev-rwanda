@@ -182,6 +182,10 @@ For CI/CD workflows, deployments, or GitHub Actions, you may need to add the fol
 | `JWT_SECRET`               | Secret key for JWT authentication                                |
 | `CORS_ORIGIN`              | Allowed CORS origin(s) for backend API                           |
 | `VITE_API_BASE_URL`        | Base URL for frontend to access backend API                      |
+| `POSTGRES_HOST`            | Host for the PostgreSQL database                                 |
+| `POSTGRES_USER`            | User for the PostgreSQL database                                 |
+| `POSTGRES_DB`              | Database name for the PostgreSQL database                        |
+| `POSTGRES_PASSWORD`        | Password for the PostgreSQL database                             |
 
 **How to add secrets:**
 1. Go to your GitHub repository on github.com
