@@ -1,0 +1,101 @@
+---
+- name: Deploy Application to Production
+  hosts: app_server
+  become: yes
+
+  vars:
+    backend_image: "{{ lookup('env', 'BACKEND_IMAGE') }}"
+    frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') }}"
+    database_url: "{{ lookup('env', 'DATABASE_URL') }}"
+    ecr_registry: "{{ backend_image.split('/')[0] }}"
+
+  tasks:
+    - name: Ensure apt cache is up to date
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/docker-archive-keyring.gpg
+
+    - name: Add Docker APT repository
+      copy:
+        dest: /etc/apt/sources.list.d/docker.list
+        content: |
+          deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.29.0/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Ensure docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create app directory
+      file:
+        path: /opt/devops-final
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose.yml
+      copy:
+        src: ../docker-compose.yml
+        dest: /opt/devops-final/docker-compose.yml
+        mode: '0644'
+
+    - name: Create environment file
+      copy:
+        dest: /opt/devops-final/.env
+        mode: '0600'
+        content: |
+          BACKEND_IMAGE={{ backend_image }}
+          FRONTEND_IMAGE={{ frontend_image }}
+          DATABASE_URL={{ database_url }}
+
+    - name: Login to ECR
+      shell: |
+        aws ecr get-login-password --region {{ lookup('env','AWS_REGION') }} \
+          | docker login --username AWS --password-stdin {{ ecr_registry }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+        AWS_DEFAULT_REGION: "{{ lookup('env','AWS_REGION') }}"
+
+    - name: Pull backend image
+      shell: |
+        docker pull {{ backend_image }}
+
+    - name: Pull frontend image
+      shell: |
+        docker pull {{ frontend_image }}
+
+    - name: Deploy frontend + backend with docker-compose
+      shell: |
+        cd /opt/devops-final && docker-compose --env-file .env up -d
