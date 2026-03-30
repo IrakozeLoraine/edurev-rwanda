@@ -146,7 +146,7 @@ services:
       PGPASSWORD: $${PGPASSWORD}
       PGDATABASE: $${PGDATABASE}
       JWT_SECRET: $${JWT_SECRET}
-      PORT: 5000
+      PORT: 4500
       CORS_ORIGIN: $${CORS_ORIGIN}
       NODE_ENV: production
     depends_on:
