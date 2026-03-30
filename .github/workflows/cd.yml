@@ -201,6 +201,18 @@ jobs:
             -i ansible/inventory.ini \
             ansible/deploy.yml
 
+      - name: Verify Deployment
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.CORS_ORIGIN }}/api/health || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "Deployment verified — health check returned 200"
+          else
+            echo "WARNING: Health check returned $STATUS — deployment may need attention"
+            exit 1
+          fi
+
       - name: Cleanup SSH Key
         if: always()
         run: rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts ansible/inventory.ini
