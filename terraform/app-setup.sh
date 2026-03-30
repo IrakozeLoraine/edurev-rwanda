@@ -131,7 +131,6 @@ chmod 600 /opt/app/.env
 
 # Create a docker-compose file for the application
 cat > /opt/app/docker-compose.yml <<'EOFCOMPOSE'
-version: '3.8'
 services:
   backend:
     image: $${ECR_REGISTRY}
