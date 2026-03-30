@@ -82,6 +82,7 @@ jobs:
           format: 'table'
           severity: 'CRITICAL'
           exit-code: '1'
+          scanners: 'vuln,secret'
 
       - name: Scan frontend image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -91,6 +92,7 @@ jobs:
           format: 'table'
           severity: 'CRITICAL'
           exit-code: '1'
+          scanners: 'vuln,secret'
 
       - name: Run tfsec on Terraform
         uses: aquasecurity/tfsec-action@v1.0.0
