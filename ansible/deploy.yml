@@ -16,7 +16,7 @@
     backend_image: "{{ lookup('env', 'BACKEND_IMAGE') }}"
     frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') }}"
     database_url: "{{ lookup('env', 'DATABASE_URL') }}"
-    ecr_registry: "{{ backend_image.split('/')[0] }}"
+    ecr_registry: "{{ backend_image.split('/')[0] | trim }}"
     aws_region: "{{ lookup('env','AWS_REGION') }}"
     aws_access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
     aws_secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
@@ -81,9 +81,7 @@
           CORS_ORIGIN={{ cors_origin }}
 
     - name: Login to ECR
-      ansible.builtin.shell: |
-        aws ecr get-login-password --region {{ aws_region }} \
-          | docker login --username AWS --password-stdin {{ ecr_registry }}
+      ansible.builtin.shell: "aws ecr get-login-password --region {{ aws_region | trim }} | docker login --username AWS --password-stdin {{ ecr_registry | trim }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
