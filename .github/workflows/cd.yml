@@ -164,8 +164,7 @@ jobs:
 
       - name: Install Ansible
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+          pip install 'ansible-core<2.17'
 
       - name: Configure SSH Key
         run: |
