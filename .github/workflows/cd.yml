@@ -178,12 +178,18 @@ jobs:
           echo "[app_server]" > ansible/inventory.ini
           echo "app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=${{ secrets.APP_SSH_USER }} ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
-      - name: Debug Inventory
+      - name: Debug SSH Setup
         run: |
-          echo "=== Inventory content ==="
+          echo "=== Inventory ==="
           cat ansible/inventory.ini
-          echo "=== SSH key exists ==="
+          echo "=== Key info ==="
           ls -la /home/runner/.ssh/deploy_key
+          wc -l /home/runner/.ssh/deploy_key
+          ssh-keygen -lf /home/runner/.ssh/deploy_key || echo "Failed to read key fingerprint"
+          echo "=== Test bastion ==="
+          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION FAILED"
+          echo "=== Test app via bastion ==="
+          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo app_ok" 2>&1 || echo "APP FAILED"
 
       - name: Run Ansible Playbook
         env:
@@ -199,7 +205,7 @@ jobs:
         run: |
           ansible-playbook \
             -i ansible/inventory.ini \
-            --ssh-common-args="-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}'" \
+            --ssh-common-args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}'" \
             ansible/deploy.yml
 
       - name: Verify Deployment
