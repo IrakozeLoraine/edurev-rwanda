@@ -2,10 +2,9 @@
 
 > A smart revision companion for Rwandan secondary students preparing for national exams.
 
-<!-- Uncomment when deployed:
-**Live Application:** [http://edurev-rwanda-alb-xxxx.eu-central-1.elb.amazonaws.com](http://edurev-rwanda-alb-xxxx.eu-central-1.elb.amazonaws.com)
-**Video Demo:** [Link to demo video]()
--->
+**Live Application:** [http://edurev-rwanda-alb-2053544712.eu-central-1.elb.amazonaws.com](http://edurev-rwanda-alb-2053544712.eu-central-1.elb.amazonaws.com)
+
+**Video Demo:** *Coming soon*
 
 ---
 

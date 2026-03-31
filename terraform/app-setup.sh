@@ -116,7 +116,7 @@ PGDATABASE=${db_name}
 
 # Application Configuration
 JWT_SECRET=${jwt_secret}
-PORT=5000
+PORT=4500
 CORS_ORIGIN=${backend_cors_origin}
 NODE_ENV=production
 
@@ -131,14 +131,13 @@ chmod 600 /opt/app/.env
 
 # Create a docker-compose file for the application
 cat > /opt/app/docker-compose.yml <<'EOFCOMPOSE'
-version: '3.8'
 services:
   backend:
     image: $${ECR_REGISTRY}
     container_name: edurev-backend
     restart: always
     ports:
-      - "5000:5000"
+      - "4500:4500"
     environment:
       PGHOST: $${PGHOST}
       PGPORT: $${PGPORT}
@@ -146,13 +145,13 @@ services:
       PGPASSWORD: $${PGPASSWORD}
       PGDATABASE: $${PGDATABASE}
       JWT_SECRET: $${JWT_SECRET}
-      PORT: 5000
+      PORT: 4500
       CORS_ORIGIN: $${CORS_ORIGIN}
       NODE_ENV: production
     depends_on:
       - postgres-client
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:4500/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

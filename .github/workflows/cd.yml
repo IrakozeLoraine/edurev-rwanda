@@ -11,22 +11,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-
     services:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: $POSTGRES_USER
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-          POSTGRES_DB: $POSTGRES_DB
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
+          --health-cmd "pg_isready"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -86,8 +81,8 @@ jobs:
           image-ref: '${{ env.IMAGE_BACKEND }}:ci-${{ github.sha }}'
           format: 'table'
           severity: 'CRITICAL'
-          vuln-type: 'library'
           exit-code: '1'
+          scanners: 'vuln,secret'
 
       - name: Scan frontend image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -96,8 +91,8 @@ jobs:
           image-ref: '${{ env.IMAGE_FRONTEND }}:ci-${{ github.sha }}'
           format: 'table'
           severity: 'CRITICAL'
-          vuln-type: 'library'
           exit-code: '1'
+          scanners: 'vuln,secret'
 
       - name: Run tfsec on Terraform
         uses: aquasecurity/tfsec-action@v1.0.0
@@ -205,6 +200,18 @@ jobs:
           ansible-playbook \
             -i ansible/inventory.ini \
             ansible/deploy.yml
+
+      - name: Verify Deployment
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.CORS_ORIGIN }}/api/health || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "Deployment verified — health check returned 200"
+          else
+            echo "WARNING: Health check returned $STATUS — deployment may need attention"
+            exit 1
+          fi
 
       - name: Cleanup SSH Key
         if: always()

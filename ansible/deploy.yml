@@ -1,4 +1,13 @@
 ---
+- name: Install Python 3.8 for Ansible compatibility
+  hosts: app_server
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: Install Python 3.8
+      ansible.builtin.raw: amazon-linux-extras install python3.8 -y
+      changed_when: true
+
 - name: Deploy Application to Production
   hosts: app_server
   become: yes
