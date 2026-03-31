@@ -177,18 +177,9 @@ jobs:
           echo "[app_server]" > ansible/inventory.ini
           echo "app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=${{ secrets.APP_SSH_USER }} ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
-      - name: Debug SSH Setup
+      - name: Verify SSH Connectivity
         run: |
-          echo "=== Inventory ==="
-          cat ansible/inventory.ini
-          echo "=== Key info ==="
-          ls -la /home/runner/.ssh/deploy_key
-          wc -l /home/runner/.ssh/deploy_key
-          ssh-keygen -lf /home/runner/.ssh/deploy_key || echo "Failed to read key fingerprint"
-          echo "=== Test bastion ==="
-          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION FAILED"
-          echo "=== Test app via bastion ==="
-          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo app_ok" 2>&1 || echo "APP FAILED"
+          ssh -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo SSH connectivity verified"
 
       - name: Run Ansible Playbook
         env:
