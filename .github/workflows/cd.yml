@@ -191,7 +191,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          ECR_REGISTRY=$(aws ecr describe-repositories --repository-names edurev-rwanda-backend --query 'repositories[0].repositoryUri' --output text | cut -d'/' -f1)
+          ECR_REGISTRY=$(aws ecr describe-repositories --region "$AWS_REGION" --repository-names edurev-rwanda-backend --query 'repositories[0].repositoryUri' --output text | cut -d'/' -f1)
           export BACKEND_IMAGE="$ECR_REGISTRY/edurev-rwanda-backend:${{ github.sha }}"
           export FRONTEND_IMAGE="$ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }}"
           echo "BACKEND_IMAGE=$BACKEND_IMAGE"
