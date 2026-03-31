@@ -81,11 +81,15 @@
           CORS_ORIGIN={{ cors_origin }}
 
     - name: Login to ECR
-      ansible.builtin.shell: "aws ecr get-login-password --region {{ aws_region | trim }} | docker login --username AWS --password-stdin {{ ecr_registry | trim }}"
+      ansible.builtin.shell: |
+        set -o pipefail
+        aws ecr get-login-password --region {{ aws_region | trim }} | docker login --username AWS --password-stdin {{ ecr_registry | trim }}
+      args:
+        executable: /bin/bash
       environment:
-        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
-        AWS_DEFAULT_REGION: "{{ aws_region }}"
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id | trim }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key | trim }}"
+        AWS_DEFAULT_REGION: "{{ aws_region | trim }}"
 
     - name: Pull backend image
       ansible.builtin.shell: "docker pull {{ backend_image | trim }}"
