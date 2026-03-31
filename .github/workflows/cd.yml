@@ -185,8 +185,7 @@ jobs:
           echo "=== Key info ==="
           ls -la /home/runner/.ssh/deploy_key
           wc -l /home/runner/.ssh/deploy_key
-          head -1 /home/runner/.ssh/deploy_key
-          tail -1 /home/runner/.ssh/deploy_key
+          ssh-keygen -lf /home/runner/.ssh/deploy_key || echo "Failed to read key fingerprint"
           echo "=== Test bastion ==="
           ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION FAILED"
           echo "=== Test app via bastion ==="
