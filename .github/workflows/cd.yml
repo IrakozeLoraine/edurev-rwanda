@@ -167,21 +167,35 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
 
-      - name: Configure SSH Key
+      - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          cat > ~/.ssh/config << SSHEOF
+          Host bastion
+            HostName ${{ secrets.BASTION_HOST }}
+            User ${{ secrets.APP_SSH_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+
+          Host app-vm
+            HostName ${{ secrets.APP_HOST }}
+            User ${{ secrets.APP_SSH_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+            ProxyJump bastion
+          SSHEOF
+          sed -i 's/^          //' ~/.ssh/config
+          chmod 600 ~/.ssh/config
 
       - name: Generate Ansible Inventory
         run: |
-          printf '[app_server]\napp-vm ansible_host=%s ansible_user=%s ansible_ssh_private_key_file=~/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8\n' \
-            "${{ secrets.APP_HOST }}" "${{ secrets.APP_SSH_USER }}" > ansible/inventory.ini
+          printf '[app_server]\napp-vm ansible_python_interpreter=/usr/bin/python3.8\n' > ansible/inventory.ini
 
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "false"
-          ANSIBLE_SSH_COMMON_ARGS: "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}'"
           BACKEND_IMAGE: ${{ needs.build-and-push.outputs.backend_image }}
           FRONTEND_IMAGE: ${{ needs.build-and-push.outputs.frontend_image }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
