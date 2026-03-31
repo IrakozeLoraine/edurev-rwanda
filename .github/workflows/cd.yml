@@ -167,24 +167,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
 
-      - name: Configure SSH
+      - name: Configure SSH Key
         run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          printf 'Host bastion\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking no\n\nHost app-vm\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking no\n  ProxyJump bastion\n' \
-            "${{ secrets.BASTION_HOST }}" "${{ secrets.APP_SSH_USER }}" \
-            "${{ secrets.APP_HOST }}" "${{ secrets.APP_SSH_USER }}" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
+          mkdir -p /home/runner/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/deploy_key
+          chmod 600 /home/runner/.ssh/deploy_key
 
       - name: Generate Ansible Inventory
         run: |
-          printf '[app_server]\napp-vm ansible_python_interpreter=/usr/bin/python3.8\n' > ansible/inventory.ini
+          echo "[app_server]" > ansible/inventory.ini
+          echo "app-vm ansible_host=${{ secrets.APP_HOST }}" >> ansible/inventory.ini
+          echo "" >> ansible/inventory.ini
+          echo "[app_server:vars]" >> ansible/inventory.ini
+          echo "ansible_user=${{ secrets.APP_SSH_USER }}" >> ansible/inventory.ini
+          echo "ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key" >> ansible/inventory.ini
+          echo 'ansible_ssh_common_args=-o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}"' >> ansible/inventory.ini
+          echo "ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "false"
-          ANSIBLE_SSH_ARGS: "-F $HOME/.ssh/config"
           BACKEND_IMAGE: ${{ needs.build-and-push.outputs.backend_image }}
           FRONTEND_IMAGE: ${{ needs.build-and-push.outputs.frontend_image }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -212,4 +214,4 @@ jobs:
 
       - name: Cleanup SSH Key
         if: always()
-        run: rm -f ~/.ssh/deploy_key ~/.ssh/config ~/.ssh/known_hosts ansible/inventory.ini
+        run: rm -f /home/runner/.ssh/deploy_key /home/runner/.ssh/known_hosts ansible/inventory.ini
