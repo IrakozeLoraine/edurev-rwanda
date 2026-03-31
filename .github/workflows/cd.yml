@@ -190,9 +190,9 @@ jobs:
           head -1 /home/runner/.ssh/deploy_key
           tail -1 /home/runner/.ssh/deploy_key
           echo "=== Test bastion SSH ==="
-          ssh -v -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o ConnectTimeout=5 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION SSH FAILED"
+          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION SSH FAILED"
           echo "=== Test app SSH via bastion ==="
-          ssh -v -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo app_ok" 2>&1 || echo "APP SSH FAILED"
+          ssh -vvv -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo app_ok" 2>&1 || echo "APP SSH FAILED"
 
       - name: Run Ansible Playbook
         env:
@@ -208,7 +208,7 @@ jobs:
         run: |
           ansible-playbook \
             -i ansible/inventory.ini \
-            --ssh-common-args="-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}'" \
+            --ssh-common-args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}'" \
             ansible/deploy.yml
 
       - name: Verify Deployment
