@@ -88,10 +88,10 @@
         AWS_DEFAULT_REGION: "{{ aws_region }}"
 
     - name: Pull backend image
-      ansible.builtin.shell: docker pull {{ backend_image }}
+      ansible.builtin.shell: "docker pull {{ backend_image | trim }}"
 
     - name: Pull frontend image
-      ansible.builtin.shell: docker pull {{ frontend_image }}
+      ansible.builtin.shell: "docker pull {{ frontend_image | trim }}"
 
     - name: Deploy frontend + backend with docker-compose
       ansible.builtin.shell: |
