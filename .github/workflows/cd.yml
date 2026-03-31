@@ -175,18 +175,16 @@ jobs:
 
       - name: Generate Ansible Inventory
         run: |
-          echo "[app_server]" > ansible/inventory.ini
-          echo "app-vm ansible_host=${{ secrets.APP_HOST }}" >> ansible/inventory.ini
-          echo "" >> ansible/inventory.ini
-          echo "[app_server:vars]" >> ansible/inventory.ini
-          echo "ansible_user=ec2-user" >> ansible/inventory.ini
-          echo "ansible_ssh_private_key_file=~/.ssh/deploy_key" >> ansible/inventory.ini
-          echo "ansible_ssh_common_args=-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}'" >> ansible/inventory.ini
-          echo "ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
+          cat > ansible/inventory.ini << 'EOF'
+          [app_server]
+          app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8
+          EOF
+          sed -i 's/^          //' ansible/inventory.ini
 
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "false"
+          ANSIBLE_SSH_ARGS: "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}'"
           BACKEND_IMAGE: ${{ needs.build-and-push.outputs.backend_image }}
           FRONTEND_IMAGE: ${{ needs.build-and-push.outputs.frontend_image }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
