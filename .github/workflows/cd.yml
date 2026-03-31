@@ -176,13 +176,7 @@ jobs:
       - name: Generate Ansible Inventory
         run: |
           echo "[app_server]" > ansible/inventory.ini
-          echo "app-vm ansible_host=${{ secrets.APP_HOST }}" >> ansible/inventory.ini
-          echo "" >> ansible/inventory.ini
-          echo "[app_server:vars]" >> ansible/inventory.ini
-          echo "ansible_user=${{ secrets.APP_SSH_USER }}" >> ansible/inventory.ini
-          echo "ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key" >> ansible/inventory.ini
-          echo 'ansible_ssh_common_args=-o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}"' >> ansible/inventory.ini
-          echo "ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
+          echo "app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=${{ secrets.APP_SSH_USER }} ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
       - name: Run Ansible Playbook
         env:
@@ -196,6 +190,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
+          export ANSIBLE_SSH_COMMON_ARGS='-o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}"'
           ansible-playbook \
             -i ansible/inventory.ini \
             ansible/deploy.yml
