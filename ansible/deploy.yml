@@ -76,8 +76,8 @@
         content: |
           BACKEND_IMAGE={{ backend_image }}
           FRONTEND_IMAGE={{ frontend_image }}
-          DATABASE_URL={{ database_url }}
-          JWT_SECRET={{ jwt_secret }}
+          DATABASE_URL={{ database_url | replace('$', '$$') }}
+          JWT_SECRET={{ jwt_secret | replace('$', '$$') }}
           CORS_ORIGIN={{ cors_origin }}
 
     - name: Login to ECR
