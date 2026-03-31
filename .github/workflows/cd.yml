@@ -172,21 +172,9 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          cat > ~/.ssh/config << SSHEOF
-          Host bastion
-            HostName ${{ secrets.BASTION_HOST }}
-            User ${{ secrets.APP_SSH_USER }}
-            IdentityFile ~/.ssh/deploy_key
-            StrictHostKeyChecking no
-
-          Host app-vm
-            HostName ${{ secrets.APP_HOST }}
-            User ${{ secrets.APP_SSH_USER }}
-            IdentityFile ~/.ssh/deploy_key
-            StrictHostKeyChecking no
-            ProxyJump bastion
-          SSHEOF
-          sed -i 's/^          //' ~/.ssh/config
+          printf 'Host bastion\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking no\n\nHost app-vm\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking no\n  ProxyJump bastion\n' \
+            "${{ secrets.BASTION_HOST }}" "${{ secrets.APP_SSH_USER }}" \
+            "${{ secrets.APP_HOST }}" "${{ secrets.APP_SSH_USER }}" > ~/.ssh/config
           chmod 600 ~/.ssh/config
 
       - name: Generate Ansible Inventory
@@ -224,4 +212,4 @@ jobs:
 
       - name: Cleanup SSH Key
         if: always()
-        run: rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts ansible/inventory.ini
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/config ~/.ssh/known_hosts ansible/inventory.ini
