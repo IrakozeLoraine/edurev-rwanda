@@ -178,12 +178,21 @@ jobs:
           echo "[app_server]" > ansible/inventory.ini
           echo "app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=${{ secrets.APP_SSH_USER }} ansible_ssh_private_key_file=/home/runner/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
-      - name: Debug Inventory
+      - name: Debug SSH Setup
         run: |
           echo "=== Inventory content ==="
           cat ansible/inventory.ini
-          echo "=== SSH key exists ==="
+          echo "=== SSH key info ==="
           ls -la /home/runner/.ssh/deploy_key
+          echo "=== Key line count ==="
+          wc -l /home/runner/.ssh/deploy_key
+          echo "=== Key first/last line ==="
+          head -1 /home/runner/.ssh/deploy_key
+          tail -1 /home/runner/.ssh/deploy_key
+          echo "=== Test bastion SSH ==="
+          ssh -v -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o ConnectTimeout=5 ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }} "echo bastion_ok" 2>&1 || echo "BASTION SSH FAILED"
+          echo "=== Test app SSH via bastion ==="
+          ssh -v -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ProxyCommand="ssh -W %h:%p -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.APP_SSH_USER }}@${{ secrets.BASTION_HOST }}" ${{ secrets.APP_SSH_USER }}@${{ secrets.APP_HOST }} "echo app_ok" 2>&1 || echo "APP SSH FAILED"
 
       - name: Run Ansible Playbook
         env:
