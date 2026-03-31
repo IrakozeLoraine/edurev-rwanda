@@ -184,7 +184,7 @@ jobs:
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: "false"
-          ANSIBLE_SSH_ARGS: "-F ~/.ssh/config"
+          ANSIBLE_SSH_ARGS: "-F $HOME/.ssh/config"
           BACKEND_IMAGE: ${{ needs.build-and-push.outputs.backend_image }}
           FRONTEND_IMAGE: ${{ needs.build-and-push.outputs.frontend_image }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
