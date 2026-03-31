@@ -13,15 +13,15 @@
   become: yes
 
   vars:
-    backend_image: "{{ lookup('env', 'BACKEND_IMAGE') }}"
-    frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') }}"
-    database_url: "{{ lookup('env', 'DATABASE_URL') }}"
-    ecr_registry: "{{ backend_image.split('/')[0] | trim }}"
-    aws_region: "{{ lookup('env','AWS_REGION') }}"
-    aws_access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
-    aws_secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
-    cors_origin: "{{ lookup('env', 'CORS_ORIGIN' )}}"
-    jwt_secret: "{{ lookup('env', 'JWT_SECRET')}}"
+    backend_image: "{{ lookup('env', 'BACKEND_IMAGE') | trim }}"
+    frontend_image: "{{ lookup('env', 'FRONTEND_IMAGE') | trim }}"
+    database_url: "{{ lookup('env', 'DATABASE_URL') | trim }}"
+    ecr_registry: "{{ backend_image.split('/')[0] }}"
+    aws_region: "{{ lookup('env', 'AWS_REGION') | trim }}"
+    aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') | trim }}"
+    aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') | trim }}"
+    cors_origin: "{{ lookup('env', 'CORS_ORIGIN') | trim }}"
+    jwt_secret: "{{ lookup('env', 'JWT_SECRET') | trim }}"
 
 
   tasks:
@@ -83,19 +83,19 @@
     - name: Login to ECR
       ansible.builtin.shell: |
         set -o pipefail
-        aws ecr get-login-password --region {{ aws_region | trim }} | docker login --username AWS --password-stdin {{ ecr_registry | trim }}
+        aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
       args:
         executable: /bin/bash
       environment:
-        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id | trim }}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key | trim }}"
-        AWS_DEFAULT_REGION: "{{ aws_region | trim }}"
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
 
     - name: Pull backend image
-      ansible.builtin.shell: "docker pull {{ backend_image | trim }}"
+      ansible.builtin.shell: "docker pull {{ backend_image }}"
 
     - name: Pull frontend image
-      ansible.builtin.shell: "docker pull {{ frontend_image | trim }}"
+      ansible.builtin.shell: "docker pull {{ frontend_image }}"
 
     - name: Deploy frontend + backend with docker-compose
       ansible.builtin.shell: |
