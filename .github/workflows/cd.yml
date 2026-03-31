@@ -175,11 +175,8 @@ jobs:
 
       - name: Generate Ansible Inventory
         run: |
-          cat > ansible/inventory.ini << 'EOF'
-          [app_server]
-          app-vm ansible_host=${{ secrets.APP_HOST }} ansible_user=${{ secrets.APP_SSH_USER }} ansible_ssh_private_key_file=~/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8
-          EOF
-          sed -i 's/^          //' ansible/inventory.ini
+          printf '[app_server]\napp-vm ansible_host=%s ansible_user=%s ansible_ssh_private_key_file=~/.ssh/deploy_key ansible_python_interpreter=/usr/bin/python3.8\n' \
+            "${{ secrets.APP_HOST }}" "${{ secrets.APP_SSH_USER }}" > ansible/inventory.ini
 
       - name: Run Ansible Playbook
         env:
