@@ -136,9 +136,10 @@ jobs:
       - name: Build and Push Frontend Image
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: |
           docker build \
-            --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} \
+            --build-arg "VITE_API_BASE_URL=$VITE_API_BASE_URL" \
             -t $ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }} \
             -t $ECR_REGISTRY/edurev-rwanda-frontend:latest ./frontend
           docker push $ECR_REGISTRY/edurev-rwanda-frontend:${{ github.sha }}
