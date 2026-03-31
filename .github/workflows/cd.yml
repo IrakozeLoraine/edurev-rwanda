@@ -181,7 +181,7 @@ jobs:
           echo "[app_server:vars]" >> ansible/inventory.ini
           echo "ansible_user=ec2-user" >> ansible/inventory.ini
           echo "ansible_ssh_private_key_file=~/.ssh/deploy_key" >> ansible/inventory.ini
-          echo "ansible_ssh_common_args=-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %%h:%%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}'" >> ansible/inventory.ini
+          echo "ansible_ssh_common_args=-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_HOST }}'" >> ansible/inventory.ini
           echo "ansible_python_interpreter=/usr/bin/python3.8" >> ansible/inventory.ini
 
       - name: Run Ansible Playbook
