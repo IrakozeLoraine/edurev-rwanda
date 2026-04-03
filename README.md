@@ -4,7 +4,7 @@
 
 **Live Application:** [http://edurev-rwanda-alb-2053544712.eu-central-1.elb.amazonaws.com](http://edurev-rwanda-alb-2053544712.eu-central-1.elb.amazonaws.com)
 
-**Video Demo:** *Coming soon*
+**Video Demo:** [https://drive.google.com/drive/folders/1xPeYTE_LBSEVRitymq7uRKWesabLjyEV]
 
 ---
 
