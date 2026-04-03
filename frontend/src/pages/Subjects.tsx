@@ -79,7 +79,7 @@ const Subjects = () => {
           Subjects
         </h1>
         <p className="text-mongo-muted mt-1">
-          Choose a subject to explore its revision topics
+          Choose a subject to start exploring topics and resources for your revision journey.
         </p>
       </div>
 
